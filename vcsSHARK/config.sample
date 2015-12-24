@@ -1,0 +1,23 @@
+[General]
+debug=
+quiet=
+no_parse=
+writable_path=
+logfile=
+
+[RepositoryConfiguration]
+#uri=/home/fabian/Arbeit/testEvolution/AntFileParser/projects/checkstyle/
+#uri=/home/fabian/Arbeit/linux/
+uri=/home/fabian/Arbeit/samba/
+#uri=/home/fabian/Arbeit/CVSAnalY
+
+[Database]
+db_user = root
+db_password = root
+db_database = test
+db_hostname = localhost
+db_driver = mongo
+db_port = 27017
+
+[Extensions]
+extensions=
