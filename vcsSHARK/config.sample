@@ -6,10 +6,7 @@ writable_path=
 logfile=
 
 [RepositoryConfiguration]
-#uri=/home/fabian/Arbeit/testEvolution/AntFileParser/projects/checkstyle/
-#uri=/home/fabian/Arbeit/linux/
-uri=/home/fabian/Arbeit/samba/
-#uri=/home/fabian/Arbeit/CVSAnalY
+uri=/home/user/CVSAnalY
 
 [Database]
 db_user = root
