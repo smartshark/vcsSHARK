@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyvcsshark.dbmodels.mongomodels &mdash; vcsSHARK 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="vcsSHARK 0.1a1 documentation" href="../../../index.html"/>
+        <link rel="up" title="pyvcsshark" href="../../pyvcsshark.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> vcsSHARK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">2. API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">vcsSHARK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../pyvcsshark.html">pyvcsshark</a> &raquo;</li>
+      
+    <li>pyvcsshark.dbmodels.mongomodels</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyvcsshark.dbmodels.mongomodels</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">mongoengine</span> <span class="kn">import</span> <span class="n">Document</span><span class="p">,</span> <span class="n">StringField</span><span class="p">,</span> <span class="n">DateTimeField</span><span class="p">,</span> <span class="n">ListField</span><span class="p">,</span> <span class="n">DateTimeField</span><span class="p">,</span> <span class="n">IntField</span><span class="p">,</span> <span class="n">BooleanField</span><span class="p">,</span> <span class="n">ObjectIdField</span>
+
+<div class="viewcode-block" id="FileAction"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.mongomodels.FileAction">[docs]</a><span class="k">class</span> <span class="nc">FileAction</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Document that inherits from :class:`mongoengine.Document`. Holds information for the fileaction collection.</span>
+
+<span class="sd">    </span>
+<span class="sd">    :property projectId: id of the project, which belongs to the file action (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property fileId: id of the file, which belongs to the file action (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property revisionHash: hash of the revision (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property mode: mode of the file action (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    </span>
+<span class="sd">        .. NOTE:: It can only be (&quot;A&quot;)dded, (&quot;D&quot;)eleted, (&quot;M&quot;)odified, (&quot;C&quot;)opied or Moved, &quot;T&quot; for links (special in git)</span>
+<span class="sd">        </span>
+<span class="sd">    :property sizeAtCommit: size of the file on commit (type: :class:`mongoengine.fields.IntField`)</span>
+<span class="sd">    :property linesAdded: number of lines added in this action (type: :class:`mongoengine.fields.IntField`)</span>
+<span class="sd">    :property linesDeleted: number of lines deleted in this action (type: :class:`mongoengine.fields.IntField`)</span>
+<span class="sd">    :property isBinary: indicates if the file is a binary file or not (type: :class:`mongoengine.fields.BooleanField`)</span>
+<span class="sd">    :property oldFilePathId: object id of old file (if it was moved or copied) (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property hunkIds: list of ids to the different hunks of this action (type: :class:`mongoengine.fields.ListField(:class:`mongoengine.fields.ObjectIdField`)`)</span>
+<span class="sd">        </span>
+<span class="sd">    .. NOTE:: Unique (or primary key) are the fields: projectId, fileId, and revisionHash.</span>
+<span class="sd">    </span>
+<span class="sd">    .. NOTE:: oldFilePathId only exists, if the file was created due to a copy or move action</span>
+<span class="sd">    </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MODES</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;M&#39;</span><span class="p">,</span> <span class="s">&#39;D&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;T&#39;</span><span class="p">)</span>
+    <span class="c">#pk fileId, revisionhash, projectId</span>
+    <span class="n">projectId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;fileId&#39;</span><span class="p">,</span> <span class="s">&#39;revisionHash&#39;</span><span class="p">]</span> <span class="p">)</span>
+    <span class="n">fileId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;projectId&#39;</span><span class="p">,</span> <span class="s">&#39;revisionHash&#39;</span><span class="p">]</span> <span class="p">)</span>
+    <span class="n">revisionHash</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;projectId&#39;</span><span class="p">,</span> <span class="s">&#39;fileId&#39;</span><span class="p">]</span> <span class="p">)</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">MODES</span><span class="p">)</span>
+    <span class="n">sizeAtCommit</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">()</span>
+    <span class="n">linesAdded</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">()</span>
+    <span class="n">linesDeleted</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">()</span>
+    <span class="n">isBinary</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">()</span>
+
+    <span class="c"># oldFilePathId is only set, if we detected a copy or move operation</span>
+    <span class="n">oldFilePathId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">()</span>
+    <span class="n">hunkIds</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">ObjectIdField</span><span class="p">())</span></div>
+    
+        
+    
+
+
+<div class="viewcode-block" id="Hunk"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.mongomodels.Hunk">[docs]</a><span class="k">class</span> <span class="nc">Hunk</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Document that inherits from :class:`mongoengine.Document`. Holds information for the hunk collection.</span>
+<span class="sd">    </span>
+<span class="sd">    :property content: content of the hunk in the unified format (see: https://en.wikipedia.org/wiki/Diff#Unified_format)&quot;&quot;&quot;</span>
+    
+    <span class="n">content</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="File"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.mongomodels.File">[docs]</a><span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Document that inherits from :class:`mongoengine.Document`. Holds information for the file collection.</span>
+<span class="sd">    </span>
+<span class="sd">    :property projectId: id of the project, which belongs to the file action (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property path: path of the file (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property name: name of the file (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    </span>
+<span class="sd">    .. NOTE:: Unique (or primary key) are the fields: path, name, and projectId.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c">#PK path, name, projectId</span>
+    <span class="n">projectId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;path&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;projectId&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;path&#39;</span><span class="p">,</span> <span class="s">&#39;projectId&#39;</span><span class="p">]</span> <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Tag"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.mongomodels.Tag">[docs]</a><span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Document that inherits from :class:`mongoengine.Document`. Holds information for the tag collection.</span>
+<span class="sd">    </span>
+<span class="sd">    :property projectId: id of the project, which belongs to the file action (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property name: name of the tag (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property message: message of the tag (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property taggerId: id of the person who created the tag (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property date: date of the creation of the tag (type: :class:`mongoengine.fields.DateTimeField`)</span>
+<span class="sd">    :property offset: offset of the tag creation date for timezones (type: :class:`mongoengine.fields.IntField`)</span>
+<span class="sd">    </span>
+<span class="sd">    .. NOTE:: Unique (or primary key) are the fields: name and projectId.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
+     <span class="c">#PK: project, name</span>
+    <span class="n">projectId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="p">)</span><span class="c">#</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;projectId&#39;</span><span class="p">])</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">taggerId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">()</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">DateTimeField</span><span class="p">()</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="People"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.mongomodels.People">[docs]</a><span class="k">class</span> <span class="nc">People</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Document that inherits from :class:`mongoengine.Document`. Holds information for the people collection.</span>
+<span class="sd">    </span>
+<span class="sd">    :property name: name of the person (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property email: email of the person (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    </span>
+<span class="sd">    .. NOTE:: Unique (or primary key) are the fields: name and email.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+     <span class="c">#PK: email, name</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>             
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;email&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="Project"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.mongomodels.Project">[docs]</a><span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Document that inherits from :class:`mongoengine.Document`. Holds information for the project collection.</span>
+<span class="sd">    </span>
+<span class="sd">    :property url: url to the project repository (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property name: name of the project (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property repositoryType: type of the repository (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    </span>
+<span class="sd">    .. NOTE:: Unique (or primary key) is the field url.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># PK uri</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">repositoryType</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span></div>
+    
+        
+
+<div class="viewcode-block" id="Commit"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.mongomodels.Commit">[docs]</a><span class="k">class</span> <span class="nc">Commit</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Document that inherits from :class:`mongoengine.Document`. Holds information for the commit collection.</span>
+<span class="sd">    </span>
+<span class="sd">    :property projectId: id of the project, which belongs to the file action (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property revisionHash: revision hash of the commit (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property branches: list of branches to which the commit belongs to (type: :class:`mongoengine.fields.ListField(:class:`mongoengine.fields.StringField`)`)</span>
+<span class="sd">    :property tagIds: list of tag ids, which belong to the commit (type: :class:`mongoengine.fields.ListField(:class:`mongoengine.fields.ObjectIdField`)`)</span>
+<span class="sd">    :property parents: list of parents of the commit (type: :class:`mongoengine.fields.ListField(:class:`mongoengine.fields.StringField`)`)</span>
+<span class="sd">    :property authorId: id of the author of the commit (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property authorDate: date when the commit was created (type: :class:`mongoengine.fields.DateTimeField`)</span>
+<span class="sd">    :property authorOffset: offset of the authorDate (type: :class:`mongoengine.fields.IntField`)</span>
+<span class="sd">    :property committerId: id of the committer of the commit (type: :class:`mongoengine.fields.ObjectIdField`)</span>
+<span class="sd">    :property committerDate: date when the commit was committed (type: :class:`mongoengine.fields.DateTimeField`)</span>
+<span class="sd">    :property committerOffset: offset of the committerDate (type: :class:`mongoengine.fields.IntField`)</span>
+<span class="sd">    :property message: commit message (type: :class:`mongoengine.fields.StringField`)</span>
+<span class="sd">    :property fileActionIds: list of file action ids, which belong to the commit (type: :class:`mongoengine.fields.ListField(:class:`mongoengine.fields.ObjectIdField`)`)</span>
+<span class="sd">    </span>
+<span class="sd">    .. NOTE:: Unique (or primary key) are the fields projectId and revisionHash.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c">#PK: projectId and revisionhash</span>
+    <span class="n">projectId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;revisionHash&#39;</span><span class="p">]</span> <span class="p">)</span>
+    <span class="n">revisionHash</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">unique_with</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;projectId&#39;</span><span class="p">])</span>
+    <span class="n">branches</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>
+    <span class="n">tagIds</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">ObjectIdField</span><span class="p">())</span>
+    <span class="n">parents</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">StringField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
+    <span class="n">authorId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">()</span>
+    <span class="n">authorDate</span> <span class="o">=</span> <span class="n">DateTimeField</span><span class="p">()</span>
+    <span class="n">authorOffset</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">()</span>
+    <span class="n">committerId</span> <span class="o">=</span> <span class="n">ObjectIdField</span><span class="p">()</span>
+    <span class="n">committerDate</span> <span class="o">=</span> <span class="n">DateTimeField</span><span class="p">()</span>
+    <span class="n">committerOffset</span> <span class="o">=</span> <span class="n">IntField</span><span class="p">()</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">fileActionIds</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">ObjectIdField</span><span class="p">())</span>
+
+    
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;&quot;</span></div>
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Fabian Trautsch.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

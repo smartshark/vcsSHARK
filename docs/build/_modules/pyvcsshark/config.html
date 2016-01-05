@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyvcsshark.config &mdash; vcsSHARK 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="vcsSHARK 0.1a1 documentation" href="../../index.html"/>
+        <link rel="up" title="pyvcsshark" href="../pyvcsshark.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> vcsSHARK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">2. API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">vcsSHARK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../pyvcsshark.html">pyvcsshark</a> &raquo;</li>
+      
+    <li>pyvcsshark.config</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyvcsshark.config</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">readable_dir</span>
+
+<span class="k">class</span> <span class="nc">ErrorLoadingConfig</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception class, which is used for config loading exceptions. &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s">&#39;Failed in reading config file </span><span class="si">%s</span><span class="s">. Original message: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+        <span class="ne">Exception</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../api.html#pyvcsshark.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class that represents the parsed config.</span>
+<span class="sd">    </span>
+<span class="sd">    :param no_parse: If true, the data is not parsed and only the extensions are executed</span>
+<span class="sd">    :param db_driver: name of the datastore driver (e.g. **mongo**)</span>
+<span class="sd">    :param db_user: datastore username (e.g. **root**)</span>
+<span class="sd">    :param db_password: datastore password</span>
+<span class="sd">    :param db_database: database of the datastore</span>
+<span class="sd">    :param db_hostname: hostname where the datastore runs on</span>
+<span class="sd">    :param db_port: port where the datastore is listening on</span>
+<span class="sd">    :param extensions: list of extensions to be executed</span>
+<span class="sd">    :param uri: path to the repository</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">no_parse</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">db_driver</span><span class="o">=</span><span class="s">&quot;mongo&quot;</span><span class="p">,</span> <span class="n">db_user</span><span class="o">=</span><span class="s">&quot;root&quot;</span><span class="p">,</span> <span class="n">db_password</span><span class="o">=</span><span class="s">&quot;root&quot;</span><span class="p">,</span> <span class="n">db_database</span><span class="o">=</span><span class="s">&quot;vcsSHARK&quot;</span><span class="p">,</span>
+                     <span class="n">db_hostname</span><span class="o">=</span><span class="s">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">db_port</span><span class="o">=</span><span class="mi">27017</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="p">[],</span> <span class="n">uri</span><span class="o">=</span><span class="s">&quot;.&quot;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_parse</span> <span class="o">=</span> <span class="n">no_parse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_driver</span> <span class="o">=</span> <span class="n">db_driver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_user</span> <span class="o">=</span> <span class="n">db_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_password</span> <span class="o">=</span> <span class="n">db_password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_database</span> <span class="o">=</span> <span class="n">db_database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_hostname</span> <span class="o">=</span> <span class="n">db_hostname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">db_port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="n">extensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">uri</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_str2bool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Checks if a string containts yes, true, t or 1. This way we can check if</span>
+<span class="sd">        a value is set to true in the config</span>
+<span class="sd">        </span>
+<span class="sd">        :param v: string that should be checked&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="s">&quot;true&quot;</span><span class="p">,</span> <span class="s">&quot;t&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_readConfigOption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">returnBool</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Helper method to read a config option. We can specify the return value with</span>
+<span class="sd">        the different parameters</span>
+<span class="sd">        </span>
+<span class="sd">        :param section: section of the configruation, where the option is in</span>
+<span class="sd">        :param option: option from which the value should be read</span>
+<span class="sd">        :param returnBool: specifies if the return value should be a boolean</span>
+<span class="sd">        :param returnList: specifies if the return value should be a list&quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">configParser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span><span class="n">option</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">value</span><span class="p">):</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">returnBool</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_str2bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">elif</span><span class="p">(</span><span class="n">returnList</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">value</span>
+        
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+        
+            
+<div class="viewcode-block" id="Config.load_from_file"><a class="viewcode-back" href="../../api.html#pyvcsshark.Config.load_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">load_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Load the configuration from the specified file.</span>
+<span class="sd">        </span>
+<span class="sd">        :param config_file: path to configuration file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">configParser</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span><span class="n">allow_no_value</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">configParser</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+            
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">no_parse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;General&quot;</span><span class="p">,</span> <span class="s">&quot;no_parse&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;RepositoryConfiguration&quot;</span><span class="p">,</span> <span class="s">&quot;uri&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;Extensions&quot;</span><span class="p">,</span> <span class="s">&quot;extensions&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_driver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;Database&quot;</span><span class="p">,</span> <span class="s">&quot;db_driver&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;Database&quot;</span><span class="p">,</span> <span class="s">&quot;db_user&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;Database&quot;</span><span class="p">,</span> <span class="s">&quot;db_password&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_database</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;Database&quot;</span><span class="p">,</span> <span class="s">&quot;db_database&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;Database&quot;</span><span class="p">,</span> <span class="s">&quot;db_hostname&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db_port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_readConfigOption</span><span class="p">(</span><span class="s">&quot;Database&quot;</span><span class="p">,</span> <span class="s">&quot;db_port&quot;</span><span class="p">))</span>
+
+            <span class="c"># Check if dirs are readable</span>
+            <span class="n">readable_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">)</span>
+
+           
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Failed in reading config file </span><span class="si">%s</span><span class="s">. Original message: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span></div>
+        
+    
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;Config(no_parse=&#39;</span><span class="si">%s</span><span class="s">&#39;, &quot;</span> \
+               <span class="s">&quot;uri=&#39;</span><span class="si">%s</span><span class="s">&#39;, extensions=&#39;</span><span class="si">%s</span><span class="s">&#39;, db_driver=&#39;</span><span class="si">%s</span><span class="s">&#39;, db_user=&#39;</span><span class="si">%s</span><span class="s">&#39;, db_password=&#39;</span><span class="si">%s</span><span class="s">&#39;, &quot;</span>\
+               <span class="s">&quot;db_database=&#39;</span><span class="si">%s</span><span class="s">&#39;, db_hostname=&#39;</span><span class="si">%s</span><span class="s">&#39;, db_port=&#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_parse</span><span class="p">,</span>
+                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extensions</span><span class="p">),</span>
+                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">db_driver</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_password</span><span class="p">,</span>
+                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">db_database</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_hostname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_port</span><span class="p">)</span></div>
+               
+               
+               
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Fabian Trautsch.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

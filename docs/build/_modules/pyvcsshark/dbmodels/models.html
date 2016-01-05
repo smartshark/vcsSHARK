@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyvcsshark.dbmodels.models &mdash; vcsSHARK 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="vcsSHARK 0.1a1 documentation" href="../../../index.html"/>
+        <link rel="up" title="pyvcsshark" href="../../pyvcsshark.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> vcsSHARK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">2. API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">vcsSHARK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../pyvcsshark.html">pyvcsshark</a> &raquo;</li>
+      
+    <li>pyvcsshark.dbmodels.models</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyvcsshark.dbmodels.models</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<div class="viewcode-block" id="CommitModel"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.models.CommitModel">[docs]</a><span class="k">class</span> <span class="nc">CommitModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Model that represents a commit to a repository</span>
+<span class="sd">    </span>
+<span class="sd">    :param id: id of the ocmmit (e.g. a revision hash)</span>
+<span class="sd">    :param branches: set of branches to which the commit belongs to</span>
+<span class="sd">    :param tags: list of tags of type :class:`pyvcsshark.dbmodels.models.TagModel`</span>
+<span class="sd">    :param parents: list of strings, which contains the parent ids of the commit</span>
+<span class="sd">    :param author: author of the commit. Must be of type :class:`pyvcsshark.dbmodels.models.PeopleModel`</span>
+<span class="sd">    :param committer: committer of the commit. Must be of type :class:`pyvcsshark.dbmodels.models.PeopleModel`</span>
+<span class="sd">    :param message: string of the commit message</span>
+<span class="sd">    :param changedFiles: list of files of type :class:`pyvcsshark.dbmodels.models.FileModel`</span>
+<span class="sd">    :param authorDate: date of the creation of the change of the commit (must be a UNIX timestamp)</span>
+<span class="sd">    :param authorOffset: offset for the authordate (timezone)</span>
+<span class="sd">    :param committerDate: date of the commit (must be a UNIX timestamp)</span>
+<span class="sd">    :param committerOffset: offset for the committerdate (timezone)</span>
+<span class="sd">    </span>
+<span class="sd">    .. NOTE:: If your parser do not provide all information, then just use the default ones</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">branches</span><span class="o">=</span><span class="p">[],</span> <span class="n">tags</span><span class="o">=</span><span class="p">[],</span> <span class="n">parents</span><span class="o">=</span><span class="p">[],</span> 
+                 <span class="n">author</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">committer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">changedFiles</span><span class="o">=</span><span class="p">[],</span> <span class="n">authorDate</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">authorOffset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">committerDate</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">committerOffset</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="n">branches</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parents</span> <span class="o">=</span> <span class="n">parents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">committer</span> <span class="o">=</span> <span class="n">committer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changedFiles</span> <span class="o">=</span> <span class="n">changedFiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">authorDate</span> <span class="o">=</span> <span class="n">authorDate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">authorOffset</span> <span class="o">=</span> <span class="n">authorOffset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">committerDate</span> <span class="o">=</span> <span class="n">committerDate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">committerOffset</span> <span class="o">=</span> <span class="n">committerOffset</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">authorDate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_authorDate</span>
+    
+    <span class="nd">@authorDate.setter</span>
+    <span class="k">def</span> <span class="nf">authorDate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Date must be a UNIX timestamp!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_authorDate</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">committerDate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_committerDate</span>
+    
+    <span class="nd">@committerDate.setter</span>
+    <span class="k">def</span> <span class="nf">committerDate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Date must be a UNIX timestamp!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_committerDate</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">branches</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span>
+        
+    <span class="nd">@branches.setter</span>
+    <span class="k">def</span> <span class="nf">branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Branches must be a list!&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">if</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">BranchModel</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Branch is not a Branch model!&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span>
+    
+    <span class="nd">@tags.setter</span>
+    <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Hunks must be a list!&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">if</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">TagModel</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Hunk is not a Hunk model!&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">author</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_author</span>
+    
+    <span class="nd">@author.setter</span>
+    <span class="k">def</span> <span class="nf">author</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">PeopleModel</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Author must be of type PeopleModel!&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_author</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">committer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_committer</span>
+    
+    <span class="nd">@committer.setter</span>
+    <span class="k">def</span> <span class="nf">committer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">PeopleModel</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Committer must be of type PeopleModel!&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_committer</span> <span class="o">=</span> <span class="n">value</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">changedFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_changedFiles</span>
+    
+    <span class="nd">@changedFiles.setter</span>
+    <span class="k">def</span> <span class="nf">changedFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;ChangedFiles must be a list!&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">if</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">FileModel</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;File must be of type FileModel!&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changedFiles</span> <span class="o">=</span> <span class="n">value</span>
+        
+        
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">changedFiles</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">+=</span> <span class="nb">file</span><span class="o">.</span><span class="n">path</span>
+            
+        <span class="n">branches</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">:</span>
+            <span class="n">branches</span><span class="o">+=</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span>
+            
+        <span class="n">tags</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">tags</span><span class="o">+=</span><span class="n">tag</span><span class="o">.</span><span class="n">name</span>
+        
+        <span class="k">return</span> <span class="s">&quot;&lt;CommitHash: </span><span class="si">%s</span><span class="s">&gt;, &lt;Branches: </span><span class="si">%s</span><span class="s">&gt;, &lt;Tags: </span><span class="si">%s</span><span class="s">&gt;, &lt;Parents: </span><span class="si">%s</span><span class="s">&gt;, &lt;AuthorName: </span><span class="si">%s</span><span class="s">&gt;,&quot;</span>\
+               <span class="s">&quot;&lt;AuthorEmail: </span><span class="si">%s</span><span class="s">&gt;, &lt;AuthorTime: </span><span class="si">%s</span><span class="s">&gt;, &lt;AuthorOffset: </span><span class="si">%s</span><span class="s">&gt;, &lt;CommitterName: </span><span class="si">%s</span><span class="s">&gt;, &quot;</span>\
+                <span class="s">&quot;&lt;CommitterEmail: </span><span class="si">%s</span><span class="s">&gt;, &lt;CommitterTime: </span><span class="si">%s</span><span class="s">&gt;, &lt;CommitterOffset: </span><span class="si">%s</span><span class="s">&gt;, &lt;Message: </span><span class="si">%s</span><span class="s">&gt;&quot;</span>\
+                <span class="s">&quot;&lt;ChangedFiles: </span><span class="si">%s</span><span class="s">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">branches</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span>
+                                        <span class="s">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">dateOffset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">dateOffset</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span></div>
+        
+        
+        
+<div class="viewcode-block" id="FileModel"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.models.FileModel">[docs]</a><span class="k">class</span> <span class="nc">FileModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Model that holds the changes of the files.</span>
+<span class="sd">    </span>
+<span class="sd">    :param path: path to the file that was changed</span>
+<span class="sd">    :param size: size of the file that was changed</span>
+<span class="sd">    :param linesAdded: count of how many lines were added to the file</span>
+<span class="sd">    :param linesDeleted: count of how many lines were deleted </span>
+<span class="sd">    :param isBinary: boolean, which is true if the file is a binary file</span>
+<span class="sd">    :param mode: mode of the file action (e.g. &quot;A&quot; for file was added)</span>
+<span class="sd">    :param hunks: list of hunks for the file</span>
+<span class="sd">    :param oldPath: old path to the file, which only exist if a file was copied or moved</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linesAdded</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">linesDeleted</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">isBinary</span><span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">hunks</span><span class="o">=</span><span class="p">[],</span> <span class="n">oldPath</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linesAdded</span> <span class="o">=</span> <span class="n">linesAdded</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linesDeleted</span> <span class="o">=</span> <span class="n">linesDeleted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isBinary</span> <span class="o">=</span> <span class="n">isBinary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hunks</span> <span class="o">=</span> <span class="n">hunks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oldPath</span> <span class="o">=</span> <span class="n">oldPath</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hunks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hunks</span>
+        
+    <span class="nd">@hunks.setter</span>
+    <span class="k">def</span> <span class="nf">hunks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c"># Check hunks</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Hunks must be a list!&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hunks</span> <span class="o">=</span> <span class="n">value</span></div>
+        
+<div class="viewcode-block" id="TagModel"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.models.TagModel">[docs]</a><span class="k">class</span> <span class="nc">TagModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Model that holds the information for the different tags.</span>
+<span class="sd">    </span>
+<span class="sd">    :param name: name of the tag</span>
+<span class="sd">    :param message: message of the tag</span>
+<span class="sd">    :param tagger: creator of the tag. Must be of type :class:`pyvcsshark.dbmodels.models.PeopleModel`.</span>
+<span class="sd">    :param taggerDate: date of the creation of the tag. Must be a UNIX timestamp.</span>
+<span class="sd">    :param taggerOffset: offset for taggerdate (timezone)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tagger</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">taggerDate</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">taggerOffset</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tagger</span> <span class="o">=</span> <span class="n">tagger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">taggerDate</span> <span class="o">=</span> <span class="n">taggerDate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">taggerOffset</span> <span class="o">=</span> <span class="n">taggerOffset</span>
+
+           
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">taggerDate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_taggerDate</span>
+    
+    <span class="nd">@taggerDate.setter</span>
+    <span class="k">def</span> <span class="nf">taggerDate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Date must be a UNIX timestamp!&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_taggerDate</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_taggerDate</span> <span class="o">=</span> <span class="bp">None</span>
+            
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tagger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tagger</span>
+    
+    <span class="nd">@tagger.setter</span>
+    <span class="k">def</span> <span class="nf">tagger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">PeopleModel</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Tagger is not a People model!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tagger</span> <span class="o">=</span> <span class="n">value</span></div>
+            
+    
+        
+
+<div class="viewcode-block" id="BranchModel"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.models.BranchModel">[docs]</a><span class="k">class</span> <span class="nc">BranchModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Model which holds the branch information.</span>
+<span class="sd">    </span>
+<span class="sd">    :param name: name of the branch</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PeopleModel"><a class="viewcode-back" href="../../../api.html#pyvcsshark.dbmodels.models.PeopleModel">[docs]</a><span class="k">class</span> <span class="nc">PeopleModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Model that holds the people information.</span>
+<span class="sd">    </span>
+<span class="sd">    :param name: name of the person</span>
+<span class="sd">    :param email: email of the person</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span></div>
+        
+   
+        
+        
+        
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Fabian Trautsch.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

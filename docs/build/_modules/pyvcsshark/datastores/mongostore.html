@@ -1,0 +1,536 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyvcsshark.datastores.mongostore &mdash; vcsSHARK 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="vcsSHARK 0.1a1 documentation" href="../../../index.html"/>
+        <link rel="up" title="pyvcsshark" href="../../pyvcsshark.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> vcsSHARK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">2. API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">vcsSHARK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../pyvcsshark.html">pyvcsshark</a> &raquo;</li>
+      
+    <li>pyvcsshark.datastores.mongostore</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyvcsshark.datastores.mongostore</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">pyvcsshark.datastores.basestore</span> <span class="kn">import</span> <span class="n">BaseStore</span>
+<span class="kn">from</span> <span class="nn">pyvcsshark.dbmodels.mongomodels</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">mongoengine</span> <span class="kn">import</span> <span class="n">connect</span>
+
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<div class="viewcode-block" id="MongoStore"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.MongoStore">[docs]</a><span class="k">class</span> <span class="nc">MongoStore</span><span class="p">(</span><span class="n">BaseStore</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Datastore implementation for saving data to the mongodb. Inherits from :class:`pyvcsshark.datastores.basestore.BaseStore`.</span>
+<span class="sd">    </span>
+<span class="sd">    :property commitqueue: instance of a :class:`multiprocessing.JoinableQueue`, which  \</span>
+<span class="sd">    holds objects of :class:`pyvcsshark.dbmodels.models.CommitModel`, that should be put into the mongodb</span>
+<span class="sd">    :property NUMBER_OF_PROCESSES: holds the number of processes by calling :func:`multiprocessing.cpu_count`</span>
+<span class="sd">    :property logger: holds the logging instance, by calling logging.getLogger(&quot;store&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">commitqueue</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c">#NUMBER_OF_PROCESSES = 1</span>
+    <span class="n">NUMBER_OF_PROCESSES</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;store&quot;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">BaseStore</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="MongoStore.initialize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.MongoStore.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">user</span> <span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">projectname</span><span class="p">,</span> <span class="n">repositoryURL</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the mongostore by connecting to the mongodb, creating the project in the project collection \</span>
+<span class="sd">        and setting up processes (see: :class:`pyvcsshark.datastores.mongostore.CommitStorageProcess`, which</span>
+<span class="sd">        read commits out of the commitqueue, process them and store them into the mongodb.</span>
+<span class="sd">        </span>
+<span class="sd">        :param dbname: name of the mongo database to use</span>
+<span class="sd">        :param host: host where the mongodb runs on</span>
+<span class="sd">        :param port: port where the mongodb server is listening on</span>
+<span class="sd">        :param user: user used for authentication</span>
+<span class="sd">        :param password: password for the authentication</span>
+<span class="sd">        :param projectname: name of the project of the repository which is parsed</span>
+<span class="sd">        :param repositoryURL: url of the repository which is parsed</span>
+<span class="sd">        :param type: type of the repository which is parsed (e.g. git)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">repositoryURL</span> <span class="o">=</span> <span class="n">repositoryURL</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Initializing MongoStore...&quot;</span><span class="p">)</span>
+        <span class="c"># Create queue for multiprocessing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitqueue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">JoinableQueue</span><span class="p">()</span>
+        <span class="c"># We define, that the user we authenticate with is in the admin database</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Connecting to MongoDB...&quot;</span><span class="p">)</span>
+        <span class="n">connect</span><span class="p">(</span><span class="n">dbname</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">authentication_source</span><span class="o">=</span><span class="s">&#39;admin&#39;</span><span class="p">,</span> <span class="n">connect</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="c"># Update project if project with the same url is already in the mongodb and add if not</span>
+        <span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">repositoryURL</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">repositoryURL</span><span class="p">,</span> <span class="n">repositoryType</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">projectname</span><span class="p">)</span>
+        
+        <span class="c"># Get the last commit by date of the project (if there is any)</span>
+        <span class="n">lastCommitDate</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s">&#39;committerDate&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;-committerDate&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="n">lastCommitDate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="n">lastCommitDate</span> <span class="o">=</span> <span class="n">lastCommitDate</span><span class="o">.</span><span class="n">committerDate</span>
+
+
+        <span class="c"># Start worker, they will wait till something comes into the queue and then process it</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_PROCESSES</span><span class="p">):</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="n">CommitStorageProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commitqueue</span><span class="p">,</span> <span class="n">project</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">lastCommitDate</span><span class="p">)</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">daemon</span><span class="o">=</span><span class="bp">True</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Starting storage Process...&quot;</span><span class="p">)</span></div>
+        
+
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">storeIdentifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the identifier **mongo** for this datastore&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&#39;mongo&#39;</span>
+
+
+<div class="viewcode-block" id="MongoStore.addCommit"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.MongoStore.addCommit">[docs]</a>    <span class="k">def</span> <span class="nf">addCommit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commitModel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds commits of class :class:`pyvcsshark.dbmodels.models.CommitModel` to the commitqueue&quot;&quot;&quot;</span>
+        <span class="c"># add to queue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitqueue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">commitModel</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="MongoStore.deleteAll"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.MongoStore.deleteAll">[docs]</a>    <span class="k">def</span> <span class="nf">deleteAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deletes all data of one project from the datastore</span>
+<span class="sd">        </span>
+<span class="sd">        .. WARNING:: Data from the people collection is not deleted, as these documents may be used by other projects!&quot;&quot;&quot;</span>
+        
+        <span class="c"># Get project id</span>
+        <span class="n">projectId</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repositoryURL</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        
+        <span class="c"># delete tags</span>
+        <span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="n">projectId</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        
+        
+        <span class="c"># delete commits</span>
+        <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="n">projectId</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        
+        
+        <span class="c"># delete file actions and hunks</span>
+        <span class="n">fileActions</span> <span class="o">=</span> <span class="n">FileAction</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="n">projectId</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s">&quot;hunkIds&quot;</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">fileAction</span> <span class="ow">in</span> <span class="n">fileActions</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">hunkId</span> <span class="ow">in</span> <span class="n">fileAction</span><span class="o">.</span><span class="n">hunkIds</span><span class="p">:</span>
+                <span class="n">Hunk</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">hunkId</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="n">fileAction</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        
+        <span class="c"># delete files</span>
+        <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="n">projectId</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        
+        <span class="c"># delete project</span>
+        <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">projectId</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        
+        
+        
+        <span class="k">return</span></div>
+    
+<div class="viewcode-block" id="MongoStore.finalize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.MongoStore.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Wait till all commits are processed, by calling a join on the queue&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commitqueue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Storing Process complete...&quot;</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+    
+
+<div class="viewcode-block" id="CommitStorageProcess"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess">[docs]</a><span class="k">class</span> <span class="nc">CommitStorageProcess</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class that inherits from :class:`multiprocessing.Process` for processing instances of class :class:`pyvcsshark.dbmodels.models.CommitModel` \</span>
+<span class="sd">    and writing it into the mongodb</span>
+<span class="sd">    </span>
+<span class="sd">    :param queue: queue, where the :class:`pyvcsshark.dbmodels.models.CommitModel` are stored in</span>
+<span class="sd">    :param projectId: object id of class :class:`bson.objectid.ObjectId` from the project </span>
+<span class="sd">    :param lastCommitDate: object of class :class:`datetime.datetime`, which holds the last commit that was parsed </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">projectId</span><span class="p">,</span> <span class="n">lastCommitDate</span><span class="p">):</span>
+        <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projectId</span> <span class="o">=</span> <span class="n">projectId</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastCommitDate</span> <span class="o">=</span> <span class="n">lastCommitDate</span>
+        
+<div class="viewcode-block" id="CommitStorageProcess.run"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   
+        <span class="sd">&quot;&quot;&quot; Endless loop for the processes, which consists of several steps:</span>
+<span class="sd">        </span>
+<span class="sd">        1. Get a object of class :class:`pyvcsshark.dbmodels.models.CommitModel` from the queue</span>
+<span class="sd">        2. Check if this commit was stored before and if it is so: update branches and tags (if they have changed)</span>
+<span class="sd">        3. Store author and committer in mongodb</span>
+<span class="sd">        4. Store Tags in mongodb</span>
+<span class="sd">        5. Create a list of branches, where the commit belongs to</span>
+<span class="sd">        6. Save the different file actions, which were done in this commit in the mongodb</span>
+<span class="sd">        7. Save the commit itself</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: The committer date is used to check if a commit was already stored before. Meaning: We get the \</span>
+<span class="sd">        last commit out of the database and check if the committer date of the commits we process are &gt; than the \</span>
+<span class="sd">        committer date of the last commit.</span>
+<span class="sd">        </span>
+<span class="sd">        .. WARNING:: We only look for changed tags and branches here for already processed commits!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">commit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+            <span class="c"># Check if commitdate &gt; lastcommit date</span>
+            <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lastCommitDate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">commit</span><span class="o">.</span><span class="n">committerDate</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastCommitDate</span><span class="p">):</span>
+                <span class="c"># We have parsed that commit before, now we need to check if branches or tags were changed</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkAndUpdateBranchesAndTags</span><span class="p">(</span><span class="n">commit</span><span class="p">)</span>
+                
+                <span class="c"># Nothing more than branches or tags can be changed, therefore we only need to update the commit here</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+                <span class="k">continue</span>
+
+            <span class="c"># Create people </span>
+            <span class="n">authorId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createPeople</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+            <span class="n">committerId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createPeople</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+            
+            <span class="c"># Create tag list</span>
+            <span class="n">tagIds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createTagList</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+
+            <span class="c"># Create branchlist</span>
+            <span class="n">branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createBranchList</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
+            
+            
+            <span class="c"># Create fileActions</span>
+            <span class="n">fileActionIds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createFileActions</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">changedFiles</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            
+            
+            <span class="c"># Create Revision object#</span>
+            <span class="n">mongoCommit</span> <span class="o">=</span> <span class="n">Commit</span><span class="p">(</span><span class="n">projectId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span>
+                                 <span class="n">revisionHash</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                 <span class="n">branches</span> <span class="o">=</span> <span class="n">branches</span><span class="p">,</span>
+                                 <span class="n">tagIds</span> <span class="o">=</span> <span class="n">tagIds</span> <span class="p">,</span>
+                                 <span class="n">parents</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">parents</span><span class="p">,</span>
+                                 <span class="n">authorId</span><span class="o">=</span><span class="n">authorId</span><span class="p">,</span>
+                                 <span class="n">authorDate</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">authorDate</span><span class="p">,</span>
+                                 <span class="n">authorOffset</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">authorOffset</span><span class="p">,</span>
+                                 <span class="n">committerId</span><span class="o">=</span><span class="n">committerId</span><span class="p">,</span>
+                                 <span class="n">committerDate</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">committerDate</span><span class="p">,</span>
+                                 <span class="n">committerOffset</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">committerOffset</span><span class="p">,</span>
+                                 <span class="n">message</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
+                                 <span class="n">fileActionIds</span><span class="o">=</span> <span class="n">fileActionIds</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>      
+
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CommitStorageProcess.checkAndUpdateBranchesAndTags"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess.checkAndUpdateBranchesAndTags">[docs]</a>    <span class="k">def</span> <span class="nf">checkAndUpdateBranchesAndTags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Method that checks if the commit that was stored in the database has the same</span>
+<span class="sd">        branches and tags as the commit which is processed at the moment. </span>
+<span class="sd">        </span>
+<span class="sd">        :param commit: object of class :class:`pyvcsshark.dbmodels.models.CommitModel`.</span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: We use the project id and the revision hash to find the commit in the datastore.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">oldCommit</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">revisionHash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        
+        <span class="n">oldTagList</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">oldCommit</span><span class="o">.</span><span class="n">tagIds</span><span class="p">)</span>
+        <span class="n">newTagList</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">createTagList</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">tags</span><span class="p">))</span>
+        
+        <span class="n">oldBranchList</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">oldCommit</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
+        <span class="n">newBranchList</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">createBranchList</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">branches</span><span class="p">))</span>
+        
+        <span class="c"># If they are not equal, we need to update the commit and delete old tags</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">oldTagList</span> <span class="o">!=</span> <span class="n">newTagList</span><span class="p">):</span>
+            <span class="n">tagsToDelete</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">oldTagList</span> <span class="o">-</span> <span class="n">newTagList</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tagsToDelete</span><span class="p">:</span>
+                <span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">revisionHash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">update_one</span><span class="p">(</span><span class="n">tagIds</span> <span class="o">=</span> <span class="n">newTagList</span><span class="p">)</span>
+            
+        <span class="c"># If they are not equal we need to update the commit</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">oldBranchList</span> <span class="o">!=</span> <span class="n">newBranchList</span><span class="p">):</span>
+            <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">revisionHash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">update_one</span><span class="p">(</span><span class="n">branches</span><span class="o">=</span><span class="n">newBranchList</span><span class="p">)</span></div>
+            
+                    
+
+<div class="viewcode-block" id="CommitStorageProcess.createBranchList"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess.createBranchList">[docs]</a>    <span class="k">def</span> <span class="nf">createBranchList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branches</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a list of the different branch names, where a commit belongs to. We go through the \</span>
+<span class="sd">        branches property of the class :class:`pyvcsshark.dbmodels.models.CommitModel`, which is a list of \</span>
+<span class="sd">        different branch objects of class `pyvcsshark.dbmodels.models.CommitModel`</span>
+<span class="sd">        </span>
+<span class="sd">        :param branches: list of objects of class :class:`pyvcsshark.dbmodels.models.BranchModel`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">branchList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">branches</span><span class="p">:</span>
+            <span class="n">branchList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">branchList</span></div>
+        
+<div class="viewcode-block" id="CommitStorageProcess.createTagList"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess.createTagList">[docs]</a>    <span class="k">def</span> <span class="nf">createTagList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a list of object Ids of the type :class:`bson.objectid.ObjectId` for the different tags.</span>
+<span class="sd">        First it goes through the tag list of the commit of type :class:`pyvcsshark.dbmodels.models.CommitModel`, which is</span>
+<span class="sd">        a list of different tag objects of class :class:`pyvcsshark.dbmodels.models.TagModel`. It transforms the :class:`pyvcsshark.dbmodels.models.TagModel`</span>
+<span class="sd">        tags to tags of type :class:`pyvcsshark.dbmodels.mongomodels.Tag` to store it in the mongodb.</span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: If a tag is found, which belongs to the same project and has the same name it is overwritten (normally, this should not be possible)</span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: If the person who tagged the commit is NOT in the mongodb, it is created</span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: The call to :func:`mongoengine.queryset.QuerySet.upsert_one` is thread/process safe&quot;&quot;&quot;</span>
+        <span class="n">tagList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">tagger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">taggerId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createPeople</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">tag</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+                <span class="n">mongoTag</span> <span class="o">=</span> <span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="n">projectId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> 
+                                                                                               <span class="n">taggerId</span><span class="o">=</span><span class="n">taggerId</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">taggerDate</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">taggerOffset</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mongoTag</span> <span class="o">=</span> <span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="n">projectId</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">taggerDate</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">taggerOffset</span><span class="p">)</span>
+                
+            <span class="n">tagList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mongoTag</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tagList</span></div>
+    
+<div class="viewcode-block" id="CommitStorageProcess.createPeople"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess.createPeople">[docs]</a>    <span class="k">def</span> <span class="nf">createPeople</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a people object of type :class:`pyvcsshark.dbmodels.mongomodels.People` and returns a</span>
+<span class="sd">        object id of the type :class:`bson.objectid.ObjectId` of the stored object</span>
+<span class="sd">        </span>
+<span class="sd">        :param name: name of the contributer</span>
+<span class="sd">        :param email: email of the contributer</span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: The call to :func:`mongoengine.queryset.QuerySet.upsert_one` is thread/process safe</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mongoPeople</span> <span class="o">=</span> <span class="n">People</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mongoPeople</span><span class="o">.</span><span class="n">id</span></div>
+    
+<div class="viewcode-block" id="CommitStorageProcess.createFileActions"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess.createFileActions">[docs]</a>    <span class="k">def</span> <span class="nf">createFileActions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">revisionHash</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a list of object ids of type :class:`bson.objectid.ObjectId` for the different file actions of the commit by</span>
+<span class="sd">        transforming the files into file actions of type :class:`pyvcsshark.dbmodels.mongomodels.FileAction`, :class:`pyvcsshark.dbmodels.mongomodels.File`, and</span>
+<span class="sd">        :class:`pyvcsshark.dbmodels.mongomodels.Hunk`</span>
+<span class="sd">        </span>
+<span class="sd">        :param files: list of changed files of type :class:`pyvcsshark.dbmodels.models.FileModel`</span>
+<span class="sd">        :param revisionHash: revisionhash of the commit which is processed</span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: The call to :func:`mongoengine.queryset.QuerySet.upsert_one` is thread/process safe</span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: Hunks (type :class:`pyvcsshark.dbmodels.mongomodels.Hunk`)  and the file action itself are inserted via bulk insert.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">fileActionList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            
+            <span class="c"># Check if the file was a copy or move action (then the oldPath attribute is not None)</span>
+            <span class="n">oldFileId</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="nb">file</span><span class="o">.</span><span class="n">oldPath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">oldFile</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">oldPath</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">oldPath</span><span class="p">))</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> 
+                                                                                                                                    <span class="n">path</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">oldPath</span><span class="p">,</span>
+                                                                                                                                    <span class="n">name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">oldPath</span><span class="p">))</span>
+                <span class="n">oldFileId</span> <span class="o">=</span> <span class="n">oldFile</span><span class="o">.</span><span class="n">id</span>
+                
+            <span class="c"># Create hunk objects for bulk insert</span>
+            <span class="n">hunks</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">hunk</span> <span class="ow">in</span> <span class="nb">file</span><span class="o">.</span><span class="n">hunks</span><span class="p">:</span>
+                <span class="n">mongoHunk</span> <span class="o">=</span> <span class="n">Hunk</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">hunk</span><span class="p">)</span>
+                <span class="n">hunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mongoHunk</span><span class="p">)</span>
+            
+            <span class="c"># Get hunk ids from insert if hunks is not empty</span>
+            <span class="n">hunkIds</span> <span class="o">=</span> <span class="p">[]</span> 
+            <span class="k">if</span><span class="p">(</span><span class="n">hunks</span><span class="p">):</span>
+                <span class="n">hunkIds</span> <span class="o">=</span> <span class="n">Hunk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">hunks</span><span class="p">,</span> <span class="n">load_bulk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    
+            <span class="c"># Create a new file object</span>
+            <span class="n">newFile</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">))</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> 
+                                                                                                                          <span class="n">path</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                                                                                                                          <span class="n">name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+            
+            <span class="c"># Create the new file action and append it to the file action list for bulk insert</span>
+            <span class="n">fileAction</span> <span class="o">=</span> <span class="n">FileAction</span><span class="p">(</span><span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span>
+                                    <span class="n">fileId</span><span class="o">=</span><span class="n">newFile</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                    <span class="n">revisionHash</span><span class="o">=</span><span class="n">revisionHash</span><span class="p">,</span>
+                                    <span class="n">sizeAtCommit</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+                                    <span class="n">linesAdded</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">linesAdded</span><span class="p">,</span>
+                                    <span class="n">linesDeleted</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">linesDeleted</span><span class="p">,</span>
+                                    <span class="n">isBinary</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">isBinary</span><span class="p">,</span>
+                                    <span class="n">mode</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                                    <span class="n">hunkIds</span> <span class="o">=</span> <span class="n">hunkIds</span><span class="p">,</span>
+                                    <span class="n">oldFilePathId</span><span class="o">=</span><span class="n">oldFileId</span><span class="p">)</span> 
+            <span class="n">fileActionList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fileAction</span><span class="p">)</span>
+            
+        <span class="c"># Bulk insert all action ids</span>
+        <span class="n">fileActionIds</span> <span class="o">=</span> <span class="p">[]</span> 
+        <span class="k">if</span><span class="p">(</span><span class="n">fileActionList</span><span class="p">):</span>
+            <span class="n">fileActionIds</span> <span class="o">=</span> <span class="n">FileAction</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">fileActionList</span><span class="p">,</span> <span class="n">load_bulk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>   
+        <span class="k">return</span> <span class="n">fileActionIds</span> </div></div>
+
+    
+    
+    
+    
+    
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Fabian Trautsch.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

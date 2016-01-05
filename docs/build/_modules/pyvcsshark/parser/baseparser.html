@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyvcsshark.parser.baseparser &mdash; vcsSHARK 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="vcsSHARK 0.1a1 documentation" href="../../../index.html"/>
+        <link rel="up" title="pyvcsshark" href="../../pyvcsshark.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> vcsSHARK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">2. API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">vcsSHARK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../pyvcsshark.html">pyvcsshark</a> &raquo;</li>
+      
+    <li>pyvcsshark.parser.baseparser</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyvcsshark.parser.baseparser</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="BaseParser"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.baseparser.BaseParser">[docs]</a><span class="k">class</span> <span class="nc">BaseParser</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for the parsers. One must inherit from this class and implement</span>
+<span class="sd">    the methods to create a new repository parser.</span>
+<span class="sd">    </span>
+<span class="sd">    Based on pythons abc: :py:mod:`abc`</span>
+<span class="sd">    </span>
+<span class="sd">    :param metaclass: name of the abstract metaclass</span>
+<span class="sd">    </span>
+<span class="sd">    .. NOTE:: If you want to use a logger for your implementation of a datastore you can write::</span>
+<span class="sd">    </span>
+<span class="sd">          logger = logging.getLogger(&quot;parser&quot;) </span>
+<span class="sd">      </span>
+<span class="sd">        to get the logger.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
+    <span class="nd">@abc.abstractproperty</span>
+    <span class="k">def</span> <span class="nf">repositoryType</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Must return the type for the given repository. E.g. **git**&quot;&quot;&quot;</span>
+        <span class="k">return</span>
+    
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="BaseParser.initialize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.baseparser.BaseParser.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialization process for parser&quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+    
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="BaseParser.finalize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.baseparser.BaseParser.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finalization process for parser&quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+    
+    
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="BaseParser.detect"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.baseparser.BaseParser.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repositoryPath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return true if the parser is applicable to the repository</span>
+<span class="sd">        </span>
+<span class="sd">        :param repositoryPath: path to the repository</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="BaseParser.parse"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.baseparser.BaseParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repositoryPath</span><span class="p">,</span> <span class="n">datastore</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parses the repository</span>
+<span class="sd">        </span>
+<span class="sd">        :param repositoryPath: path to the repository</span>
+<span class="sd">        :param datastore: subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        .. NOTE:: We must call the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function in the parsing process if we want \</span>
+<span class="sd">        to add commits to the datastore</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+    
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="BaseParser.getProjectName"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.baseparser.BaseParser.getProjectName">[docs]</a>    <span class="k">def</span> <span class="nf">getProjectName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retrieves the project name from the repository. This need to be</span>
+<span class="sd">        put here, as only the parser is specific to the repository type&quot;&quot;&quot;</span></div>
+    
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="BaseParser.getProjectURL"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.baseparser.BaseParser.getProjectURL">[docs]</a>    <span class="k">def</span> <span class="nf">getProjectURL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retrieves the project url from the repository. This need to be</span>
+<span class="sd">        put here, as only the parser is specific to the repository type&quot;&quot;&quot;</span></div>
+    
+    
+<div class="viewcode-block" id="BaseParser.getImmediateSubdirectories"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.baseparser.BaseParser.getImmediateSubdirectories">[docs]</a>    <span class="k">def</span> <span class="nf">getImmediateSubdirectories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Helper method, which gets the **immediate** subdirectoriesof a path. Is helpful, if one want to create a </span>
+<span class="sd">        parser, which looks if certain folders are there.</span>
+<span class="sd">        </span>
+<span class="sd">        :param a_dir: directory from which **immediate** subdirectories should be listed &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">a_dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">a_dir</span><span class="p">,</span> <span class="n">name</span><span class="p">))]</span></div></div>
+            
+            
+            
+            
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Fabian Trautsch.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
