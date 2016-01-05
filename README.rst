@@ -1,4 +1,5 @@
-# vcsSHARK
+vcsSHARK
+========
 
 Requirements
 ============
@@ -11,7 +12,7 @@ There are several requirements for **vcsSHARK**:
 *	Pymongo (3.2) - available here: https://api.mongodb.org/python/current/
 
 
-.. NOTE:: It may be possible, that **vcsSHARK** also works with other versions of the named libraries. But we only tested the versions, which are given in brackets.
+CARE: It may be possible, that **vcsSHARK** also works with other versions of the named libraries. But we only tested the versions, which are given in brackets.
 
 
 How to Use
@@ -38,14 +39,10 @@ The installation process is straight forward. First, clone the repository of **v
 		$ python vcsshark.py <arguments>
 
 
-.. NOTE:: It is advisable to change the location, where the logs are written to. They can be changed in the **pyvcsshark/loggerConfiguration.json**. There are differnt file handlers defined. Just change the "filename"-attribute to a location of your wish.
+CARE:  It is advisable to change the location, where the logs are written to. They can be changed in the **pyvcsshark/loggerConfiguration.json**. There are differnt file handlers defined. Just change the "filename"-attribute to a location of your wish.
 
 
-.. _usage:
-
-Usage
------
-**vcsSHARK** is easy to use. Nevertheless, you need to checkout/clone the repository you want to analyze first. 
+s, you need to checkout/clone the repository you want to analyze first. 
 
 **vcsSHARK** supports different commandline arguments:
 
