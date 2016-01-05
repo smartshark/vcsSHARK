@@ -42,76 +42,6 @@ The installation process is straight forward. First, clone the repository of **v
 CARE:  It is advisable to change the location, where the logs are written to. They can be changed in the **pyvcsshark/loggerConfiguration.json**. There are differnt file handlers defined. Just change the "filename"-attribute to a location of your wish.
 
 
-s, you need to checkout/clone the repository you want to analyze first. 
-
-**vcsSHARK** supports different commandline arguments:
-
-.. option:: --help, -h
-
-	shows the help page for this command
-
-.. option:: --version, -v
-
-	shows the version
-
-.. option:: --no-parse, -n
-
-	skips the parsing process (only makes sense, if you want to execute extensions only)
-
-		.. WARNING:: This is not implemented yet
-
-.. option:: --uri <PATH>, -u <PATH>
-
-	path to the repository
-	
-		.. WARNING:: Must be a local path, therefore you need to check the repository out beforehand!
-
-.. option:: --db-driver <DRIVER>, -D <DRIVER>
-
-	output datastore driver. Currently only mongodb is supported
-
-.. option:: --db-user <USER>, -U <USER>
-
-	datastore user name
-
-.. option:: --db-password <PASSWORD>, -P <PASSWORD>
-
-	datastore password
-
-.. option:: --db-hostname <HOSTNAME>, -H <HOSTNAME>
-
-	hostname, where the datastore runs on
-
-.. option:: --db-port <PORT>, -p <PORT>
-
-	port, where the datastore runs on
-
-.. option:: --list-extensions, -e
-
-	shows all available extensions
-
-		.. WARNING:: This is not implemented yet
-
-.. option:: --config-file <CONFIG_FILE>, -f <CONFIG_FILE>
-	
-	path to a custom configuration file
-
-		.. NOTE:: A sample configuration file can be found in the repository (config.sample)
-
-
-
-Configuration File
-------------------
-
-The configuration file is a simple key-value pair file. An example can be found in the repository (config.sample) and here:
-
-.. include:: ../../config.sample
-	:literal:
-
-
-The options described in this configuration file are the same as described above in :ref:`usage`.
-
-
 Small Tutorial
 --------------
 
@@ -139,7 +69,7 @@ In this section we show step-by-step how you can analyze and store the repositor
 
 		$ python vcsshark.py --help
 
-	.. NOTE:: If you receive an error here, it is most likely, that you do not have installed all requirements mentioned in :ref:`requirements`. You can try step 5, as most requirements can be automatically installed.
+	NOTE: If you receive an error here, it is most likely, that you do not have installed all requirements mentioned in requirements. You can try step 5, as most requirements can be automatically installed.
 
 5. (**optional**) Install vcsshark via the setup script
 
@@ -168,6 +98,6 @@ In this section we show step-by-step how you can analyze and store the repositor
 	.. NOTE:: Here you must be in the vcsSHARK directory!
 
 
-.. NOTE:: If any errors occure here, please make sure that you use the correct versions of the requirements mentioned in :ref:`requirements`.
+NOTE: If any errors occure here, please make sure that you use the correct versions of the requirements mentioned in requirements.
 
 Thats it. The database scheme for the mongodb can be found in the API documentation of the mongodb datastore.
