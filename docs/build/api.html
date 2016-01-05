@@ -92,7 +92,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#datastores">2.4. Datastores</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#basedatastore">2.4.1. BaseDatastore</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mongostore">2.4.2. MongoStore</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mongostore">2.4.2. MongoStore</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#database-design">2.4.2.1. Database Design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api">2.4.2.2. API</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#models">2.5. Models</a></li>
@@ -160,7 +164,7 @@ we can check, if the user chooses an available datastore.</p>
 
 <dl class="function">
 <dt id="pyvcsshark.setup_logging">
-<code class="descclassname">pyvcsshark.</code><code class="descname">setup_logging</code><span class="sig-paren">(</span><em>default_path='loggerConfiguration.json'</em>, <em>default_level=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark.html#setup_logging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.setup_logging" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyvcsshark.</code><code class="descname">setup_logging</code><span class="sig-paren">(</span><em>default_path='/usr/local/lib/python3.5/dist-packages/vcsSHARK-0.1-py3.5.egg/pyvcsshark/loggerConfiguration.json'</em>, <em>default_level=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark.html#setup_logging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.setup_logging" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup logging configuration</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -424,6 +428,12 @@ handled depends on the implementation.</p>
 </div>
 <div class="section" id="mongostore">
 <h3>2.4.2. MongoStore<a class="headerlink" href="#mongostore" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="database-design">
+<h4>2.4.2.1. Database Design<a class="headerlink" href="#database-design" title="Permalink to this headline">¶</a></h4>
+<img alt="_images/dbschema.png" src="_images/dbschema.png" />
+</div>
+<div class="section" id="api">
+<h4>2.4.2.2. API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore">
 <em class="property">class </em><code class="descclassname">pyvcsshark.datastores.mongostore.</code><code class="descname">MongoStore</code><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore" title="Permalink to this definition">¶</a></dt>
@@ -876,6 +886,7 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 </div>
 </dd></dl>
 
+</div>
 </div>
 </div>
 <div class="section" id="models">

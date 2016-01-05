@@ -36,6 +36,16 @@ BaseDatastore
 MongoStore
 ----------
 
+
+Database Design
+^^^^^^^^^^^^^^^
+
+.. image:: images/dbschema.png
+
+
+API
+^^^
+
 .. autoclass:: pyvcsshark.datastores.mongostore.MongoStore
    :members:
 
