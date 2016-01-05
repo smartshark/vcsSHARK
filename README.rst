@@ -1,6 +1,13 @@
 vcsSHARK
 ========
 
+
+Docuementation
+==============
+
+The complete documentation can be found here: `documentation <http://ftrautsch.github.io/vcsSHARK/index.html>`_.
+
+
 Requirements
 ============
 
