@@ -1,7 +1,8 @@
-build/*
-dist/*
-vcsSHARK.egg-info/*
-logs/*
+build/
+dist/
+vcsSHARK.egg-info/
+logs/
 config.cfg
+
 
 !.gitignore

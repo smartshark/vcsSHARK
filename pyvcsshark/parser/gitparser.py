@@ -432,17 +432,4 @@ class CommitParserProcess(multiprocessing.Process):
         return changedFiles   
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     
