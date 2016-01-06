@@ -15,7 +15,7 @@ The documentation can also be built via
 		$ sphinx-build -b html docs/source docs/build
 
 
-For the documentation `sphinx <http://sphinx-doc.org/>` is used. Be aware, that if **vcsSHARK** is not working on your computer, the API documentation is empty as sphinx autodoc extension requires a runnable script.
+For the documentation `sphinx <http://sphinx-doc.org/>`_ is used. Be aware, that if **vcsSHARK** is not working on your computer, the API documentation is empty as sphinx autodoc extension requires a runnable script.
 
 
 
