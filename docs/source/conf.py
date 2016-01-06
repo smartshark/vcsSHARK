@@ -273,4 +273,4 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 #intersphinx_mapping = {'https://docs.python.org/3': None}
-intersphinx_mapping = {'pygit2' : ('http://www.pygit2.org/', None), 'mongoengine' : ('http://docs.mongoengine.org/',None),'python': ('https://docs.python.org/3.5', None), 'pymongo' : ('https://api.mongodb.org/python/current', None)}
+intersphinx_mapping = {'pygit2' : ('http://www.pygit2.org/', None), 'mongoengine' : ('http://docs.mongoengine.org/',None),'python': ('https://docs.python.org/3.5', None), 'pymongo' : ('http://api.mongodb.org/python/current', None)}
