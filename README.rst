@@ -2,10 +2,21 @@ vcsSHARK
 ========
 
 
-Docuementation
+Documentation
 ==============
 
 The complete documentation can be found here: `documentation <http://ftrautsch.github.io/vcsSHARK/index.html>`_.
+
+
+The documentation can also be built via
+
+	.. code-block:: bash
+
+		$ sphinx-build -b html docs/source docs/build
+
+
+For the documentation `sphinx <http://sphinx-doc.org/>` is used. Be aware, that if **vcsSHARK** is not working on your computer, the API documentation is empty as sphinx autodoc extension requires a runnable script.
+
 
 
 Requirements
