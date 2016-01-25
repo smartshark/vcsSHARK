@@ -18,7 +18,7 @@ def test_suite():
     modules = []
     for name in listdir(dirname(__file__)):
         if name.startswith('test_') and name.endswith('.py'):
-            module = 'test.%s' % name[:-3]
+            module = 'tests.%s' % name[:-3]
             # Check the module imports correctly, have a nice error otherwise
             __import__(module)
             modules.append(module)

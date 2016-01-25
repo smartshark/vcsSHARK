@@ -33,6 +33,18 @@ There are several requirements for **vcsSHARK**:
 CARE: It may be possible, that **vcsSHARK** also works with other versions of the named libraries. But we only tested the versions, which are given in brackets.
 
 
+Tests
+=====
+vcsSHARK can be tested by calling
+
+	.. code-block:: bash
+		$ python setup.py test
+
+The tests can be found in the folder "tests".
+
+WARNING: The generated tests are not fully complete! They just test the very basic functionality and it can happen, that something is not working but the tests say everything is fine!
+
+
 How to Use
 ==========
 In this chapter, we explain how you can install **vcsSHARK** or use it directly from the command line. Furhtermore, a short step-by-step tutorial shows,
