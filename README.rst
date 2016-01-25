@@ -38,6 +38,7 @@ Tests
 vcsSHARK can be tested by calling
 
 	.. code-block:: bash
+
 		$ python setup.py test
 
 The tests can be found in the folder "tests".
