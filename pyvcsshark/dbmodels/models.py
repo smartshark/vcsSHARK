@@ -145,8 +145,8 @@ class CommitModel(object):
                 "<CommitterEmail: %s>, <CommitterTime: %s>, <CommitterOffset: %s>, <Message: %s>"\
                 "<ChangedFiles: %s>" % (self.id, branches, tags,
                                         ",".join(self.parents), self.author.name, self.author.email,
-                                        self.author.date, self.author.dateOffset, self.committer.name,
-                                        self.committer.email, self.committer.date, self.committer.dateOffset,
+                                        self.authorDate, self.authorOffset, self.committer.name,
+                                        self.committer.email, self.committerDate, self.committerOffset,
                                         self.message, files)
         
         

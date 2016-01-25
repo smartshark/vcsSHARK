@@ -22,6 +22,7 @@ setup(name="vcsSHARK",
               'vcsshark = pyvcsshark:start'
           ]
       },
+      test_suite = 'tests',
       zip_safe=False,
       include_package_data=True,
       package_data={

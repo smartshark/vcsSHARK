@@ -4,6 +4,7 @@ import pygit2
 import logging
 import re
 import math
+import uuid
 import queue
 import multiprocessing
 from collections import Counter
@@ -54,13 +55,16 @@ class GitParser(BaseParser):
 
     def getProjectURL(self):
         """ Returns the url of the project, which is processed """
-        return self.repository.remotes["origin"].url
+        url = "local/"+str(uuid.uuid4())
+        try:
+             url = self.repository.remotes["origin"].url
+        except KeyError:
+            # repository is only local
+            pass
         
+        return url
         
-    #def initialize(self):
-    #    """Initialization process for parser"""
-    #    return
-    
+
     def finalize(self):
         """Finalization process for paser"""
         return
@@ -258,7 +262,7 @@ class CommitParserProcess(multiprocessing.Process):
         """
         The process gets a commit out of the queue and processes it.
         We use the poisonous pill technique here. Means, our queue has #Processes times "None" in it in the end.
-        If a process encouters that None, he will stop and terminate.
+        If a process encounters that None, he will stop and terminate.
         """
         while True:
             nextTask = self.queue.get()
@@ -308,10 +312,12 @@ class CommitParserProcess(multiprocessing.Process):
                                   self.commitsToBeProcessed[strCommitHash]['tags'], parentIds,
                                   authorModel, committerModel, commit.message, changedFiles, commit.author.time,
                                   commit.author.offset, commit.committer.time, commit.committer.offset)
+        
         # Make sure, that addCommit is only called by one process at a time
         self.lock.acquire()
         self.datastore.addCommit(commitModel)
         self.lock.release()
+        
         del self.commitsToBeProcessed[strCommitHash]
   
     
@@ -384,17 +390,17 @@ class CommitParserProcess(multiprocessing.Process):
         return changedFiles
         
         
-    def getChangedFilesWithSimiliarity(self, parent, child): 
+    def getChangedFilesWithSimiliarity(self, parent, commit): 
         """ Creates a list of changed files of the class :class:`pyvcsshark.dbmodels.models.FileModel`. For every
         changed file in the commit such an object is created. Furthermore, hunks are saved an each file is tested for similarity to
         detect copy and move operations
         
         :param parent: Object of class :class:`pygit2.Commit`, that represents the parent commit
-        :param child:  Object of class :class:`pygit2.Commit`, that represents the child commit
+        :param commit: Object of class :class:`pygit2.Commit`, that represents the child commit
         """
         
         changedFiles = []
-        diff = self.repository.diff(parent, child)
+        diff = self.repository.diff(parent, commit)
                             
         opts = pygit2.GIT_DIFF_FIND_RENAMES | pygit2.GIT_DIFF_FIND_COPIES
         diff.find_similar(opts, GitParser.SIMILARITY_THRESHOLD, GitParser.SIMILARITY_THRESHOLD)
@@ -406,6 +412,7 @@ class CommitParserProcess(multiprocessing.Process):
 
         alreadyCheckedFilePaths = set()
         for patch in diff:
+            
             # Only if the filepath was not processed before, add new file
             if(patch.delta.new_file.path in alreadyCheckedFilePaths):
                 continue
@@ -413,7 +420,7 @@ class CommitParserProcess(multiprocessing.Process):
             if(counts[patch.delta.new_file.path] > 1):
                 mode = 'T'
             else:
-                mode = self.getModeForFile(parent.tree, child.tree, patch.delta.new_file.path, patch.delta.similarity)
+                mode = self.getModeForFile(parent.tree, commit.tree, patch.delta.new_file.path, patch.delta.similarity)
                 
             
             changedFile = FileModel(patch.delta.new_file.path, patch.delta.new_file.size,
