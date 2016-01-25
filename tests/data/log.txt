@@ -1,0 +1,124 @@
+* commit 830c29f111f261e26897d42e94c15960a512c0e4 204d306b10e123f2474612a297b83be6ac79e519 (HEAD -> refs/heads/master)
+| Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| AuthorDate: Thu Jan 21 14:01:31 2016 +0100
+| Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| CommitDate: Thu Jan 21 14:01:31 2016 +0100
+| 
+|     changed lines
+| 
+| M	lines.txt
+|  
+* commit 204d306b10e123f2474612a297b83be6ac79e519 e91b0419196248c664f2b2e06c9a2c97452fda5c
+| Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| AuthorDate: Thu Jan 21 13:49:06 2016 +0100
+| Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| CommitDate: Thu Jan 21 13:49:06 2016 +0100
+| 
+|     lines
+| 
+| A	lines.txt
+|  
+* commit e91b0419196248c664f2b2e06c9a2c97452fda5c a8dfa0944a8c3d97f217d34705de2ae1c7e68793 (refs/heads/testbranch3)
+| Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| AuthorDate: Thu Jan 21 13:46:06 2016 +0100
+| Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| CommitDate: Thu Jan 21 13:46:06 2016 +0100
+| 
+|     testbranch3
+| 
+| A	testbranch3.txt
+|  
+* commit a8dfa0944a8c3d97f217d34705de2ae1c7e68793 6fe2eff1f0bbc3220128e082385a01558e3306a6
+| Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| AuthorDate: Thu Jan 21 13:45:47 2016 +0100
+| Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| CommitDate: Thu Jan 21 13:45:47 2016 +0100
+| 
+|     branch3
+| 
+| A	branch3.txt
+|  
+* commit 6fe2eff1f0bbc3220128e082385a01558e3306a6 5ed91aa4557b5042fa7096bf6c69463024c46b6f (tag: refs/tags/release2)
+| Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| AuthorDate: Thu Jan 21 13:36:54 2016 +0100
+| Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| CommitDate: Thu Jan 21 13:36:54 2016 +0100
+| 
+|     moved
+| 
+| R100	lib.jar	libs/lib.jar
+| R100	program.py	program1.py
+|    
+| * commit c5afe477c6af7ef05fc5eb7237a98ca53c35262c 5a3ccf3b41b3f34be9d03cec2dd15e8e1e1df803 (refs/heads/testbranch2)
+| | Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| | AuthorDate: Thu Jan 21 13:31:14 2016 +0100
+| | Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| | CommitDate: Thu Jan 21 13:31:14 2016 +0100
+| | 
+| |     testbranch21
+| | 
+| | A	testbranch2.py
+| |   
+| * commit 5a3ccf3b41b3f34be9d03cec2dd15e8e1e1df803 4964641680b6af2eaaaef4cbb7783760c93898cd
+| | Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| | AuthorDate: Thu Jan 21 13:30:28 2016 +0100
+| | Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| | CommitDate: Thu Jan 21 13:30:28 2016 +0100
+| | 
+| |     testbranch2
+| | 
+| | A	branch2.txt
+| |   
+| * commit 4964641680b6af2eaaaef4cbb7783760c93898cd 2ccc7f8706419a13e218d2bf90b7079742eb8e17 (tag: refs/tags/branch1, refs/heads/testbranch1)
+| | Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| | AuthorDate: Thu Jan 21 13:29:24 2016 +0100
+| | Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| | CommitDate: Thu Jan 21 13:29:24 2016 +0100
+| | 
+| |     testbranch11
+| | 
+| | A	branch1.py
+| |   
+| * commit 2ccc7f8706419a13e218d2bf90b7079742eb8e17 5ed91aa4557b5042fa7096bf6c69463024c46b6f
+|/  Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+|   AuthorDate: Thu Jan 21 13:28:59 2016 +0100
+|   Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+|   CommitDate: Thu Jan 21 13:28:59 2016 +0100
+|   
+|       testbranch1
+|   
+|   A	branch1.txt
+|  
+* commit 5ed91aa4557b5042fa7096bf6c69463024c46b6f 022a1584a31ccc0816d20bfbbeb5c45aa290c7dd (tag: refs/tags/release1)
+| Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| AuthorDate: Thu Jan 21 12:29:28 2016 +0100
+| Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| CommitDate: Thu Jan 21 12:29:28 2016 +0100
+| 
+|     test$#.*;ßöä%!&
+| 
+| A	program.py
+|  
+* commit 022a1584a31ccc0816d20bfbbeb5c45aa290c7dd 3c0a6fc133b8b50b8c217642fef7eb948f29b690
+| Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+| AuthorDate: Thu Jan 21 12:22:47 2016 +0100
+| Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+| CommitDate: Thu Jan 21 12:22:47 2016 +0100
+| 
+|     second commit
+| 
+| D	test.txt
+| M	test2.txt
+| A	test3.txt
+|  
+* commit 3c0a6fc133b8b50b8c217642fef7eb948f29b690
+  Author:     Fabian Trautsch <ftrautsch@googlemail.com>
+  AuthorDate: Thu Jan 21 12:14:01 2016 +0100
+  Commit:     Fabian Trautsch <ftrautsch@googlemail.com>
+  CommitDate: Thu Jan 21 12:14:01 2016 +0100
+  
+      first commit
+  
+  A	lib.jar
+  A	test.txt
+  A	test2.txt
