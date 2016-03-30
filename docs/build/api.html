@@ -518,7 +518,7 @@ read commits out of the commitqueue, process them and store them into the mongod
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>queue</strong> &#8211; queue, where the <a class="reference internal" href="#pyvcsshark.dbmodels.models.CommitModel" title="pyvcsshark.dbmodels.models.CommitModel"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code></a> are stored in</li>
-<li><strong>projectId</strong> &#8211; object id of class <a class="reference external" href="https://api.mongodb.org/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.2)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> from the project</li>
+<li><strong>projectId</strong> &#8211; object id of class <a class="reference external" href="http://api.mongodb.org/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.2)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> from the project</li>
 <li><strong>lastCommitDate</strong> &#8211; object of class <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code></a>, which holds the last commit that was parsed</li>
 </ul>
 </td>
@@ -561,7 +561,7 @@ branches and tags as the commit which is processed at the moment.</p>
 <dl class="method">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.createFileActions">
 <code class="descname">createFileActions</code><span class="sig-paren">(</span><em>files</em>, <em>revisionHash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.createFileActions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.createFileActions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a list of object ids of type <a class="reference external" href="https://api.mongodb.org/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.2)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> for the different file actions of the commit by
+<dd><p>Creates a list of object ids of type <a class="reference external" href="http://api.mongodb.org/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.2)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> for the different file actions of the commit by
 transforming the files into file actions of type <a class="reference internal" href="#pyvcsshark.dbmodels.mongomodels.FileAction" title="pyvcsshark.dbmodels.mongomodels.FileAction"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.mongomodels.FileAction</span></code></a>, <a class="reference internal" href="#pyvcsshark.dbmodels.mongomodels.File" title="pyvcsshark.dbmodels.mongomodels.File"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.mongomodels.File</span></code></a>, and
 <a class="reference internal" href="#pyvcsshark.dbmodels.mongomodels.Hunk" title="pyvcsshark.dbmodels.mongomodels.Hunk"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.mongomodels.Hunk</span></code></a></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -590,7 +590,7 @@ transforming the files into file actions of type <a class="reference internal" h
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.createPeople">
 <code class="descname">createPeople</code><span class="sig-paren">(</span><em>name</em>, <em>email</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.createPeople"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.createPeople" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a people object of type <a class="reference internal" href="#pyvcsshark.dbmodels.mongomodels.People" title="pyvcsshark.dbmodels.mongomodels.People"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.mongomodels.People</span></code></a> and returns a
-object id of the type <a class="reference external" href="https://api.mongodb.org/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.2)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> of the stored object</p>
+object id of the type <a class="reference external" href="http://api.mongodb.org/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.2)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> of the stored object</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -612,7 +612,7 @@ object id of the type <a class="reference external" href="https://api.mongodb.or
 <dl class="method">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.createTagList">
 <code class="descname">createTagList</code><span class="sig-paren">(</span><em>tags</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.createTagList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.createTagList" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a list of object Ids of the type <a class="reference external" href="https://api.mongodb.org/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.2)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> for the different tags.
+<dd><p>Creates a list of object Ids of the type <a class="reference external" href="http://api.mongodb.org/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.2)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> for the different tags.
 First it goes through the tag list of the commit of type <a class="reference internal" href="#pyvcsshark.dbmodels.models.CommitModel" title="pyvcsshark.dbmodels.models.CommitModel"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code></a>, which is
 a list of different tag objects of class <a class="reference internal" href="#pyvcsshark.dbmodels.models.TagModel" title="pyvcsshark.dbmodels.models.TagModel"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.TagModel</span></code></a>. It transforms the <a class="reference internal" href="#pyvcsshark.dbmodels.models.TagModel" title="pyvcsshark.dbmodels.models.TagModel"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.TagModel</span></code></a>
 tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mongomodels.Tag" title="pyvcsshark.dbmodels.mongomodels.Tag"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.mongomodels.Tag</span></code></a> to store it in the mongodb.</p>
@@ -658,17 +658,17 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 <dl class="class">
 <dt id="pyvcsshark.dbmodels.mongomodels.Project">
 <em class="property">class </em><code class="descclassname">pyvcsshark.dbmodels.mongomodels.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/dbmodels/mongomodels.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.dbmodels.mongomodels.Project" title="Permalink to this definition">¶</a></dt>
-<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the project collection.</p>
+<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the project collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Property url:</th><td class="field-body">url to the project repository (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Property url:</th><td class="field-body">url to the project repository (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Property name:</th><td class="field-body">name of the project (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-even field"><th class="field-name">Property name:</th><td class="field-body">name of the project (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property repositoryType:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">type of the repository (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">type of the repository (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -681,16 +681,16 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 <dl class="class">
 <dt id="pyvcsshark.dbmodels.mongomodels.Commit">
 <em class="property">class </em><code class="descclassname">pyvcsshark.dbmodels.mongomodels.</code><code class="descname">Commit</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/dbmodels/mongomodels.html#Commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.dbmodels.mongomodels.Commit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the commit collection.</p>
+<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the commit collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Property projectId:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">id of the project, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">id of the project, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property revisionHash:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">revision hash of the commit (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">revision hash of the commit (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property branches:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body">list of branches to which the commit belongs to (type: <code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ListField(:class:`mongoengine.fields.StringField</span></code>)`)</td>
@@ -702,25 +702,25 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body">list of parents of the commit (type: <code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ListField(:class:`mongoengine.fields.StringField</span></code>)`)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property authorId:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">id of the author of the commit (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">id of the author of the commit (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property authorDate:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">date when the commit was created (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.DateTimeField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.DateTimeField</span></code></a>)</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">date when the commit was created (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.DateTimeField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.DateTimeField</span></code></a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property authorOffset:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">offset of the authorDate (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</td>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">offset of the authorDate (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property committerId:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">id of the committer of the commit (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">id of the committer of the commit (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property committerDate:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">date when the commit was committed (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.DateTimeField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.DateTimeField</span></code></a>)</td>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">date when the commit was committed (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.DateTimeField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.DateTimeField</span></code></a>)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property committerOffset:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">offset of the committerDate (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">offset of the committerDate (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property message:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">commit message (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">commit message (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property fileActionIds:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body">list of file action ids, which belong to the commit (type: <code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ListField(:class:`mongoengine.fields.ObjectIdField</span></code>)`)</td>
@@ -736,24 +736,24 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 <dl class="class">
 <dt id="pyvcsshark.dbmodels.mongomodels.FileAction">
 <em class="property">class </em><code class="descclassname">pyvcsshark.dbmodels.mongomodels.</code><code class="descname">FileAction</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/dbmodels/mongomodels.html#FileAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.dbmodels.mongomodels.FileAction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the fileaction collection.</p>
+<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the fileaction collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Property projectId:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">id of the project, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</p>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">id of the project, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property fileId:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">id of the file, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</p>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">id of the file, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property revisionHash:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">hash of the revision (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</p>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">hash of the revision (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Property mode:</th><td class="field-body"><p class="first">mode of the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</p>
+<tr class="field-even field"><th class="field-name">Property mode:</th><td class="field-body"><p class="first">mode of the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">It can only be (&#8220;A&#8221;)dded, (&#8220;D&#8221;)eleted, (&#8220;M&#8221;)odified, (&#8220;C&#8221;)opied or Moved, &#8220;T&#8221; for links (special in git)</p>
@@ -761,23 +761,23 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property sizeAtCommit:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">size of the file on commit (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</p>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">size of the file on commit (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property linesAdded:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">number of lines added in this action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</p>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">number of lines added in this action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property linesDeleted:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">number of lines deleted in this action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</p>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">number of lines deleted in this action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property isBinary:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">indicates if the file is a binary file or not (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.BooleanField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.BooleanField</span></code></a>)</p>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first">indicates if the file is a binary file or not (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.BooleanField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.BooleanField</span></code></a>)</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property oldFilePathId:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">object id of old file (if it was moved or copied) (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</p>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">object id of old file (if it was moved or copied) (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property hunkIds:</th></tr>
@@ -799,17 +799,17 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 <dl class="class">
 <dt id="pyvcsshark.dbmodels.mongomodels.File">
 <em class="property">class </em><code class="descclassname">pyvcsshark.dbmodels.mongomodels.</code><code class="descname">File</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/dbmodels/mongomodels.html#File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.dbmodels.mongomodels.File" title="Permalink to this definition">¶</a></dt>
-<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the file collection.</p>
+<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the file collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Property projectId:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">id of the project, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">id of the project, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Property path:</th><td class="field-body">path of the file (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-even field"><th class="field-name">Property path:</th><td class="field-body">path of the file (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Property name:</th><td class="field-body">name of the file (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Property name:</th><td class="field-body">name of the file (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -822,7 +822,7 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 <dl class="class">
 <dt id="pyvcsshark.dbmodels.mongomodels.Hunk">
 <em class="property">class </em><code class="descclassname">pyvcsshark.dbmodels.mongomodels.</code><code class="descname">Hunk</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/dbmodels/mongomodels.html#Hunk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.dbmodels.mongomodels.Hunk" title="Permalink to this definition">¶</a></dt>
-<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the hunk collection.</p>
+<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the hunk collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -837,26 +837,26 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 <dl class="class">
 <dt id="pyvcsshark.dbmodels.mongomodels.Tag">
 <em class="property">class </em><code class="descclassname">pyvcsshark.dbmodels.mongomodels.</code><code class="descname">Tag</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/dbmodels/mongomodels.html#Tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.dbmodels.mongomodels.Tag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the tag collection.</p>
+<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the tag collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Property projectId:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">id of the project, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">id of the project, which belongs to the file action (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Property name:</th><td class="field-body">name of the tag (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-even field"><th class="field-name">Property name:</th><td class="field-body">name of the tag (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property message:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">message of the tag (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">message of the tag (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property taggerId:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">id of the person who created the tag (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">id of the person who created the tag (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.ObjectIdField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.ObjectIdField</span></code></a>)</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Property date:</th><td class="field-body">date of the creation of the tag (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.DateTimeField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.DateTimeField</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Property date:</th><td class="field-body">date of the creation of the tag (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.DateTimeField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.DateTimeField</span></code></a>)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property offset:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">offset of the tag creation date for timezones (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</td>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">offset of the tag creation date for timezones (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.IntField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.IntField</span></code></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -869,14 +869,14 @@ tags to tags of type <a class="reference internal" href="#pyvcsshark.dbmodels.mo
 <dl class="class">
 <dt id="pyvcsshark.dbmodels.mongomodels.People">
 <em class="property">class </em><code class="descclassname">pyvcsshark.dbmodels.mongomodels.</code><code class="descname">People</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/dbmodels/mongomodels.html#People"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.dbmodels.mongomodels.People" title="Permalink to this definition">¶</a></dt>
-<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the people collection.</p>
+<dd><p>Document that inherits from <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.Document" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.Document</span></code></a>. Holds information for the people collection.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Property name:</th><td class="field-body">name of the person (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Property name:</th><td class="field-body">name of the person (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Property email:</th><td class="field-body">email of the person (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.5)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
+<tr class="field-even field"><th class="field-name">Property email:</th><td class="field-body">email of the person (type: <a class="reference external" href="http://docs.mongoengine.org/apireference.html#mongoengine.fields.StringField" title="(in MongoEngine v0.10.6)"><code class="xref py py-class docutils literal"><span class="pre">mongoengine.fields.StringField</span></code></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -1301,7 +1301,7 @@ For every changed file in the initial commit.</p>
 
 <dl class="method">
 <dt id="pyvcsshark.parser.gitparser.CommitParserProcess.getChangedFilesWithSimiliarity">
-<code class="descname">getChangedFilesWithSimiliarity</code><span class="sig-paren">(</span><em>parent</em>, <em>child</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.getChangedFilesWithSimiliarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.getChangedFilesWithSimiliarity" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getChangedFilesWithSimiliarity</code><span class="sig-paren">(</span><em>parent</em>, <em>commit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.getChangedFilesWithSimiliarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.getChangedFilesWithSimiliarity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a list of changed files of the class <a class="reference internal" href="#pyvcsshark.dbmodels.models.FileModel" title="pyvcsshark.dbmodels.models.FileModel"><code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.FileModel</span></code></a>. For every
 changed file in the commit such an object is created. Furthermore, hunks are saved an each file is tested for similarity to
 detect copy and move operations</p>
@@ -1311,7 +1311,7 @@ detect copy and move operations</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>parent</strong> &#8211; Object of class <code class="xref py py-class docutils literal"><span class="pre">pygit2.Commit</span></code>, that represents the parent commit</li>
-<li><strong>child</strong> &#8211; Object of class <code class="xref py py-class docutils literal"><span class="pre">pygit2.Commit</span></code>, that represents the child commit</li>
+<li><strong>commit</strong> &#8211; Object of class <code class="xref py py-class docutils literal"><span class="pre">pygit2.Commit</span></code>, that represents the child commit</li>
 </ul>
 </td>
 </tr>
