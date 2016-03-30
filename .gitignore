@@ -3,6 +3,13 @@ dist/
 vcsSHARK.egg-info/
 logs/
 config.cfg
-
+.metadata/
+.eggs/
+tests/__pycache__/
+docs/build/
+pyvcsshark/__pycache__/
+pyvcsshark/parser/__pycache__/
+pyvcsshark/dbmodels/__pycache__/
+pyvcsshark/datastores/__pycache__/
 
 !.gitignore
