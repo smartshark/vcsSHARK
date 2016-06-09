@@ -11,7 +11,7 @@ class MySQLStore(BaseStore):
     '''
         
     def initialize(self, dbname=None, host=None, port=None, user=None , 
-                   password=None, projectname=None, repositoryURL=None, type=None):
+                   password=None, projectname=None, repositoryURL=None, type=None, authentication_db=None):
         return
         
     @property

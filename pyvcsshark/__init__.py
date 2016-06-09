@@ -67,15 +67,13 @@ def start():
                                                  If URI is omitted, the current working directory will be used as a checked out directory.')
     parser.add_argument('-v', '--version', help='Shows the version', action='version', version='0.0.1')
     parser.add_argument('-f', '--config-file', help='Path to a custom configuration file', default=None)
-    parser.add_argument('-n', '--no-parse', help='Skip the parsing process. Only makes sense, if you want to execute extensions only', default=False, action='store_true')
     parser.add_argument('-D', '--db-driver', help='Output database driver. Currently only mongoDB is supported', default='mongo', choices=datastoreChoices)
     parser.add_argument('-U', '--db-user', help='Database user name', default='root')
     parser.add_argument('-P', '--db-password', help='Database user password', default='root')
     parser.add_argument('-DB', '--db-database', help='Database name', default='smartshark')
     parser.add_argument('-H', '--db-hostname', help='Name of the host, where the database server is running', default='localhost')
     parser.add_argument('-p', '--db-port', help='Port, where the database server is listening', default=27017, type=int)
-    parser.add_argument('-e', '--list-extensions', help='Show all available extensions')
-    parser.add_argument('--extensions', help='List of extensions to run. E.g. ext1 ext2', default=[], nargs='*')
+    parser.add_argument('-a', '--db-authentication', help='Name of the authentication database')
     parser.add_argument('-u', '--uri', help='Path to the checked out repository directory', default=os.getcwd(), type=readable_dir)
 
     logger.info("Reading out config from command line")
@@ -85,11 +83,10 @@ def start():
     except Exception as e:
         logger.error(e)
         sys.exit(1)
-    
 
-    config = Config(args.no_parse, args.db_driver, args.db_user,
+    config = Config(args.db_driver, args.db_user,
                     args.db_password, args.db_database, 
-                    args.db_hostname, args.db_port, args.extensions,
+                    args.db_hostname, args.db_port, args.db_authentication,
                     args.uri)
     
     # If config file was specified, overwrite the values
@@ -102,10 +99,5 @@ def start():
             sys.exit(1)
             
     logger.debug('Read the following config: %s' %(config))
-    
-        
-    if not config.extensions and config.no_parse:
-        logger.info("No extensions were given and no parse is true. Exiting...")
-        sys.exit(0)
 
     Application(config)

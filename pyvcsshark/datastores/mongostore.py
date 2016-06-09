@@ -25,7 +25,8 @@ class MongoStore(BaseStore):
     def __init__(self):
         BaseStore.__init__(self)
         
-    def initialize(self, dbname, host, port, user , password, projectname, repositoryURL, type=None):
+    def initialize(self, dbname, host, port, user , password, projectname, repositoryURL, type=None,
+                   authentication_db='admin'):
         """Initializes the mongostore by connecting to the mongodb, creating the project in the project collection \
         and setting up processes (see: :class:`pyvcsshark.datastores.mongostore.CommitStorageProcess`, which
         read commits out of the commitqueue, process them and store them into the mongodb.
@@ -38,6 +39,7 @@ class MongoStore(BaseStore):
         :param projectname: name of the project of the repository which is parsed
         :param repositoryURL: url of the repository which is parsed
         :param type: type of the repository which is parsed (e.g. git)
+        :param authentication_db: db where the user is authenticated against
         """
         
         self.repositoryURL = repositoryURL
@@ -47,7 +49,8 @@ class MongoStore(BaseStore):
         self.commitqueue = multiprocessing.JoinableQueue()
         # We define, that the user we authenticate with is in the admin database
         self.logger.info("Connecting to MongoDB...")
-        connect(dbname, username=user, password=password, host=host, port=port, authentication_source='admin', connect=False)
+        connect(dbname, username=user, password=password, host=host, port=port, authentication_source=authentication_db,
+                connect=False)
 
         # Update project if project with the same url is already in the mongodb and add if not
         project = Project.objects(url=repositoryURL).upsert_one(url=repositoryURL, repositoryType=type, name=projectname)

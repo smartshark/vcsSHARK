@@ -39,7 +39,7 @@ class BaseStore(metaclass=abc.ABCMeta):
     
     @abc.abstractmethod
     def initialize(self, dbname=None, host=None, port=None, user=None , 
-                   password=None, projectname=None, repositoryURL=None, type=None):
+                   password=None, projectname=None, repositoryURL=None, type=None, authentication_db=None):
         """Initializes the datastore
         
         :param dbname: name of the database to use
@@ -49,7 +49,9 @@ class BaseStore(metaclass=abc.ABCMeta):
         :param password: password for the given user
         :param projectname: name of the project, which is to be analyzed
         :param repositoryURL: url of the repository, which is to be analyzed
-        :param type: type of the repository, which is to be analyzed (e.g. "git")"""
+        :param type: type of the repository, which is to be analyzed (e.g. "git")
+        :param authentication_db: db where the user is authenticated against
+        """
         
         return
 

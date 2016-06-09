@@ -17,23 +17,20 @@ class Config(object):
     :param db_database: database of the datastore
     :param db_hostname: hostname where the datastore runs on
     :param db_port: port where the datastore is listening on
-    :param extensions: list of extensions to be executed
+    :param db_authentication: database to authenticate against
     :param uri: path to the repository
     """
     
-    
-    def __init__(self, no_parse=False,
-                    db_driver="mongo", db_user="root", db_password="root", db_database="vcsSHARK",
-                     db_hostname="localhost", db_port=27017, extensions=[], uri="."):
+    def __init__(self, db_driver="mongo", db_user="root", db_password="root", db_database="vcsSHARK",
+                 db_hostname="localhost", db_port=27017, db_authentication='admin', uri="."):
 
-        self.no_parse = no_parse
         self.db_driver = db_driver
         self.db_user = db_user
         self.db_password = db_password
         self.db_database = db_database
         self.db_hostname = db_hostname
         self.db_port = int(db_port)
-        self.extensions = extensions
+        self.db_authentication = db_authentication
         self.uri = uri.rstrip('/')
         
     
@@ -75,15 +72,14 @@ class Config(object):
             self.configParser.read(config_file)
             
 
-            self.no_parse = self._readConfigOption("General", "no_parse", True)
             self.uri = self._readConfigOption("RepositoryConfiguration", "uri").rstrip('/')
-            self.extensions = self._readConfigOption("Extensions", "extensions", False, True)
             self.db_driver = self._readConfigOption("Database", "db_driver")
             self.db_user = self._readConfigOption("Database", "db_user")
             self.db_password = self._readConfigOption("Database", "db_password")
             self.db_database = self._readConfigOption("Database", "db_database")
             self.db_hostname = self._readConfigOption("Database", "db_hostname")
             self.db_port = int(self._readConfigOption("Database", "db_port"))
+            self.db_authentiacation = self._readConfigOption("Database", "db_authentication")
 
             # Check if dirs are readable
             readable_dir(self.uri)
@@ -91,15 +87,12 @@ class Config(object):
            
         except Exception as e:
             raise Exception('Failed in reading config file %s. Original message: %s' % (config_file, e))
-        
-    
+
     def __str__(self):
-        return "<Config(no_parse='%s', " \
-               "uri='%s', extensions='%s', db_driver='%s', db_user='%s', db_password='%s', "\
-               "db_database='%s', db_hostname='%s', db_port='%s'" % (self.no_parse,
-                                                                     self.uri, ','.join(self.extensions),
-                                                                     self.db_driver, self.db_user, self.db_password,
-                                                                     self.db_database, self.db_hostname, self.db_port)
+        return "<Config(uri='%s', db_driver='%s', db_user='%s', db_password='%s', "\
+               "db_database='%s', db_hostname='%s', db_port='%s', db_authentication='%s'" % \
+               (self.uri, self.db_driver, self.db_user, self.db_password, self.db_database,
+                self.db_hostname, self.db_port, self.db_authentication)
                
                
                
