@@ -4,8 +4,9 @@ API Documentation
 
 Main Module
 ===========
-.. automodule:: pyvcsshark
-   :members:
+.. automodule:: main
+    :members:
+    :undoc-members:
 
 Application
 ===========
