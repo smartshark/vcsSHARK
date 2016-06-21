@@ -6,7 +6,7 @@ config.cfg
 .metadata/
 .eggs/
 tests/__pycache__/
-docs/build/
+docs/build
 pyvcsshark/__pycache__/
 pyvcsshark/parser/__pycache__/
 pyvcsshark/dbmodels/__pycache__/
@@ -26,12 +26,9 @@ external/
 # Distribution / packaging
 .Python
 env/
-build/
 develop-eggs/
-dist/
 downloads/
 eggs/
-.eggs/
 lib/
 lib64/
 parts/
@@ -70,8 +67,6 @@ coverage.xml
 *.log
 
 # Sphinx documentation
-docs/_build/
-
 # PyBuilder
 target/
 
