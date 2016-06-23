@@ -62,13 +62,15 @@ class BaseStore(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def addCommit(self, commitModel):
-        """Add the commit to the datastore. How this is 
-        handled depends on the implementation.
+        """Add the commit to the datastore. How this is handled depends on the implementation.
         
-        :param commitModel: instance of :class:`~pyvcsshark.dbmodels.models.CommitModel`, which includes all important information about the commit
+        :param commitModel: instance of :class:`~pyvcsshark.dbmodels.models.CommitModel`, which includes all \
+        important information about the commit
         
-        .. WARNING:: The commits we get here are not sorted. Furthermore, they need to be processed right away or stored in a :class:`~multiprocessing.SimpleQueue`.
-        Storing it in a normal list or dictionary can not be done, as some parser (e.g. GitParser) use multiprocessing to add the commits."""
+        .. WARNING:: The commits we get here are not sorted. Furthermore, they need to be processed right away or\
+            stored in a :class:`~multiprocessing.SimpleQueue`. Storing it in a normal list or dictionary can not be done,\
+            as some parser (e.g. GitParser) use multiprocessing to add the commits.
+        """
         return
 
     @abc.abstractmethod
