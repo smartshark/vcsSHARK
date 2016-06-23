@@ -314,8 +314,13 @@ class CommitStorageProcess(multiprocessing.Process):
 
             # Get hunk ids from insert if hunks is not empty
             hunkIds = []
-            if(hunks):
-                hunkIds = Hunk.objects.insert(hunks, load_bulk=False)
+            if hunks:
+                if len(hunks) > 20:
+                    for chunk in self.create_hunk_chunks(hunks, 10):
+                        ids = Hunk.objects.insert(hunks, load_bulk=False)
+                        hunkIds.extend(ids)
+                else:
+                    hunkIds = Hunk.objects.insert(hunks, load_bulk=False)
 
             # Create a new file object
             newFile = File.objects(projectId=self.projectId, path=file.path, name=os.path.basename(file.path)).upsert_one(projectId=self.projectId,
@@ -340,3 +345,13 @@ class CommitStorageProcess(multiprocessing.Process):
         if(fileActionList):
             fileActionIds = FileAction.objects.insert(fileActionList, load_bulk=False)
         return fileActionIds
+
+    @staticmethod
+    def create_hunk_chunks(hunks, n):
+        """Yield successive n-sized chunks from huks.
+
+        :param l list that is used
+        :param n how big the chunck should be
+        """
+        for i in range(0, len(hunks), n):
+            yield hunks[i:i+n]
