@@ -21,6 +21,8 @@ There are several requirements for **vcsSHARK**:
 *	Pymongo (3.2) - available here: https://api.mongodb.org/python/current/
 
 
+.. WARNING:: Make sure, that the following packages are installed, as pygit2 may be not functioning as desired: libssl, libssl-dev, libhttp-parser-dev, libbssh-2-1-dev, libssh-dev, pkg-config, libcurl-dev, libcurl4-openssl-dev, libcurl.
+
 .. NOTE:: It may be possible, that **vcsSHARK** also works with other versions of the named libraries. But we only tested the versions, which are given in brackets.
 
 Tests
@@ -79,12 +81,6 @@ Usage
 
 	shows the version
 
-.. option:: --no-parse, -n
-
-	skips the parsing process (only makes sense, if you want to execute extensions only)
-
-		.. WARNING:: This is not implemented yet
-
 .. option:: --uri <PATH>, -u <PATH>
 
 	path to the repository
@@ -103,6 +99,10 @@ Usage
 
 	datastore password
 
+.. option:: --db-database <DATABASENAME>, -DB <DATABASENAME>
+
+	database name (e.g., name of the mongodb database that should be used)
+
 .. option:: --db-hostname <HOSTNAME>, -H <HOSTNAME>
 
 	hostname, where the datastore runs on
@@ -111,11 +111,9 @@ Usage
 
 	port, where the datastore runs on
 
-.. option:: --list-extensions, -e
+.. option:: --db-authentication <DB_AUTHENTICATION> -a <DB_AUTHENTICATION>
 
-	shows all available extensions
-
-		.. WARNING:: This is not implemented yet
+	name of the authentication database
 
 .. option:: --config-file <CONFIG_FILE>, -f <CONFIG_FILE>
 	
@@ -182,13 +180,13 @@ In this section we show step-by-step how you can analyze and store the repositor
 
 	.. code-block:: bash
 
-		$ vcsshark -D mongo -U root -P root -DB vcsshark -H localhost -p 27017 -u ~/checkstyle
+		$ vcsshark -D mongo -U root -P root -DB vcsshark -H localhost -p 27017 -u ~/checkstyle -a admin
 
 	or if not:
 
 	.. code-block:: bash
 
-		$ python vcsshark.py -D mongo -U root -P root -DB vcsshark -H localhost -p 27017 -u ~/checkstyle
+		$ python3.5 vcsshark.py -D mongo -U root -P root -DB vcsshark -H localhost -p 27017 -u ~/checkstyle -a admin
 
 	.. NOTE:: Here you must be in the vcsSHARK directory!
 
