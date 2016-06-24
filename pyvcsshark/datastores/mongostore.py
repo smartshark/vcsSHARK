@@ -1,4 +1,5 @@
 from pymongo import ReadPreference
+from pymongo.errors import DocumentTooLarge
 
 from pyvcsshark.datastores.basestore import BaseStore
 from pyvcsshark.dbmodels.mongomodels import *
@@ -315,12 +316,15 @@ class CommitStorageProcess(multiprocessing.Process):
             # Get hunk ids from insert if hunks is not empty
             hunkIds = []
             if hunks:
-                if len(hunks) > 20:
-                    for chunk in self.create_hunk_chunks(hunks, 10):
-                        ids = Hunk.objects.insert(hunks, load_bulk=False)
-                        hunkIds.extend(ids)
-                else:
+                try:
                     hunkIds = Hunk.objects.insert(hunks, load_bulk=False)
+                except DocumentTooLarge:
+                    for hunk in hunks:
+                        try:
+                            hunkIds.append(hunk.save().id)
+                        except DocumentTooLarge:
+                            pass
+
 
             # Create a new file object
             newFile = File.objects(projectId=self.projectId, path=file.path, name=os.path.basename(file.path)).upsert_one(projectId=self.projectId,
@@ -342,16 +346,24 @@ class CommitStorageProcess(multiprocessing.Process):
             
         # Bulk insert all action ids
         fileActionIds = [] 
-        if(fileActionList):
-            fileActionIds = FileAction.objects.insert(fileActionList, load_bulk=False)
+        if fileActionList:
+            try:
+                fileActionIds = FileAction.objects.insert(fileActionList, load_bulk=False)
+            except DocumentTooLarge:
+                for fileAction in fileActionList:
+                    try:
+                        fileActionIds.append(fileAction.save().id)
+                    except DocumentTooLarge:
+                        pass
+
         return fileActionIds
 
     @staticmethod
-    def create_hunk_chunks(hunks, n):
+    def create_chunks(list, n):
         """Yield successive n-sized chunks from huks.
 
         :param l list that is used
         :param n how big the chunck should be
         """
-        for i in range(0, len(hunks), n):
-            yield hunks[i:i+n]
+        for i in range(0, len(list), n):
+            yield list[i:i+n]

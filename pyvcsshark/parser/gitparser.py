@@ -379,7 +379,7 @@ class CommitParserProcess(multiprocessing.Process):
         :param commit: commit of type :class:`pygit2.Commit`
         '''
         changedFiles = []
-        diff = commit.tree.diff_to_tree()
+        diff = commit.tree.diff_to_tree(context_lines=0, interhunk_lines=1)
 
         for patch in diff:
             changedFile = FileModel(patch.delta.old_file.path, patch.delta.old_file.size,
@@ -400,7 +400,7 @@ class CommitParserProcess(multiprocessing.Process):
         """
         
         changedFiles = []
-        diff = self.repository.diff(parent, commit)
+        diff = self.repository.diff(parent, commit, context_lines=0, interhunk_lines=1)
                             
         opts = pygit2.GIT_DIFF_FIND_RENAMES | pygit2.GIT_DIFF_FIND_COPIES
         diff.find_similar(opts, GitParser.SIMILARITY_THRESHOLD, GitParser.SIMILARITY_THRESHOLD)
