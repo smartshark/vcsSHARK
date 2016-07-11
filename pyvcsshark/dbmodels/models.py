@@ -185,7 +185,17 @@ class FileModel(object):
             raise Exception("Hunks must be a list!")
         
         self._hunks = value
-        
+
+
+class Hunk(object):
+    def __init__(self, new_start, new_lines, old_start, old_lines, content):
+        self.new_start = new_start
+        self.new_lines = new_lines
+        self.old_start = old_start
+        self.old_lines = old_lines
+        self.content = content
+
+
 class TagModel(object):
     """ Model that holds the information for the different tags.
     

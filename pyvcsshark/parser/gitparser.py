@@ -1,16 +1,13 @@
 from pyvcsshark.parser.baseparser import BaseParser
-import threading
 import pygit2
 import logging
 import re
-import math
 import uuid
-import queue
 import multiprocessing
 from collections import Counter
-from pprint import pprint
 from pyvcsshark.dbmodels.models import BranchModel, PeopleModel, TagModel,\
-    FileModel, CommitModel
+    FileModel, CommitModel, Hunk
+
 
 class GitParser(BaseParser):
     """ Parser for git repositories. The general parsing process is described in :func:`pyvcsshark.parser.gitparser.GitParser.parse`.
@@ -155,7 +152,7 @@ class GitParser(BaseParser):
             self.logger.info("Getting information from branch %s" % (branch))
             commit = self.repository.lookup_reference(branch).peel()
             # Walk through every child
-            for child in self.repository.walk(commit.id, 
+            for child in self.repository.walk(commit.id,
                                               pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
                 self.addBranch(child.id, branch)
                 
@@ -203,34 +200,9 @@ class GitParser(BaseParser):
             thread.daemon=True
             thread.start()
         
-        
         self.commitQueue.join()
         self.logger.info("Parsing complete...")
-     
-        # Linux "tests"
-        #print(self.commitsToBeProcessed['73796d8bf27372e26c2b79881947304c14c2d353'])        
-        #print(self.commitsToBeProcessed['9b29c6962b70f232cde4076b1020191e1be0889d'])    
-        #print(self.commitsToBeProcessed['6a13feb9c82803e2b815eca72fa7a9f5561d7861']) # 4.3  
-        #print(self.commitsToBeProcessed['b953c0d234bc72e8489d3bf51a276c5c4ec85345']) # 4.1
-        #print(len(self.commitsToBeProcessed))  
-        
-        # Samba "tests"      
-        #print(self.commits['5f9d3113d73bf87de16d909273dc6eb8c4cc98de']) # only v4-2-test branch
-        #print(self.commits['a6f9a793d8b14b9b77729fdeeea34287dd3bda3b']) # 4-2-test and v4-2-stable
-        #print(self.commits['392b2d33f243d1c9e25b7c48a38977cfe9924305']) # v4-3-test
-        #print(self.commits['c7207e73b116b76f6dd681e0c5a872ae2e702616']) # v4-3-test, master, v4-3-stable + tag tdb-1.3.7
-        #print(self.commits['8c8cbd984f8d1f30c7f2dfe3a4d3b472e3245aee']) # same as above + tag samba-4.3.0rc1
-        
-        # Checkstyle "tests"
-        #print(self.commits['3fb7ae8ee60c30f1ad4a5b4b2ad0325075fef6ac']) # tag: release4_4
-        #print(self.commits['e2f1c7db68501d767a12fc5d99a14dd036ce400b']) # branch: build-helper-maven-plugin-1-10 + master
-        #print(self.commits['0bf5f793206ca5e219e19b4379f6d46221fe2aea']) # branch: build-helper-maven-plugin-1-10 + master
-        #print(self.commits['75989a70bbe0f6f319e7c250b9b10c5b51b8486d']) # branch: i2604-name-checks-format
-        #print(self.commits['9817c4fb3c1729772956bb9d37b549e823f4ffba']) # branch: i2604-name-checks-format
-        #print(self.commits['f52306ff7799ea2b2e4d99fba7040a11b186d68a']) # branch: i2604-name-checks-format + master + build-helper
-        #print(self.commits['753bc06c7aa24cb6be8d23afb6b4dc5cf4b5caea']) # branch: master, tag: checkstyle-6.12.1
-        
-        #print(len(self.commits))
+
         return
 
 
@@ -294,7 +266,7 @@ class CommitParserProcess(multiprocessing.Process):
         """
         changedFiles = []
         # If there are parents, we need to get the normal changed files, if not we need to get the files for initial commit
-        if(commit.parents):
+        if commit.parents:
             changedFiles = self.getChangedFilesWithSimiliarity(commit.parents[0], commit)
         else:
             changedFiles = self.getChangedFilesForInitialCommit(commit)
@@ -319,33 +291,33 @@ class CommitParserProcess(multiprocessing.Process):
         self.lock.release()
         
         del self.commitsToBeProcessed[strCommitHash]
-  
-    
-    def createDiffInUnifiedFormat(self, hunks, initialCommit=False):
-        '''
+
+    def create_hunks(self, hunks, initialCommit=False):
+        """
         Creates the diff in the unified format (see: https://en.wikipedia.org/wiki/Diff#Unified_format)
-        
+
         If we have the initial commit, we need to turn around the hunk.* attributes.
-        
+
         :param hunks: list of objects of class :class:`pygit2.DiffHunk`
         :param initialCommit: indicates if we have an initial commit
-        '''
-        listOfHunks = []
-        output = ""
+        """
+
+        list_of_hunks = []
+
+
         for hunk in hunks:
-            if(initialCommit):
-                output = "@@ -%d,%d +%d,%d @@ \n" % (hunk.new_start, hunk.new_lines, hunk.old_start, hunk.old_lines)     
+            output = ""
+            if initialCommit:
                 for line in hunk.lines:
-                    output+= "%s%s" %('+', line.content) 
+                    output+= "%s%s" %('+', line.content)
+                gen_hunk = Hunk(hunk.new_start, hunk.new_lines, hunk.old_start, hunk.old_lines, output)
             else:
-                output = "@@ -%d,%d +%d,%d @@ \n" % (hunk.old_start, hunk.old_lines, hunk.new_start, hunk.new_lines)
                 for line in hunk.lines:
-                    output+= "%s%s" %(line.origin, line.content)     
-            
-            listOfHunks.append(output)
-        
-        return listOfHunks
-            
+                    output+= "%s%s" %(line.origin, line.content)
+                gen_hunk = Hunk(hunk.old_start, hunk.old_lines, hunk.new_start, hunk.new_lines, output)
+            list_of_hunks.append(gen_hunk)
+
+        return list_of_hunks
 
     def getModeForFile(self, parentTree, childTree, path, similarity):
         '''
@@ -385,7 +357,7 @@ class CommitParserProcess(multiprocessing.Process):
             changedFile = FileModel(patch.delta.old_file.path, patch.delta.old_file.size,
                                     patch.line_stats[2], patch.line_stats[1],
                                     patch.delta.is_binary, 'A', 
-                                    self.createDiffInUnifiedFormat(patch.hunks, True))
+                                    self.create_hunks(patch.hunks, True))
             changedFiles.append(changedFile)
         return changedFiles
         
@@ -414,10 +386,10 @@ class CommitParserProcess(multiprocessing.Process):
         for patch in diff:
             
             # Only if the filepath was not processed before, add new file
-            if(patch.delta.new_file.path in alreadyCheckedFilePaths):
+            if patch.delta.new_file.path in alreadyCheckedFilePaths:
                 continue
             
-            if(counts[patch.delta.new_file.path] > 1):
+            if counts[patch.delta.new_file.path] > 1:
                 mode = 'T'
             else:
                 mode = self.getModeForFile(parent.tree, commit.tree, patch.delta.new_file.path, patch.delta.similarity)
@@ -426,7 +398,7 @@ class CommitParserProcess(multiprocessing.Process):
             changedFile = FileModel(patch.delta.new_file.path, patch.delta.new_file.size,
                                     patch.line_stats[1], patch.line_stats[2],
                                     patch.delta.is_binary, mode, 
-                                    self.createDiffInUnifiedFormat(patch.hunks))
+                                    self.create_hunks(patch.hunks))
             
             # only add oldpath if file was copied/renamed
             if('C' in mode):
@@ -438,5 +410,31 @@ class CommitParserProcess(multiprocessing.Process):
             
         return changedFiles   
 
+    """
+    deprecated
 
-    
+    def createDiffInUnifiedFormat(self, hunks, initialCommit=False):
+        '''
+        Creates the diff in the unified format (see: https://en.wikipedia.org/wiki/Diff#Unified_format)
+
+        If we have the initial commit, we need to turn around the hunk.* attributes.
+
+        :param hunks: list of objects of class :class:`pygit2.DiffHunk`
+        :param initialCommit: indicates if we have an initial commit
+        '''
+        listOfHunks = []
+        output = ""
+        for hunk in hunks:
+            if(initialCommit):
+                output = "@@ -%d,%d +%d,%d @@ \n" % (hunk.new_start, hunk.new_lines, hunk.old_start, hunk.old_lines)
+                for line in hunk.lines:
+                    output+= "%s%s" %('+', line.content)
+            else:
+                output = "@@ -%d,%d +%d,%d @@ \n" % (hunk.old_start, hunk.old_lines, hunk.new_start, hunk.new_lines)
+                for line in hunk.lines:
+                    output+= "%s%s" %(line.origin, line.content)
+            print(output)
+            listOfHunks.append(output)
+
+        return listOfHunks
+    """

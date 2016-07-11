@@ -1,10 +1,8 @@
-from pymongo import ReadPreference
-from pymongo.errors import DocumentTooLarge
+from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
 from pyvcsshark.datastores.basestore import BaseStore
 from pyvcsshark.dbmodels.mongomodels import *
-from datetime import datetime
-from mongoengine import connect
+from mongoengine import connect, NotUniqueError
 
 import multiprocessing
 import logging
@@ -21,7 +19,6 @@ class MongoStore(BaseStore):
     """
 
     commitqueue = None
-    #NUMBER_OF_PROCESSES = 1
     NUMBER_OF_PROCESSES = multiprocessing.cpu_count()
     logger = logging.getLogger("store")
 
@@ -61,13 +58,13 @@ class MongoStore(BaseStore):
         # Get the last commit by date of the project (if there is any)
         lastCommitDate = Commit.objects(projectId=project.id).only('committerDate').order_by('-committerDate').first()
 
-        if(lastCommitDate is not None):
+        if lastCommitDate is not None:
             lastCommitDate = lastCommitDate.committerDate
-
 
         # Start worker, they will wait till something comes into the queue and then process it
         for i in range(self.NUMBER_OF_PROCESSES):
-            process = CommitStorageProcess(self.commitqueue, project.id, lastCommitDate,  dbname, host, port, user , password, authentication_db)
+            process = CommitStorageProcess(self.commitqueue, project.id, lastCommitDate,  dbname, host, port, user,
+                                           password, authentication_db)
             process.daemon=True
             process.start()
 
@@ -165,13 +162,16 @@ class CommitStorageProcess(multiprocessing.Process):
             commit = self.queue.get()
 
             # Check if commitdate > lastcommit date
-            if(self.lastCommitDate is not None and commit.committerDate <= self.lastCommitDate):
-                # We have parsed that commit before, now we need to check if branches or tags were changed
-                self.checkAndUpdateBranchesAndTags(commit)
+            if self.lastCommitDate is not None and commit.committerDate <= self.lastCommitDate:
+                oldCommit = Commit.objects(projectId=self.projectId, revisionHash=commit.id).first()
 
-                # Nothing more than branches or tags can be changed, therefore we only need to update the commit here
-                self.queue.task_done()
-                continue
+                if oldCommit is not None:
+                    # We have parsed that commit before, now we need to check if branches or tags were changed
+                    self.checkAndUpdateBranchesAndTags(commit, oldCommit)
+
+                    # Nothing more than branches or tags can be changed, therefore we only need to update the commit here
+                    self.queue.task_done()
+                    continue
 
             # Create people
             authorId = self.createPeople(commit.author.name, commit.author.email)
@@ -206,7 +206,7 @@ class CommitStorageProcess(multiprocessing.Process):
 
             self.queue.task_done()
 
-    def checkAndUpdateBranchesAndTags(self, commit):
+    def checkAndUpdateBranchesAndTags(self, commit, oldCommit):
         """ Method that checks if the commit that was stored in the database has the same
         branches and tags as the commit which is processed at the moment.
 
@@ -214,7 +214,6 @@ class CommitStorageProcess(multiprocessing.Process):
 
         .. NOTE:: We use the project id and the revision hash to find the commit in the datastore.
         """
-        oldCommit = Commit.objects(projectId=self.projectId, revisionHash=commit.id).first()
 
         oldTagList = set(oldCommit.tagIds)
         newTagList = set(self.createTagList(commit.tags))
@@ -263,12 +262,19 @@ class CommitStorageProcess(multiprocessing.Process):
         for tag in tags:
             if tag.tagger is not None:
                 taggerId = self.createPeople(tag.tagger.name, tag.tagger.email)
-                mongoTag = Tag.objects(projectId = self.projectId, name = tag.name).upsert_one(projectId = self.projectId, name=tag.name, message=tag.message,
-                                                                                               taggerId=taggerId, date=tag.taggerDate, offset = tag.taggerOffset)
+                try:
+                    tag_id = Tag(projectId=self.projectId, name=tag.name, message=tag.message,taggerId=taggerId,
+                        date=tag.taggerDate, offset=tag.taggerOffset).save().id
+                except (DuplicateKeyError, NotUniqueError):
+                    tag_id = Tag.objects(projectId=self.projectId, name=tag.name).only('id').get().id
             else:
-                mongoTag = Tag.objects(projectId = self.projectId, name = tag.name).upsert_one(projectId = self.projectId, name= tag.name, date=tag.taggerDate, offset=tag.taggerOffset)
+                try:
+                    tag_id = Tag(projectId=self.projectId, name=tag.name, date=tag.taggerDate,
+                                 offset=tag.taggerOffset).save().id
+                except (DuplicateKeyError, NotUniqueError):
+                    tag_id = Tag.objects(projectId=self.projectId, name=tag.name).only('id').get().id
 
-            tagList.append(mongoTag.id)
+            tagList.append(tag_id)
         return tagList
 
     def createPeople(self, name, email):
@@ -280,8 +286,11 @@ class CommitStorageProcess(multiprocessing.Process):
 
         .. NOTE:: The call to :func:`mongoengine.queryset.QuerySet.upsert_one` is thread/process safe
         """
-        mongoPeople = People.objects(name=name, email=email).upsert_one(name=name, email=email)
-        return mongoPeople.id
+        try:
+            people_id = People(name=name, email=email).save().id
+        except (DuplicateKeyError, NotUniqueError):
+            people_id = People.objects(name=name, email=email).only('id').get().id
+        return people_id
 
     def createFileActions(self, files, revisionHash):
         """ Creates a list of object ids of type :class:`bson.objectid.ObjectId` for the different file actions of the commit by
@@ -300,17 +309,20 @@ class CommitStorageProcess(multiprocessing.Process):
         for file in files:
 
             # Check if the file was a copy or move action (then the oldPath attribute is not None)
-            oldFileId = None
+            old_file_id = None
             if file.oldPath is not None:
-                oldFile = File.objects(projectId=self.projectId, path=file.oldPath, name=os.path.basename(file.oldPath)).upsert_one(projectId=self.projectId,
-                                                                                                                                    path=file.oldPath,
-                                                                                                                                    name=os.path.basename(file.oldPath))
-                oldFileId = oldFile.id
+                try:
+                    old_file_id = File(projectId=self.projectId, path=file.oldPath,
+                                       name=os.path.basename(file.oldPath)).save().id
+                except (DuplicateKeyError, NotUniqueError):
+                    old_file_id = File.objects(projectId=self.projectId, path=file.oldPath,
+                                               name=os.path.basename(file.oldPath)).only('id').get().id
 
             # Create hunk objects for bulk insert
             hunks = []
             for hunk in file.hunks:
-                mongoHunk = Hunk(content=hunk)
+                mongoHunk = Hunk(new_start=hunk.new_start, new_lines=hunk.new_lines, old_start=hunk.old_start,
+                                 old_lines=hunk.old_lines, content=hunk.content)
                 hunks.append(mongoHunk)
 
             # Get hunk ids from insert if hunks is not empty
@@ -323,17 +335,20 @@ class CommitStorageProcess(multiprocessing.Process):
                         try:
                             hunkIds.append(hunk.save().id)
                         except DocumentTooLarge:
+                            #TODO
                             pass
 
 
             # Create a new file object
-            newFile = File.objects(projectId=self.projectId, path=file.path, name=os.path.basename(file.path)).upsert_one(projectId=self.projectId,
-                                                                                                                          path=file.path,
-                                                                                                                          name=os.path.basename(file.path))
+            try:
+                new_file_id = File(projectId=self.projectId, path=file.path, name=os.path.basename(file.path)).save().id
+            except (DuplicateKeyError, NotUniqueError):
+                new_file_id = File.objects(projectId=self.projectId, path=file.path,
+                                           name=os.path.basename(file.path)).only('id').get().id
 
             # Create the new file action and append it to the file action list for bulk insert
             fileAction = FileAction(projectId=self.projectId,
-                                    fileId=newFile.id,
+                                    fileId=new_file_id,
                                     revisionHash=revisionHash,
                                     sizeAtCommit=file.size,
                                     linesAdded = file.linesAdded,
@@ -341,7 +356,7 @@ class CommitStorageProcess(multiprocessing.Process):
                                     isBinary = file.isBinary,
                                     mode = file.mode,
                                     hunkIds = hunkIds,
-                                    oldFilePathId=oldFileId)
+                                    oldFilePathId=old_file_id)
             fileActionList.append(fileAction)
             
         # Bulk insert all action ids

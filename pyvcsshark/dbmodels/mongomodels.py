@@ -45,10 +45,21 @@ class FileAction(Document):
 
 class Hunk(Document):
     """ Document that inherits from :class:`mongoengine.Document`. Holds information for the hunk collection.
-    
-    :property content: content of the hunk in the unified format (see: https://en.wikipedia.org/wiki/Diff#Unified_format)"""
-    
+    :property new_start: new starting of the hunk in new file
+    :property new_lines: number of new lines
+    :property old_start: old start of the hunk in the old file
+    :property old_lines: old number of lines
+    :property content: content of the hunk.
+
+    For more information: https://en.wikipedia.org/wiki/Diff#Unified_format)
+    """
+
+    new_start = IntField(required=True)
+    new_lines = IntField(required=True)
+    old_start = IntField(required=True)
+    old_lines = IntField(required=True)
     content = StringField(required=True)
+
 
 class File(Document):
     """ Document that inherits from :class:`mongoengine.Document`. Holds information for the file collection.
@@ -158,4 +169,4 @@ class Commit(Document):
     
     def __str__(self):
         return ""
-    
+
