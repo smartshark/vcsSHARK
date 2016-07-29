@@ -167,7 +167,7 @@ class GitParser(BaseParser):
             self.addTag(taggedCommit, tag, tagObject)
 
 
-               
+
         
             
     def parse(self, repositoryPath, datastore):
