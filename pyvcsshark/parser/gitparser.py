@@ -317,29 +317,6 @@ class CommitParserProcess(multiprocessing.Process):
             list_of_hunks.append(gen_hunk)
         return list_of_hunks
 
-    def getModeForFile(self, parentTree, childTree, path, similarity):
-        '''
-        Gets the mode for a file.
-        C = Copied/Moved (if similiarity is greater than threshold)
-        A = Added (if file is not in parenttree, but in child tree)
-        D = Deleted (if file is in parent tree, but not in child tree)
-        M = Modified (otherwise)
-        
-        :param parentTree: object of type :class:`pygit2.Tree` of the parent commit
-        :param childTree: object of type :class:`pygit2.Tree` of the child commit
-        :param path: path to the file that is analyzed
-        :param similarity: similarity of the two files in both trees
-        '''    
-        if(similarity >= GitParser.SIMILARITY_THRESHOLD):
-            return 'C'
-        elif(path not in parentTree and path in childTree):
-            return 'A'
-        elif(path in parentTree and path not in childTree):
-            return 'D'
-        else:
-            return 'M'
-        
-
     def getChangedFilesForInitialCommit(self, commit):
         '''
         Special function for the initial commit, as we need to diff against the empty tree. Creates
@@ -415,32 +392,3 @@ class CommitParserProcess(multiprocessing.Process):
             
             
         return changedFiles
-
-    """
-    deprecated
-
-    def createDiffInUnifiedFormat(self, hunks, initialCommit=False):
-        '''
-        Creates the diff in the unified format (see: https://en.wikipedia.org/wiki/Diff#Unified_format)
-
-        If we have the initial commit, we need to turn around the hunk.* attributes.
-
-        :param hunks: list of objects of class :class:`pygit2.DiffHunk`
-        :param initialCommit: indicates if we have an initial commit
-        '''
-        listOfHunks = []
-        output = ""
-        for hunk in hunks:
-            if(initialCommit):
-                output = "@@ -%d,%d +%d,%d @@ \n" % (hunk.new_start, hunk.new_lines, hunk.old_start, hunk.old_lines)
-                for line in hunk.lines:
-                    output+= "%s%s" %('+', line.content)
-            else:
-                output = "@@ -%d,%d +%d,%d @@ \n" % (hunk.old_start, hunk.old_lines, hunk.new_start, hunk.new_lines)
-                for line in hunk.lines:
-                    output+= "%s%s" %(line.origin, line.content)
-            print(output)
-            listOfHunks.append(output)
-
-        return listOfHunks
-    """
