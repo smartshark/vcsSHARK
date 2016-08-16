@@ -374,37 +374,47 @@ class CommitParserProcess(multiprocessing.Process):
                             
         opts = pygit2.GIT_DIFF_FIND_RENAMES | pygit2.GIT_DIFF_FIND_COPIES
         diff.find_similar(opts, GitParser.SIMILARITY_THRESHOLD, GitParser.SIMILARITY_THRESHOLD)
-                    
-        # We need to check for mode "T" for files. We have this mode, if there are >1 patches, which affect the same file
-        # Therefore, we first need to check, which file is there more than once
-        filePaths = [patch.delta.new_file.path for patch in diff]
-        counts = Counter(filePaths)
+
         alreadyCheckedFilePaths = set()
         for patch in diff:
+
             # Only if the filepath was not processed before, add new file
             if patch.delta.new_file.path in alreadyCheckedFilePaths:
                 continue
-            
-            if counts[patch.delta.new_file.path] > 1:
+
+            # Check change mode
+            mode = 'X'
+            if patch.delta.status == 1:
+                mode = 'A'
+            elif patch.delta.status == 2:
+                mode = 'D'
+            elif patch.delta.status == 3:
+                mode = 'M'
+            elif patch.delta.status == 4:
+                mode = 'R'
+            elif patch.delta.status == 5:
+                mode = 'C'
+            elif patch.delta.status == 6:
+                mode = 'I'
+            elif patch.delta.status == 7:
+                mode = 'U'
+            elif patch.delta.status == 8:
                 mode = 'T'
-            else:
-                mode = self.getModeForFile(parent.tree, commit.tree, patch.delta.new_file.path, patch.delta.similarity)
-                
-            
+
             changedFile = FileModel(patch.delta.new_file.path, patch.delta.new_file.size,
                                     patch.line_stats[1], patch.line_stats[2],
                                     patch.delta.is_binary, mode, 
                                     self.create_hunks(patch.hunks))
             
             # only add oldpath if file was copied/renamed
-            if('C' in mode):
+            if mode in ['C', 'R']:
                 changedFile.oldPath = patch.delta.old_file.path
     
             alreadyCheckedFilePaths.add(patch.delta.new_file.path)
             changedFiles.append(changedFile)
             
             
-        return changedFiles   
+        return changedFiles
 
     """
     deprecated

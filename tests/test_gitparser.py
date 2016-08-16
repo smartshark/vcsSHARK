@@ -616,7 +616,7 @@ class GitParserCommitsTest(GitParserTest):
         self.assertEqual(0, testFile.linesAdded)
         self.assertEqual(0, testFile.linesDeleted)
         self.assertTrue(testFile.isBinary)
-        self.assertEqual("C", testFile.mode)
+        self.assertEqual("R", testFile.mode)
         self.assertEqual("lib.jar", testFile.oldPath)
         self.assertEqual(30747, testFile.size)
 
@@ -629,7 +629,7 @@ class GitParserCommitsTest(GitParserTest):
         self.assertEqual(0, testFile.linesAdded)
         self.assertEqual(0, testFile.linesDeleted)
         self.assertFalse(testFile.isBinary)
-        self.assertEqual("C", testFile.mode)
+        self.assertEqual("R", testFile.mode)
         self.assertEqual("program.py", testFile.oldPath)
         self.assertEqual(15, testFile.size)
 
