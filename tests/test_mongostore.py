@@ -13,7 +13,7 @@ import uuid
 from pyvcsshark.config import Config
 from pyvcsshark.datastores.mongostore import MongoStore
 from pyvcsshark.dbmodels.models import CommitModel, BranchModel, TagModel,\
-    PeopleModel, FileModel
+    PeopleModel, FileModel, Hunk
 
 
 class Test(unittest.TestCase):
@@ -31,7 +31,7 @@ class Test(unittest.TestCase):
         
         # Read testconfig
         cls.config = Config()
-        cls.config.load_from_file(os.path.dirname(os.path.realpath(__file__))+"/data/testconfig.cfg")
+        cls.config.load_from_file(os.path.dirname(os.path.realpath(__file__))+"/data/used_test_config.cfg")
         
         # Initialize mongoclient
         cls.mongoClient = MongoClient(cls.config.db_hostname, cls.config.db_port)
@@ -66,9 +66,12 @@ class Test(unittest.TestCase):
         
         ## ChangedFile
         hunks = []
-        hunks.append("@@ -1,4 +1,3 @@ \n-line1\n line2\n line3\n line4\n")
-        hunks.append("@@ -17,7 +16,7 @@ \n line17\n line18\n line19\n-line20\n+\n line21\n line22\n line23\n")
-        hunks.append("@@ -38,3 +37,4 @@ \n line38\n line39\n line40\n+line41\n")
+        hunks.append(Hunk(old_start=1, old_lines=1, new_start=0, new_lines=0, content='-line1\n'))
+        hunks.append(Hunk(old_start=20, old_lines=1, new_start=19, new_lines=1, content='-line20\n+\n'))
+        hunks.append(Hunk(old_start=40, old_lines=0, new_start=40, new_lines=1, content='+line41\n'))
+        #hunks.append("@@ -1,4 +1,3 @@ \n-line1\n line2\n line3\n line4\n")
+        #hunks.append("@@ -17,7 +16,7 @@ \n line17\n line18\n line19\n-line20\n+\n line21\n line22\n line23\n")
+        #hunks.append("@@ -38,3 +37,4 @@ \n line38\n line39\n line40\n+line41\n")
         testFile = FileModel("lib/lib.txt", 266, 2, 2, False, "M", hunks, None)
         
         
@@ -192,9 +195,23 @@ class Test(unittest.TestCase):
         self.assertIn(hunk3['_id'], fileAction['hunkIds'])
         
         # Check hunks
-        self.assertEqual('@@ -1,4 +1,3 @@ \n-line1\n line2\n line3\n line4\n',hunk1['content'])
-        self.assertEqual('@@ -17,7 +16,7 @@ \n line17\n line18\n line19\n-line20\n+\n line21\n line22\n line23\n',hunk2['content'])
-        self.assertEqual('@@ -38,3 +37,4 @@ \n line38\n line39\n line40\n+line41\n',hunk3['content'])
+        self.assertEqual(0, hunk1['new_lines'])
+        self.assertEqual(0, hunk1['new_start'])
+        self.assertEqual(1, hunk1['old_start'])
+        self.assertEqual(1, hunk1['old_lines'])
+        self.assertEqual("-line1\n",hunk1['content'])
+
+        self.assertEqual(1, hunk2['new_lines'])
+        self.assertEqual(19, hunk2['new_start'])
+        self.assertEqual(20, hunk2['old_start'])
+        self.assertEqual(1, hunk2['old_lines'])
+        self.assertEqual("-line20\n+\n",hunk2['content'])
+
+        self.assertEqual(1, hunk3['new_lines'])
+        self.assertEqual(40, hunk3['new_start'])
+        self.assertEqual(40, hunk3['old_start'])
+        self.assertEqual(0, hunk3['old_lines'])
+        self.assertEqual("+line41\n",hunk3['content'])
         
         # Check people
         self.assertEqual("Fabian Trautsch", ppl['name'])

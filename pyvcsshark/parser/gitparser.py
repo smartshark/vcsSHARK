@@ -304,19 +304,17 @@ class CommitParserProcess(multiprocessing.Process):
 
         list_of_hunks = []
 
-
         for hunk in hunks:
             output = ""
             if initialCommit:
                 for line in hunk.lines:
                     output+= "%s%s" %('+', line.content)
-                gen_hunk = Hunk(hunk.new_start, hunk.new_lines, hunk.old_start, hunk.old_lines, output)
+                gen_hunk = Hunk(hunk.old_start, hunk.old_lines, hunk.new_start, hunk.new_lines, output)
             else:
                 for line in hunk.lines:
                     output+= "%s%s" %(line.origin, line.content)
-                gen_hunk = Hunk(hunk.old_start, hunk.old_lines, hunk.new_start, hunk.new_lines, output)
+                gen_hunk = Hunk(hunk.new_start, hunk.new_lines, hunk.old_start, hunk.old_lines, output)
             list_of_hunks.append(gen_hunk)
-
         return list_of_hunks
 
     def getModeForFile(self, parentTree, childTree, path, similarity):
@@ -381,10 +379,8 @@ class CommitParserProcess(multiprocessing.Process):
         # Therefore, we first need to check, which file is there more than once
         filePaths = [patch.delta.new_file.path for patch in diff]
         counts = Counter(filePaths)
-
         alreadyCheckedFilePaths = set()
         for patch in diff:
-            
             # Only if the filepath was not processed before, add new file
             if patch.delta.new_file.path in alreadyCheckedFilePaths:
                 continue

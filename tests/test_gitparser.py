@@ -66,7 +66,7 @@ class GitParserCommitsTest(GitParserTest):
         # sort the generated list
         cls.listOfCommits.sort(key=lambda x: x.committerDate)
 
- 
+
     def test_parsing_commit1(self):
         commit1 = self.listOfCommits[0]
         
@@ -132,7 +132,13 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+test1\n", testFile.hunks[0])
+        self.assertEqual(len(testFile.hunks), 1)
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+test1\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+test1\n", testFile.hunks[0])
         
         
         
@@ -148,7 +154,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+test2\n", testFile.hunks[0])
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+test2\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+test2\n", testFile.hunks[0])
 
 
     def test_parsing_commit2(self):
@@ -203,7 +214,7 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+test3\n", testFile.hunks[0])
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+test3\n", testFile.hunks[0])
         
         ## test.txt
         testFile = [file for file in commit1.changedFiles if file.path == "test.txt"][0]
@@ -217,7 +228,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -1,1 +0,0 @@ \n-test1\n", testFile.hunks[0])
+        self.assertEqual(0, testFile.hunks[0].new_lines)
+        self.assertEqual(0, testFile.hunks[0].new_start)
+        self.assertEqual(1, testFile.hunks[0].old_start)
+        self.assertEqual(1, testFile.hunks[0].old_lines)
+        self.assertEqual("-test1\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -1,1 +0,0 @@ \n-test1\n", testFile.hunks[0])
         
         
         
@@ -233,7 +249,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -1,1 +1,1 @@ \n-test2\n+test\n", testFile.hunks[0])
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(1, testFile.hunks[0].old_start)
+        self.assertEqual(1, testFile.hunks[0].old_lines)
+        self.assertEqual("-test2\n+test\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -1,1 +1,1 @@ \n-test2\n+test\n", testFile.hunks[0])
         
     def test_parsing_commit3(self):
         commit1 = self.listOfCommits[2]
@@ -294,7 +315,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+import nothing\n", testFile.hunks[0])
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+import nothing\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+import nothing\n", testFile.hunks[0])
     
                                
     def test_parsing_commit4(self):
@@ -347,7 +373,13 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+branch1\n", testFile.hunks[0])
+        self.assertEqual(len(testFile.hunks), 1)
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+branch1\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+branch1\n", testFile.hunks[0])
         
         
     def test_parsing_commit5(self):
@@ -410,7 +442,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+import branch1\n", testFile.hunks[0])
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+import branch1\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+import branch1\n", testFile.hunks[0])
         
     def test_parsing_commit6(self):
         commit1 = self.listOfCommits[5]
@@ -462,7 +499,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+branch2\n", testFile.hunks[0])
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+branch2\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+branch2\n", testFile.hunks[0])
 
 
     def test_parsing_commit7(self):
@@ -515,7 +557,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+import nothing\n", testFile.hunks[0])
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+import nothing\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+import nothing\n", testFile.hunks[0])
         
     def test_parsing_commit8(self):
         commit1 = self.listOfCommits[7]
@@ -640,7 +687,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+branch3\n", testFile.hunks[0])
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+branch3\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+branch3\n", testFile.hunks[0])
         
     def test_parsing_commit10(self):
         commit1 = self.listOfCommits[9]
@@ -693,7 +745,12 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,1 @@ \n+testbranch3\n", testFile.hunks[0])
+        self.assertEqual(1, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+testbranch3\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,1 @@ \n+testbranch3\n", testFile.hunks[0])
         
     def test_parsing_commit11(self):
         commit1 = self.listOfCommits[10]
@@ -745,10 +802,18 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 1)
-        self.assertEqual("@@ -0,0 +1,40 @@ \n+line1\n+line2\n+line3\n+line4\n+line5\n+line6\n+line7\n+line8\n+line9\n+line10\n"+
+        self.assertEqual(40, testFile.hunks[0].new_lines)
+        self.assertEqual(1, testFile.hunks[0].new_start)
+        self.assertEqual(0, testFile.hunks[0].old_start)
+        self.assertEqual(0, testFile.hunks[0].old_lines)
+        self.assertEqual("+line1\n+line2\n+line3\n+line4\n+line5\n+line6\n+line7\n+line8\n+line9\n+line10\n"+
                          "+line11\n+line12\n+line13\n+line14\n+line15\n+line16\n+line17\n+line18\n+line19\n+line20\n"+
                          "+line21\n+line22\n+line23\n+line24\n+line25\n+line26\n+line27\n+line28\n+line29\n+line30\n"+
-                         "+line31\n+line32\n+line33\n+line34\n+line35\n+line36\n+line37\n+line38\n+line39\n+line40\n", testFile.hunks[0])
+                         "+line31\n+line32\n+line33\n+line34\n+line35\n+line36\n+line37\n+line38\n+line39\n+line40\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -0,0 +1,40 @@ \n+line1\n+line2\n+line3\n+line4\n+line5\n+line6\n+line7\n+line8\n+line9\n+line10\n"+
+        #                 "+line11\n+line12\n+line13\n+line14\n+line15\n+line16\n+line17\n+line18\n+line19\n+line20\n"+
+        #                 "+line21\n+line22\n+line23\n+line24\n+line25\n+line26\n+line27\n+line28\n+line29\n+line30\n"+
+        #                 "+line31\n+line32\n+line33\n+line34\n+line35\n+line36\n+line37\n+line38\n+line39\n+line40\n", testFile.hunks[0])
         
     def test_parsing_commit12(self):
         commit1 = self.listOfCommits[11]
@@ -800,10 +865,27 @@ class GitParserCommitsTest(GitParserTest):
 
         ### Hunks
         self.assertEqual(len(testFile.hunks), 3)
-        
-        self.assertEqual("@@ -1,4 +1,3 @@ \n-line1\n line2\n line3\n line4\n", testFile.hunks[0])
-        self.assertEqual("@@ -17,7 +16,7 @@ \n line17\n line18\n line19\n-line20\n+\n line21\n line22\n line23\n", testFile.hunks[1])
-        self.assertEqual("@@ -38,3 +37,4 @@ \n line38\n line39\n line40\n+line41\n", testFile.hunks[2])
+
+        self.assertEqual(0, testFile.hunks[0].new_lines)
+        self.assertEqual(0, testFile.hunks[0].new_start)
+        self.assertEqual(1, testFile.hunks[0].old_start)
+        self.assertEqual(1, testFile.hunks[0].old_lines)
+        self.assertEqual("-line1\n", testFile.hunks[0].content)
+        #self.assertEqual("@@ -1,1 +0,0 @@ \n -line1\n", testFile.hunks[0])
+
+        self.assertEqual(1, testFile.hunks[1].new_lines)
+        self.assertEqual(19, testFile.hunks[1].new_start)
+        self.assertEqual(20, testFile.hunks[1].old_start)
+        self.assertEqual(1, testFile.hunks[1].old_lines)
+        self.assertEqual("-line20\n+\n", testFile.hunks[1].content)
+        #self.assertEqual("@@ -20,1 +19,1 @@ \n -line20\n +\n", testFile.hunks[1])
+
+        self.assertEqual(1, testFile.hunks[2].new_lines)
+        self.assertEqual(40, testFile.hunks[2].new_start)
+        self.assertEqual(40, testFile.hunks[2].old_start)
+        self.assertEqual(0, testFile.hunks[2].old_lines)
+        self.assertEqual("+line41\n", testFile.hunks[2].content)
+        #self.assertEqual("@@ -40,0 +40,1 @@ \n +line41\n", testFile.hunks[2])
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

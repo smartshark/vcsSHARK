@@ -195,6 +195,10 @@ class Hunk(object):
         self.old_lines = old_lines
         self.content = content
 
+    def __str__(self):
+        return "@@ -%s,%s +%s,%s @@ \n %s" % (self.old_start, self.old_lines, self.new_start, self.new_lines, self.content)
+
+
 
 class TagModel(object):
     """ Model that holds the information for the different tags.
