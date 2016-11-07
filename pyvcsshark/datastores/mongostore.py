@@ -183,10 +183,8 @@ class CommitStorageProcess(multiprocessing.Process):
             # Create branchlist
             branches = self.createBranchList(commit.branches)
 
-
             # Create fileActions
             fileActionIds = self.createFileActions(commit.changedFiles, commit.id)
-
 
             # Create Revision object#
             mongoCommit = Commit(projectId = self.projectId,

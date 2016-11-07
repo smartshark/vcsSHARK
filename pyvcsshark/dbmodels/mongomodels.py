@@ -154,7 +154,7 @@ class Commit(Document):
     #PK: projectId and revisionhash
     projectId = ObjectIdField(required=True,unique_with=['revisionHash'] )
     revisionHash = StringField(max_length=50, required=True, unique_with=['projectId'])
-    branches = ListField(StringField(max_length=100))
+    branches = ListField(StringField(max_length=500))
     tagIds = ListField(ObjectIdField())
     parents = ListField(StringField(max_length=50))
     authorId = ObjectIdField()
