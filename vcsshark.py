@@ -8,5 +8,4 @@ if __name__ == "__main__":
         pyvcsshark.start()
     except KeyboardInterrupt:
         print ("\n\nReceived Ctrl-C or other break signal. Exiting.")
-        sys.exit (0)
-        
+        sys.exit(0)

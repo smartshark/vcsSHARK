@@ -108,7 +108,7 @@ class People(Document):
     """
     
      #PK: email, name
-    email = StringField(max_length=150, required=True, unique_with=['name'])             
+    email = StringField(max_length=150, required=True, unique_with=['name'])
     name = StringField(max_length=150, required=True, unique_with=['email'])
 
     def __hash__(self):
