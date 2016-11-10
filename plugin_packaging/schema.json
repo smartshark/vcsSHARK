@@ -30,7 +30,7 @@
                "field_name":"tagIds"
             },
             {  
-               "sub_type":"StringType",
+               "sub_type":"ObjectIdType",
                "type":"ArrayType",
                "logical_type":"ProductMetric",
                "field_name":"parents"
