@@ -1,0 +1,90 @@
+{
+    "name": "vcsSHARK",
+    "author": "Fabian Trautsch",
+    "version": "0.10",
+    "plugin_type": "repo",
+    "linux_libraries": [
+        "build-essential", 
+        "libssl-dev", 
+        "libffi-dev", 
+        "python3-dev", 
+        "git", 
+        "cmake", 
+        "pkg-config", 
+        "libcurl3", 
+        "libcurl4-gnutls-dev", 
+        "libhttp-parser-dev", 
+        "libssh2-1", 
+        "libssh2-1-dev", 
+        "libgit2-dev", 
+        "libgit2-24"
+    ],
+    "description": "Plugin to get the history of a project from a GIT repository.",
+    "requires": [
+    ],
+    "arguments": [
+        {
+            "name": "plugin_path",
+            "required": true,
+            "position": 1,
+            "type": "install",
+            "description": "path to root folder of plugin"
+        },
+        {
+            "name": "db_user",
+            "required": true,
+            "position": 1,
+            "type": "execute",
+            "description": "database user for the mongodb"
+        },
+        {
+            "name": "db_password",
+            "required": true,
+            "position": 2,
+            "type": "execute",
+            "description": "password for the user of the mongodb"
+        },
+        {
+            "name": "db_database",
+            "required": true,
+            "position": 3,
+            "type": "execute",
+            "description": "name of the database in the mongodb"
+        },
+        {
+            "name": "db_hostname",
+            "required": true,
+            "position": 4,
+            "type": "execute",
+            "description": "hostname of the server, where the mongodb runs on"
+        },
+        {
+            "name": "db_port",
+            "required": true,
+            "position": 5,
+            "type": "execute",
+            "description": "port on which the mongodb is listening on"
+        },
+        {
+            "name": "db_authentication",
+            "required": true,
+            "position": 6,
+            "type": "execute",
+            "description": "databse against which users are authenticated"
+        },
+        {
+            "name": "path",
+            "required": true,
+            "position": 7,
+            "type": "execute",
+            "description": "path to the project repository"
+        },
+        {
+            "name": "plugin_path",
+            "required": true,
+            "position": 8,
+            "type": "execute",
+            "description": "path to root folder of plugin"
+        }
+    ]
+}
