@@ -9,7 +9,8 @@
             },
             {  
                "type":"ObjectIdType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "project",
                "field_name":"projectId"
             },
             {  
@@ -26,7 +27,8 @@
             {  
                "sub_type":"ObjectIdType",
                "type":"ArrayType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "tag",
                "field_name":"tagIds"
             },
             {  
@@ -37,7 +39,8 @@
             },
             {  
                "type":"ObjectIdType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "people",
                "field_name":"authorId"
             },
             {  
@@ -52,7 +55,8 @@
             },
             {  
                "type":"ObjectIdType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "people",
                "field_name":"committerId"
             },
             {  
@@ -73,7 +77,8 @@
             {  
                "sub_type":"ObjectIdType",
                "type":"ArrayType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "file_action",
                "field_name":"fileActionIds"
             }
          ],
@@ -88,7 +93,8 @@
             },
             {  
                "type":"ObjectIdType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "project",
                "field_name":"projectId"
             },
             {  
@@ -113,12 +119,14 @@
             },
             {  
                "type":"ObjectIdType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "project",
                "field_name":"projectId"
             },
             {  
                "type":"ObjectIdType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "file",
                "field_name":"fileId"
             },
             {  
@@ -154,7 +162,8 @@
             {  
                "sub_type":"ObjectIdType",
                "type":"ArrayType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "hunk",
                "field_name":"hunkIds"
             }
          ],
@@ -249,12 +258,14 @@
             },
             {  
                "type":"ObjectIdType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "project",
                "field_name":"projectId"
             },
             {  
                "type":"ObjectIdType",
-               "logical_type":"OID",
+               "logical_type":"RID",
+               "reference_to": "people",
                "field_name":"taggerId"
             },
             {  
