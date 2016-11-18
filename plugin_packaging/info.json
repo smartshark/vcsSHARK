@@ -31,60 +31,60 @@
             "description": "path to root folder of plugin"
         },
         {
-            "name": "db_user",
+            "name": "plugin_path",
             "required": true,
             "position": 1,
             "type": "execute",
-            "description": "database user for the mongodb"
+            "description": "path to root folder of plugin"
         },
         {
-            "name": "db_password",
+            "name": "path",
             "required": true,
             "position": 2,
             "type": "execute",
-            "description": "password for the user of the mongodb"
-        },
-        {
-            "name": "db_database",
-            "required": true,
-            "position": 3,
-            "type": "execute",
-            "description": "name of the database in the mongodb"
+            "description": "path to the project repository"
         },
         {
             "name": "db_hostname",
             "required": true,
-            "position": 4,
+            "position": 3,
             "type": "execute",
             "description": "hostname of the server, where the mongodb runs on"
         },
         {
             "name": "db_port",
             "required": true,
-            "position": 5,
+            "position": 4,
             "type": "execute",
             "description": "port on which the mongodb is listening on"
         },
         {
-            "name": "db_authentication",
+            "name": "db_database",
             "required": true,
+            "position": 5,
+            "type": "execute",
+            "description": "name of the database in the mongodb"
+        },
+        {
+            "name": "db_user",
+            "required": false,
             "position": 6,
             "type": "execute",
-            "description": "databse against which users are authenticated"
+            "description": "database user for the mongodb"
         },
         {
-            "name": "path",
-            "required": true,
+            "name": "db_password",
+            "required": false,
             "position": 7,
             "type": "execute",
-            "description": "path to the project repository"
+            "description": "password for the user of the mongodb"
         },
         {
-            "name": "plugin_path",
-            "required": true,
+            "name": "db_authentication",
+            "required": false,
             "position": 8,
             "type": "execute",
-            "description": "path to root folder of plugin"
+            "description": "databse against which users are authenticated"
         }
     ]
 }

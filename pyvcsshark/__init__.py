@@ -1,6 +1,4 @@
 import argparse
-import os
-import sys
 from .config import Config
 from .main import Application
 from .utils import *
@@ -56,7 +54,7 @@ def start():
     try:
         datastoreChoices = getDatastoreChoices()
     except Exception as e:
-        logger.error("Failed to instantiate datastore. Original message: %s" % (e))
+        logger.exception("Failed to instantiate datastore")
         sys.exit(1)
         
     if(not datastoreChoices):
@@ -68,8 +66,8 @@ def start():
     parser.add_argument('-v', '--version', help='Shows the version', action='version', version='0.0.1')
     parser.add_argument('-f', '--config-file', help='Path to a custom configuration file', default=None)
     parser.add_argument('-D', '--db-driver', help='Output database driver. Currently only mongoDB is supported', default='mongo', choices=datastoreChoices)
-    parser.add_argument('-U', '--db-user', help='Database user name', default='root')
-    parser.add_argument('-P', '--db-password', help='Database user password', default='root')
+    parser.add_argument('-U', '--db-user', help='Database user name', default=None)
+    parser.add_argument('-P', '--db-password', help='Database user password', default=None)
     parser.add_argument('-DB', '--db-database', help='Database name', default='smartshark')
     parser.add_argument('-H', '--db-hostname', help='Name of the host, where the database server is running', default='localhost')
     parser.add_argument('-p', '--db-port', help='Port, where the database server is listening', default=27017, type=int)

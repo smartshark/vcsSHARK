@@ -1,7 +1,7 @@
 from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
 from pyvcsshark.datastores.basestore import BaseStore
-from pyvcsshark.dbmodels.mongomodels import *
+from pyvcsshark.helpers.mongomodels import *
 from mongoengine import connect, NotUniqueError
 
 import multiprocessing
@@ -49,6 +49,7 @@ class MongoStore(BaseStore):
         self.commitqueue = multiprocessing.JoinableQueue()
         # We define, that the user we authenticate with is in the admin database
         self.logger.info("Connecting to MongoDB...")
+        print(password)
         connect(dbname, username=user, password=password, host=host, port=port, authentication_source=authentication_db,
                 connect=False)
 

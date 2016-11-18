@@ -32,9 +32,9 @@
                "field_name":"tagIds"
             },
             {  
-               "sub_type":"ObjectIdType",
+               "sub_type":"StringType",
                "type":"ArrayType",
-               "logical_type":"ProductMetric",
+               "logical_type":"ID",
                "field_name":"parents"
             },
             {  

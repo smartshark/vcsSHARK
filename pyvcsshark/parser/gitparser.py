@@ -4,7 +4,6 @@ import logging
 import re
 import uuid
 import multiprocessing
-from collections import Counter
 from pyvcsshark.dbmodels.models import BranchModel, PeopleModel, TagModel,\
     FileModel, CommitModel, Hunk
 
