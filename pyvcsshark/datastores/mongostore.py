@@ -2,7 +2,7 @@ from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
 from pyvcsshark.datastores.basestore import BaseStore
 from pyvcsshark.helpers.mongomodels import *
-from mongoengine import connect, NotUniqueError
+from mongoengine import connect, NotUniqueError, DoesNotExist
 
 import multiprocessing
 import logging
@@ -49,7 +49,7 @@ class MongoStore(BaseStore):
         self.commitqueue = multiprocessing.JoinableQueue()
         # We define, that the user we authenticate with is in the admin database
         self.logger.info("Connecting to MongoDB...")
-        print(password)
+
         connect(dbname, username=user, password=password, host=host, port=port, authentication_source=authentication_db,
                 connect=False)
 
@@ -174,34 +174,41 @@ class CommitStorageProcess(multiprocessing.Process):
                     self.queue.task_done()
                     continue
 
+            # Try to get the event. If it is already existent, then return directly
+            try:
+                mongo_commit = Commit.objects(projectId=self.projectId, revisionHash=commit.id).get()
+            except DoesNotExist:
+                mongo_commit = Commit(
+                    projectId=self.projectId,
+                    revisionHash=commit.id
+                ).save()
+
             # Create people
-            authorId = self.createPeople(commit.author.name, commit.author.email)
-            committerId = self.createPeople(commit.committer.name, commit.committer.email)
+            mongo_commit.authorId = self.createPeople(commit.author.name, commit.author.email)
+            mongo_commit.authorDate = commit.authorDate
+            mongo_commit.authorOffset = commit.authorOffset
+
+            mongo_commit.committerId = self.createPeople(commit.committer.name, commit.committer.email)
+            mongo_commit.committerDate = commit.committerDate
+            mongo_commit.committerOffset = commit.committerOffset
 
             # Create tag list
-            tagIds = self.createTagList(commit.tags)
+            mongo_commit.tagIds = self.createTagList(commit.tags)
 
             # Create branchlist
-            branches = self.createBranchList(commit.branches)
+            mongo_commit.branches = self.createBranchList(commit.branches)
+
+            # Set parent hashes
+            mongo_commit.parents = commit.parents
+
+            # Set message
+            mongo_commit.message = commit.message
 
             # Create fileActions
-            fileActionIds = self.createFileActions(commit.changedFiles, commit.id)
+            self.createFileActions(commit.changedFiles, mongo_commit.id)
 
-            # Create Revision object#
-            mongoCommit = Commit(projectId = self.projectId,
-                                 revisionHash = commit.id,
-                                 branches = branches,
-                                 tagIds = tagIds ,
-                                 parents=commit.parents,
-                                 authorId=authorId,
-                                 authorDate=commit.authorDate,
-                                 authorOffset=commit.authorOffset,
-                                 committerId=committerId,
-                                 committerDate=commit.committerDate,
-                                 committerOffset=commit.committerOffset,
-                                 message=commit.message,
-                                 fileActionIds= fileActionIds).save()
-
+            # Save Revision object#
+            mongo_commit.save()
 
             self.queue.task_done()
 
@@ -291,15 +298,13 @@ class CommitStorageProcess(multiprocessing.Process):
             people_id = People.objects(name=name, email=email).only('id').get().id
         return people_id
 
-    def createFileActions(self, files, revisionHash):
+    def createFileActions(self, files, mongo_commit_id):
         """ Creates a list of object ids of type :class:`bson.objectid.ObjectId` for the different file actions of the commit by
         transforming the files into file actions of type :class:`pyvcsshark.dbmodels.mongomodels.FileAction`, :class:`pyvcsshark.dbmodels.mongomodels.File`, and
         :class:`pyvcsshark.dbmodels.mongomodels.Hunk`
 
         :param files: list of changed files of type :class:`pyvcsshark.dbmodels.models.FileModel`
-        :param revisionHash: revisionhash of the commit which is processed
-
-        .. NOTE:: The call to :func:`mongoengine.queryset.QuerySet.upsert_one` is thread/process safe
+        :param mongo_commit_id: mongoid of the commit which is processed
 
         .. NOTE:: Hunks (type :class:`pyvcsshark.dbmodels.mongomodels.Hunk`)  and the file action itself are inserted via bulk insert.
         """
@@ -346,31 +351,27 @@ class CommitStorageProcess(multiprocessing.Process):
                                            name=os.path.basename(file.path)).only('id').get().id
 
             # Create the new file action and append it to the file action list for bulk insert
-            fileAction = FileAction(projectId=self.projectId,
-                                    fileId=new_file_id,
-                                    revisionHash=revisionHash,
+            fileAction = FileAction(fileId=new_file_id,
+                                    commit_id=mongo_commit_id,
                                     sizeAtCommit=file.size,
-                                    linesAdded = file.linesAdded,
-                                    linesDeleted = file.linesDeleted,
-                                    isBinary = file.isBinary,
-                                    mode = file.mode,
-                                    hunkIds = hunkIds,
+                                    linesAdded=file.linesAdded,
+                                    linesDeleted=file.linesDeleted,
+                                    isBinary=file.isBinary,
+                                    mode=file.mode,
+                                    hunkIds=hunkIds,
                                     oldFilePathId=old_file_id)
             fileActionList.append(fileAction)
             
         # Bulk insert all action ids
-        fileActionIds = [] 
         if fileActionList:
             try:
-                fileActionIds = FileAction.objects.insert(fileActionList, load_bulk=False)
+                FileAction.objects.insert(fileActionList, load_bulk=False)
             except DocumentTooLarge:
                 for fileAction in fileActionList:
                     try:
-                        fileActionIds.append(fileAction.save().id)
+                        fileAction.save()
                     except DocumentTooLarge:
                         pass
-
-        return fileActionIds
 
     @staticmethod
     def create_chunks(list, n):

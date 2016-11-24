@@ -273,9 +273,4 @@ class PeopleModel(object):
     def __init__(self, name=None, email=None):
         self.name = name
         self.email = email
-        
-   
-        
-        
-        
-        
+
