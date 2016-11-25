@@ -1,3 +1,0 @@
-[submodule "pyvcsshark/helpers"]
-	path = pyvcsshark/helpers
-	url = git@github.com:smartshark/helpers.git
