@@ -6,6 +6,8 @@ Created on 09.12.2015
 
 import abc
 import os
+import pyvcsshark.utils
+
 
 class BaseStore(metaclass=abc.ABCMeta):
     """
@@ -38,33 +40,25 @@ class BaseStore(metaclass=abc.ABCMeta):
     repositoryType = None
     
     @abc.abstractmethod
-    def initialize(self, dbname=None, host=None, port=None, user=None , 
-                   password=None, projectname=None, repositoryURL=None, type=None, authentication_db=None):
+    def initialize(self, config, repository_url, repository_type):
         """Initializes the datastore
         
-        :param dbname: name of the database to use
-        :param host: name of the host, where the datastore runs on
-        :param port: port, where the datastore is listening to
-        :param user: user of the datastore (e.g. for authentication)
-        :param password: password for the given user
-        :param projectname: name of the project, which is to be analyzed
-        :param repositoryURL: url of the repository, which is to be analyzed
-        :param type: type of the repository, which is to be analyzed (e.g. "git")
-        :param authentication_db: db where the user is authenticated against
+        :param config: all configuration
+        :param repository_url: url of the repository, which is to be analyzed
+        :param repository_type: type of the repository, which is to be analyzed (e.g. "git")
         """
-        
         return
 
     @abc.abstractproperty
-    def storeIdentifier(self):
+    def store_identifier(self):
         """Must return a string identifier for the datastore (e.g. **mongo**) """
         return
 
     @abc.abstractmethod
-    def addCommit(self, commitModel):
+    def add_commit(self, commit_model):
         """Add the commit to the datastore. How this is handled depends on the implementation.
         
-        :param commitModel: instance of :class:`~pyvcsshark.dbmodels.models.CommitModel`, which includes all \
+        :param commit_model: instance of :class:`~pyvcsshark.dbmodels.models.CommitModel`, which includes all \
         important information about the commit
         
         .. WARNING:: The commits we get here are not sorted. Furthermore, they need to be processed right away or\
@@ -72,14 +66,23 @@ class BaseStore(metaclass=abc.ABCMeta):
             as some parser (e.g. GitParser) use multiprocessing to add the commits.
         """
         return
-
-    @abc.abstractmethod
-    def deleteAll(self):
-        """Deletes all data of one project from the datastore"""
-        return
     
     @abc.abstractmethod
     def finalize(self):
         """Is called in the end to finalize the datastore (e.g. closing files or connections)"""
         return
 
+    @staticmethod
+    def find_correct_datastore(datastore_identifier):
+        """ Finds the correct datastore by looking at the datastore.storeIdentifier property
+
+        :param datastore_identifier: string that represents the correct datastore (e.g. **mongo**)
+        """
+
+        # import datastore plugins
+        pyvcsshark.utils.find_plugins(os.path.dirname(os.path.realpath(__file__)))
+        for sc in BaseStore.__subclasses__():
+            datastore = sc()
+            if datastore_identifier and datastore_identifier in datastore.store_identifier:
+                return datastore
+        return None

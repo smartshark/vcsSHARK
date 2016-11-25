@@ -1,53 +1,39 @@
-'''
-Created on 09.12.2015
-
-@author: fabian
-'''
-import abc
+from pyvcsshark.utils import get_immediate_subdirectories
 from pyvcsshark.parser.baseparser import BaseParser
 import logging
 
+
+logger = logging.getLogger("parser")
+
+
 class SVNParser(BaseParser):
-    '''
-    classdocs
-    '''
-
-
     def __init__(self):
-        '''
-        Constructor
-        '''
-        self.logger = logging.getLogger("parser")
+        pass
         
     @property   
-    def repositoryType(self):
+    def repository_type(self):
         return 'svn'
-    
-    def getProjectName(self):
-        return
 
-    def getProjectURL(self):
+    def get_project_url(self):
         return 
         
-    def detect(self, repositoryPath):
-        subdirectories = self.getImmediateSubdirectories(repositoryPath)
+    def detect(self, repository_path):
+        subdirectories = get_immediate_subdirectories(repository_path)
         
-        if(".svn" in subdirectories):
+        if ".svn" in subdirectories:
             return True
         else:
             return False
-    
-    
-    
+
     def initialize(self):
         """Initialization process for parser"""
         return
     
     def finalize(self):
-        """Finalization process for paser"""
+        """Finalization process for parser"""
         return
     
-    def parse(self, repositoryPath, datastore):
+    def parse(self, repository_path, datastore):
         return None
     
     

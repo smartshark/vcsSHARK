@@ -1,5 +1,6 @@
 import abc
 import os
+import pyvcsshark.utils
 
 class BaseParser(metaclass=abc.ABCMeta):
     """
@@ -17,10 +18,9 @@ class BaseParser(metaclass=abc.ABCMeta):
         to get the logger.
 
     """
-    
-    
+
     @abc.abstractproperty
-    def repositoryType(self):
+    def repository_type(self):
         """Must return the type for the given repository. E.g. **git**"""
         return
     
@@ -34,20 +34,19 @@ class BaseParser(metaclass=abc.ABCMeta):
         """Finalization process for parser"""
         return
     
-    
     @abc.abstractmethod
-    def detect(self, repositoryPath):
+    def detect(self, repository_path):
         """Return true if the parser is applicable to the repository
         
-        :param repositoryPath: path to the repository
+        :param repository_path: path to the repository
         """
         return
 
     @abc.abstractmethod
-    def parse(self, repositoryPath, datastore):
+    def parse(self, repository_path, datastore):
         """Parses the repository
         
-        :param repositoryPath: path to the repository
+        :param repository_path: path to the repository
         :param datastore: subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`.
         
         
@@ -57,25 +56,31 @@ class BaseParser(metaclass=abc.ABCMeta):
         return
     
     @abc.abstractmethod
-    def getProjectName(self):
-        """Retrieves the project name from the repository. This need to be
-        put here, as only the parser is specific to the repository type"""
-    
-    @abc.abstractmethod
-    def getProjectURL(self):
+    def get_project_url(self):
         """Retrieves the project url from the repository. This need to be
         put here, as only the parser is specific to the repository type"""
-    
-    
-    def getImmediateSubdirectories(self, a_dir):
-        """ Helper method, which gets the **immediate** subdirectoriesof a path. Is helpful, if one want to create a 
-        parser, which looks if certain folders are there.
-        
-        :param a_dir: directory from which **immediate** subdirectories should be listed """
-        return [name for name in os.listdir(a_dir)
-            if os.path.isdir(os.path.join(a_dir, name))]
-            
-            
-            
-            
-        
+
+    @staticmethod
+    def find_correct_parser(repository_path):
+        """ Finds the correct parser by executing the parser.detect() method on
+        the given repository path
+
+        :param repository_path: path to the repository
+        """
+
+        # Import parser plugins
+        pyvcsshark.utils.find_plugins(os.path.dirname(os.path.realpath(__file__)))
+
+        # Trying to find the correct parser by checking if it implements the
+        # needed methods and calling the detect method
+        correct_parser = None
+        for sc in BaseParser.__subclasses__():
+            parser = sc()
+            if parser.detect(repository_path):
+                return parser
+
+        # Check if correct parser was found
+        if correct_parser is None:
+            raise Exception("No fitting parser found for repository located at %s" % repository_path)
+        else:
+            return correct_parser
