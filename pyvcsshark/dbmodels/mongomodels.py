@@ -102,6 +102,7 @@ class Issue(Document):
     fix_versions = ListField(StringField())
     assignee_id = ObjectIdField()
     issue_links = ListField(DictField())
+    parent_issue_id = ObjectIdField()
     original_time_estimate=IntField()
     environment = StringField()
 
