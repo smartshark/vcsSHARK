@@ -5,18 +5,22 @@ NEW_UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
 cp -R $REPOSITORY_PATH "/dev/shm/$NEW_UUID"
 
-COMMAND="python3.5 $PLUGIN_PATH/vcsshark.py --db-driver mongo --db-hostname $3 --db-port $4 --db-database $5 --uri /dev/shm/$NEW_UUID"
+COMMAND="python3.5 $PLUGIN_PATH/vcsshark.py --project-name $3 --db-hostname $5 --db-port $6 --db-database $7 --db-driver mongo --path /dev/shm/$NEW_UUID"
 
-if [ ! -z ${6+x} ]; then
-	COMMAND="$COMMAND --db-user ${6}"
+if [ ! -z ${4+x} ] && [ ${4} != "None" ]; then
+    COMMAND="$COMMAND --debug ${4}"
 fi
 
-if [ ! -z ${7+x} ]; then
-	COMMAND="$COMMAND --db-password ${7}"
+if [ ! -z ${8+x} ] && [ ${8} != "None" ]; then
+	COMMAND="$COMMAND --db-user ${8}"
 fi
 
-if [ ! -z ${8+x} ]; then
-	COMMAND="$COMMAND --db-authentication ${8}"
+if [ ! -z ${9+x} ] && [ ${9} != "None" ]; then
+	COMMAND="$COMMAND --db-password ${9}"
+fi
+
+if [ ! -z ${10+x} ] && [ ${10} != "None" ]; then
+	COMMAND="$COMMAND --db-authentication ${10}"
 fi
 
 $COMMAND

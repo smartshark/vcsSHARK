@@ -238,7 +238,7 @@ class CommitStorageProcess(multiprocessing.Process):
             else:
                 try:
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, date=tag.taggerDate,
-                                    offset=tag.taggerOffset).save()
+                                    date_offset=tag.taggerOffset).save()
                 except (DuplicateKeyError, NotUniqueError):
                     mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name).only('id').get()
 
