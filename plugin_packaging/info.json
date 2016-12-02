@@ -19,6 +19,39 @@
         "libgit2-dev", 
         "libgit2-24"
     ],
+    "created_collections": [
+		{
+			"name": "commit",
+			"shard_key": {"revision_hash": 1, "vcs_system_id": 1},
+			"unique": true
+		},
+        {
+			"name": "file",
+			"shard_key": {"path": 1, "vcs_system_id": 1},
+			"unique": true
+		},
+        {
+			"name": "file_action",
+			"shard_key": {"_id": "hashed"}
+		},
+        {
+			"name": "hunk",
+			"shard_key": {"file_action_id": "hashed"}
+		},
+        {
+			"name": "people",
+			"shard_key": {"email": 1, "name": 1},
+			"unique": true
+		},
+        {
+			"name": "tag",
+			"shard_key": {"commit_id": "hashed"}
+		},
+		{
+			"name": "vcs_system",
+			"shard_key": {"url": "hashed"}
+		}
+	],
     "description": "Plugin to get the history of a project from a GIT repository.",
     "requires": [
     ],

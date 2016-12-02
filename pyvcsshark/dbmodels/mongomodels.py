@@ -306,7 +306,7 @@ class Tag(Document):
             'name',
             ('name', 'commit_id'),
         ],
-        'shard_key': ('commit_id', 'name'),
+        'shard_key': ('commit_id', ),
     }
 
     # PK: commit_id

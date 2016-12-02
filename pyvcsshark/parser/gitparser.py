@@ -112,7 +112,7 @@ class GitParser(BaseParser):
             if isinstance(tag_object, pygit2.Tag):
                 people_model = PeopleModel(tag_object.tagger.name, tag_object.tagger.email)
                 tag_model = TagModel(tag_name, getattr(tag_object, 'message', None), people_model,
-                                    tag_object.tagger.time, tag_object.tagger.offset)
+                                     tag_object.tagger.time, tag_object.tagger.offset)
             else:
                 tag_model = TagModel(tag_name)
                 
