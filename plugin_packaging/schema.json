@@ -248,6 +248,11 @@
                "logical_type":"Name",
                "field_name":"name"
             },
+            {
+               "type": "ObjectIdType",
+               "logical_type": "OID",
+               "field_name": "vcs_system_id"
+            },
             {  
                "type":"ObjectIdType",
                "logical_type":"RID",

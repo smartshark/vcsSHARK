@@ -62,7 +62,7 @@ class CommitModel(object):
     @branches.setter
     def branches(self, value):
         if(value is not None and type(value) is not set):
-            raise Exception("Branches must be a list!")
+            raise Exception("Branches must be a set!")
         
         if(value is not None):
             for branch in value:
@@ -78,12 +78,12 @@ class CommitModel(object):
     @tags.setter
     def tags(self, value):
         if(value is not None and type(value) is not list):
-            raise Exception("Hunks must be a list!")
+            raise Exception("Tags must be a list!")
         
         if(value is not None):
             for tag in value:
                 if(not isinstance(tag, TagModel)):
-                    raise Exception("Hunk is not a Hunk model!")
+                    raise Exception("Tag is not a Tag model!")
         
         self._tags = value
     

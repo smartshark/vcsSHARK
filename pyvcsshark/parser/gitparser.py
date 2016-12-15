@@ -106,17 +106,21 @@ class GitParser(BaseParser):
         commit_id = str(tagged_commit.id)
         tag_name = tag_name.split("/")[-1]
 
+        # If we have an annotated tag, get all the information we can out of it
+        if isinstance(tag_object, pygit2.Tag):
+            people_model = PeopleModel(tag_object.tagger.name, tag_object.tagger.email)
+            tag_model = TagModel(tag_name, getattr(tag_object, 'message', None), people_model,
+                                 tag_object.tagger.time, tag_object.tagger.offset)
+        else:
+            tag_model = TagModel(tag_name)
+
+        # As it can happen that we have commits with tags that are not on any branch (e.g. project Zookeeper), we need
+        # to take care of that here
         if commit_id in self.commits_to_be_processed:
-            
-            # If we have an annotated tag, get all the information we can out of it
-            if isinstance(tag_object, pygit2.Tag):
-                people_model = PeopleModel(tag_object.tagger.name, tag_object.tagger.email)
-                tag_model = TagModel(tag_name, getattr(tag_object, 'message', None), people_model,
-                                     tag_object.tagger.time, tag_object.tagger.offset)
-            else:
-                tag_model = TagModel(tag_name)
-                
             self.commits_to_be_processed[commit_id]['tags'].append(tag_model)
+        else:
+            self.commits_to_be_processed[commit_id] = {'branches': set([]), 'tags': [tag_model]}
+            self.commit_queue.put(commit_id)
 
     def initialize(self):
         """ Initializes the parser. It gets all the branch and tag information and puts it into two different locations: First the commit id
@@ -141,16 +145,15 @@ class GitParser(BaseParser):
             for child in self.repository.walk(commit.id,
                                               pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
                 self.add_branch(child.id, branch)
-                
+
         self.logger.info("Getting tags...")
-    
         # Walk through every tag and put the information in the dictionary via the addtag method
         for tag in tags:
             reference = self.repository.lookup_reference(tag)
             tag_object = self.repository[reference.target.hex]
             tagged_commit = self.repository.lookup_reference(tag).peel()
-    
             self.add_tag(tagged_commit, tag, tag_object)
+
 
     def parse(self, repository_path, datastore):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
@@ -258,7 +261,6 @@ class CommitParserProcess(multiprocessing.Process):
         author_model = PeopleModel(commit.author.name, commit.author.email)
         committer_model = PeopleModel(commit.committer.name, commit.committer.email)
         parent_ids = [str(parentId) for parentId in commit.parent_ids]
-
         commit_model = CommitModel(string_commit_hash, self.commits_to_be_processed[string_commit_hash]['branches'],
                                    self.commits_to_be_processed[string_commit_hash]['tags'], parent_ids,
                                    author_model, committer_model, commit.message, changed_files, commit.author.time,

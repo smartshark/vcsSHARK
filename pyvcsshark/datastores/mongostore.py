@@ -195,22 +195,22 @@ class CommitStorageProcess(multiprocessing.Process):
         .. NOTE:: We use the project id and the revision hash to find the commit in the datastore.
         """
 
-        old_tags = set(Tag.objects(commit_id=mongo_commit.id).all())
+        old_tags = list(Tag.objects(commit_id=mongo_commit.id).all())
 
         # Directly creates the new tags and associates it with the new commit
-        new_tags = set(self.create_tags(mongo_commit.id, commit.tags))
+        new_tags = self.create_tags(mongo_commit.id, commit.tags)
 
-        old_branches = set(mongo_commit.branches)
-        new_branches = set(self.create_branch_list(commit.branches))
-
-        # If they are not equal, we need to update the commit and delete old tags
+        # If they are not equal, we need to delete old tags
         if old_tags != new_tags:
-            for tag in list(old_tags - new_tags):
-                Tag.objects(id=tag.id).delete()
+            for old_tag in old_tags:
+                if old_tag not in new_tags:
+                    Tag.objects(id=old_tag.id).delete()
 
         # If they are not equal we need to update the commit
+        old_branches = set(mongo_commit.branches)
+        new_branches = set(self.create_branch_list(commit.branches))
         if old_branches != new_branches:
-            mongo_commit.update_one(branches=new_branches)
+            mongo_commit.update(branches=new_branches)
 
     def create_branch_list(self, branches):
         """Creates a list of the different branch names, where a commit belongs to. We go through the \
@@ -232,15 +232,17 @@ class CommitStorageProcess(multiprocessing.Process):
                 tagger_id = self.create_people(tag.tagger.name, tag.tagger.email)
                 try:
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, message=tag.message,tagger_id=tagger_id,
-                                    date=tag.taggerDate, date_offset=tag.taggerOffset).save()
+                                    date=tag.taggerDate, date_offset=tag.taggerOffset,
+                                    vcs_system_id=self.vcs_system_id).save()
                 except (DuplicateKeyError, NotUniqueError):
-                    mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name).only('id').get()
+                    mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name)\
+                        .only('id', 'name').get()
             else:
                 try:
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, date=tag.taggerDate,
-                                    date_offset=tag.taggerOffset).save()
+                                    date_offset=tag.taggerOffset, vcs_system_id=self.vcs_system_id).save()
                 except (DuplicateKeyError, NotUniqueError):
-                    mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name).only('id').get()
+                    mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name).only('id', 'name').get()
 
             tag_list.append(mongo_tag)
         return tag_list
