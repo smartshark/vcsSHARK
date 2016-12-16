@@ -105,6 +105,7 @@ class Issue(Document):
     parent_issue_id = ObjectIdField()
     original_time_estimate=IntField()
     environment = StringField()
+    platform = StringField()
 
     def __str__(self):
         return "System_id: %s, issue_system_id: %s, title: %s, desc: %s, created_at: %s, updated_at: %s, issue_type: %s," \
@@ -119,49 +120,6 @@ class Issue(Document):
 
 
 class Event(Document):
-    STATI = (
-        ('created', 'The issue was created by the actor.'),
-        ('closed','The issue was closed by the actor. When the commit_id is present, it identifies the commit '
-                  'that closed the issue using "closes / fixes #NN" syntax.'),
-        ('reopened', 'The issue was reopened by the actor.'),
-        ('subscribed', 'The actor subscribed to receive notifications for an issue.'),
-        ('merged','The issue was merged by the actor. The `commit_id` attribute is the SHA1 of the HEAD '
-                  'commit that was merged.'),
-        ('referenced', 'The issue was referenced from a commit message. The `commit_id` attribute is the '
-                       'commit SHA1 of where that happened.'),
-        ('mentioned', 'The actor was @mentioned in an issue body.'),
-        ('assigned', 'The issue was assigned to the actor.'),
-        ('unassigned', 'The actor was unassigned from the issue.'),
-        ('labeled', 'A label was added to the issue.'),
-        ('unlabeled', 'A label was removed from the issue.'),
-        ('milestoned', 'The issue was added to a milestone.'),
-        ('demilestoned', 'The issue was removed from a milestone.'),
-        ('renamed', 'The issue title was changed.'),
-        ('locked', 'The issue was locked by the actor.'),
-        ('unlocked','The issue was unlocked by the actor.'),
-        ('head_ref_deleted', 'The pull requests branch was deleted.'),
-        ('head_ref_restored', 'The pull requests branch was restored.'),
-        ('description', 'The description was changed.'),
-        ('priority', 'The issue was added to a milestone.'),
-        ('status', 'The status was changed.'),
-        ('resolution', 'The resolution was changed.'),
-        ('issuetype','The issuetype was changed.'),
-        ('environment', 'The environment was changed.'),
-        ('timeoriginalestimate', 'The original time estimation for fixing the issue was changed.'),
-        ('version', 'The affected versions was changed.'),
-        ('component', 'The component list was changed.'),
-        ('labels', 'The labels of the issue were changed.'),
-        ('fix version', 'The fix versions of the issue were changed.'),
-        ('link', 'Issuelinks were added or deleted.'),
-        ('attachment','The attachments of the issue were changed.'),
-        ('release note', 'A release note was changed.'),
-        ('remoteissuelink', 'A remote link was added to the issue.'),
-        ('comment', 'A comment was deleted or added to the issue.'),
-        ('hadoop flags', 'Hadoop flags were change to the issue.'),
-        ('timeestimate', 'Time estimation was changed in the issue.'),
-        ('tags', 'Tags of the issue were changed.')
-    )
-
     meta = {
         'indexes': [
             'issue_id',
@@ -177,7 +135,7 @@ class Event(Document):
     external_id = StringField(unique_with=['issue_id'])
     issue_id = ObjectIdField()
     created_at = DateTimeField()
-    status = StringField(max_length=50, choices=STATI)
+    status = StringField(max_length=50)
     author_id = ObjectIdField()
 
     old_value = StringField()
@@ -314,6 +272,7 @@ class Tag(Document):
 
     name = StringField(max_length=150, required=True, unique_with=['commit_id'])
     commit_id = ObjectIdField(required=True)
+    vcs_system_id = ObjectIdField(required=True)
     message = StringField()
     tagger_id = ObjectIdField()
     date = DateTimeField()
@@ -389,7 +348,6 @@ class TestState(Document):
     error = BooleanField()
 
 
-
 class CodeEntityState(Document):
     meta = {
         'indexes': [
@@ -408,6 +366,7 @@ class CodeEntityState(Document):
     ce_parent_id = ObjectIdField()
     cg_ids = ListField(ObjectIdField())
     ce_type = StringField()
+    imports = ListField(StringField())
     start_line = IntField()
     end_line = IntField()
     start_column = IntField()
