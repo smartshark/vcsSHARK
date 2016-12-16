@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 
 # Check dependencies
-deps = ['mongoengine >= 0.10.5',
+deps = ['mongoengine >= 0.11.0',
         'pygit2 == 0.24.0',
         'pymongo >= 3.2']
 
@@ -28,6 +28,3 @@ setup(name="vcsSHARK",
       package_data={
         'pyvcsshark': ['loggerConfiguration.json'],
       },)
-      
-
-      

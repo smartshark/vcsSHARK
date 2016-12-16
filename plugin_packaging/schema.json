@@ -268,7 +268,7 @@
                "type":"ObjectIdType",
                "logical_type":"RID",
                "reference_to": "project",
-               "field_name":"project_id"
+               "field_name":"project_id",
                "desc": "ObjectID that links to the projects, to which this vcs system belongs"
             },
             {  
