@@ -4,8 +4,7 @@ import logging
 import re
 import uuid
 import multiprocessing
-from pyvcsshark.dbmodels.models import BranchModel, PeopleModel, TagModel,\
-    FileModel, CommitModel, Hunk
+from pyvcsshark.parser.models import BranchModel, PeopleModel, TagModel, FileModel, CommitModel, Hunk
 
 
 class GitParser(BaseParser):

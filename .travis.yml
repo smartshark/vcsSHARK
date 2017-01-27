@@ -1,0 +1,11 @@
+# check if tests succeed
+language: python
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+before_install:
+  - sudo apt-get install libgit2-24 libgit2-dev
+install: "python setup.py install"
+#script: "python setup.py test"

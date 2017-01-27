@@ -2,8 +2,8 @@ import sys
 from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
 from pyvcsshark.datastores.basestore import BaseStore
-from pyvcsshark.dbmodels.mongomodels import *
 from mongoengine import connect, NotUniqueError, DoesNotExist
+from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk
 
 import multiprocessing
 import logging
