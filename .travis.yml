@@ -1,7 +1,5 @@
 # check if tests succeed
 sudo: required
-language: python
-
 services:
   - docker
 
