@@ -1,30 +1,40 @@
-import os
 import sys
 
 from setuptools import setup, find_packages
 
+if not sys.version_info[0] == 3:
+    print('only python3 supported!')
+    sys.exit(1)
 
-# Check dependencies
-deps = ['mongoengine >= 0.11.0',
-        'pygit2 == 0.24.0',
-        'pymongo >= 3.2']
-
-setup(name="vcsSHARK",
-      version="0.1",
-      author="Fabian Trautsch",
-      author_email="ftrautsch@googlemail.com",
-      description="vcsSHARK is a tool to analyze source code repositories",
-      install_requires=deps,
-      url="https://github.com/ftrautsch/vcsSHARK",
-      packages=find_packages(),
-      entry_points={
-          'console_scripts': [
-              'vcsshark = pyvcsshark:start'
-          ]
-      },
-      test_suite = 'tests',
-      zip_safe=False,
-      include_package_data=True,
-      package_data={
+setup(
+    name="vcsSHARK",
+    version='1.0.0',
+    author='Fabian Trautsch',
+    author_email='trautsch@cs.uni-goettingen.de',
+    description='vcsSHARK is a tool to analyze source code repositories',
+    install_requires=['mongoengine', 'pygit2==0.24.2', 'pymongo', 'pycoshark>=1.0.0'],
+    dependency_links=['git+https://github.com/smartshark/pycoSHARK.git@1.0.0#egg=pycoshark-1.0.0'],
+    url='https://github.com/smartshark/vcsSHARK',
+    download_url='https://github.com/smartshark/vcsSHARK/zipball/master',
+    packages=find_packages(),
+    entry_points={
+        'console_scripts': [
+            'vcsshark = pyvcsshark:start'
+        ]
+    },
+    test_suite = 'tests',
+    zip_safe=False,
+    include_package_data=True,
+    package_data={
         'pyvcsshark': ['loggerConfiguration.json'],
-      },)
+    },
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: Apache2.0 License",
+        "Operating System :: POSIX :: Linux",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+)
