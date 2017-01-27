@@ -26,16 +26,13 @@ class DatastoreMock(object):
     def storeIdentifier(self):
         return "datastoremock"
 
-    def addCommit(self, commitModel):
+    def add_commit(self, commitModel):
         self.queue.put(commitModel)
-        
-    def deleteAll(self):
-        return
     
     def finalize(self): 
         return
     
-    def getCommitQueue(self):
+    def get_commit_queue(self):
         return self.queue
     
 

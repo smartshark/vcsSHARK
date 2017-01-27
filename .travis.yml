@@ -6,6 +6,7 @@ python:
   - "3.5"
   - "3.6"
 before_install:
+  - sudo apt-get -qq update
   - sudo apt-get install libgit2-24 libgit2-dev
 install: "python setup.py install"
 

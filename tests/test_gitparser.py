@@ -7,11 +7,12 @@ import unittest
 import logging
 import uuid
 import os
-import time
 import datetime
+
+from pytest import fail
+
 from pyvcsshark.parser.gitparser import GitParser
 from tests.datastoremock import DatastoreMock
-from pyvcsshark.dbmodels.models import BranchModel, TagModel
 
 class GitParserTest(unittest.TestCase):
     
@@ -30,17 +31,11 @@ class GitParserTest(unittest.TestCase):
         pass
    
     def test_repositoryType(self):
-        self.assertEqual(self.parser.repositoryType, "git")
+        self.assertEqual(self.parser.repository_type, "git")
         pass
     
     def test_getProjectURLOfLocalProject(self):
-        self.assertTrue(self.parser.getProjectURL().startswith("local"))
-    
-    def test_getProjectNameOfLocalProject(self):
-        try:
-            val = uuid.UUID(self.parser.getProjectName(), version=4)
-        except ValueError:
-            fail("Not a valid uuid!")
+        self.assertTrue(self.parser.get_project_url().startswith("local"))
             
 class GitParserCommitsTest(GitParserTest):
     
@@ -59,7 +54,7 @@ class GitParserCommitsTest(GitParserTest):
         cls.parser.parse(os.path.dirname(os.path.realpath(__file__))+"/data/gitRepo", datastore)
         
         # get the commits from our mockdatastore
-        queue = datastore.getCommitQueue()
+        queue = datastore.get_commit_queue()
         while(queue.empty() == False):
             cls.listOfCommits.append(queue.get())
             
