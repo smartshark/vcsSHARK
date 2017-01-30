@@ -7,10 +7,11 @@ services:
 
 before_install:
   - docker build -t testdocker .
-  - docker run -itd --name=mongodb mongo:3.4 /bin/bash
+  - docker network create -d bridge mongodb-net
+  - docker run -d --net=mongodb-net --name=mongodb mongo:3.4
 
 install:
-  - docker run -itd --link mongodb testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py install"
+  - docker run -itd --net=mongodb-net --name client testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py install"
 
 script:
-  - docker run -itd --link mongodb testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py test"
+  - docker run -itd --net=mongodb-net --name client testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py test"
