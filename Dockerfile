@@ -16,4 +16,4 @@ RUN pip3 install -U pip setuptools
 RUN mongod --dbpath /var/lib/mongodb --journal --logpath /var/log/mongodb/mongod.log --port 27017 --bind_ip 127.0.0.1 &
 
 
-RUN git clone https://github.com/smartshark/vcsSHARK /root/vcsshark
+RUN git clone --recursive https://github.com/smartshark/vcsSHARK /root/vcsshark

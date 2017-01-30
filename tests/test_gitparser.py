@@ -21,7 +21,7 @@ class GitParserTest(unittest.TestCase):
         logging.basicConfig(level=logging.ERROR)
         
         self.parser = GitParser()
-        self.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/gitRepo")
+        self.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository")
         pass
     
     def test_detect(self):
@@ -45,11 +45,11 @@ class GitParserCommitsTest(GitParserTest):
         logging.basicConfig(level=logging.ERROR)
         
         cls.parser = GitParser()
-        cls.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/gitRepo")
+        cls.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository")
         cls.parser.initialize()
                 
         datastore = DatastoreMock()
-        cls.parser.parse(os.path.dirname(os.path.realpath(__file__))+"/data/gitRepo", datastore)
+        cls.parser.parse(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository", datastore)
         
         # get the commits from our mockdatastore
         queue = datastore.get_commit_queue()
