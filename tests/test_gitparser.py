@@ -9,8 +9,6 @@ import uuid
 import os
 import datetime
 
-from pytest import fail
-
 from pyvcsshark.parser.gitparser import GitParser
 from tests.datastoremock import DatastoreMock
 
