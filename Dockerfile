@@ -10,7 +10,7 @@ RUN apt-get install -y python3-pip python3-cffi libgit2-24 libgit2-dev
 RUN apt-get install -y mongodb-org
 
 # Start mongodb
-RUN service mongod start
+RUN mongod
 
 
 RUN git clone https://github.com/smartshark/vcsSHARK /root/vcsshark
