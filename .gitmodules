@@ -1,0 +1,6 @@
+[submodule "testdatarepository"]
+	path = testdatarepository
+	url = https://github.com/smartshark/testdatarepository
+[submodule "tests/data/testdatarepository"]
+	path = tests/data/testdatarepository
+	url = https://github.com/smartshark/testdatarepository
