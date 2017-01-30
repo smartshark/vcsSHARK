@@ -7,7 +7,7 @@ services:
 
 before_install:
   - docker build -t testdocker .
-  - docker run testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py install"
 
-#install: "python setup.py install"
+install:
+  - docker run testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py install"
 #script: "python setup.py test"
