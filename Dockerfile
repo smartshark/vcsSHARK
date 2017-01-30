@@ -10,7 +10,7 @@ RUN apt-get install -y python3-pip python3-cffi libgit2-24 libgit2-dev
 RUN apt-get install -y mongodb-org
 
 # Start mongodb
-RUN mongod
+RUN mongod --dbpath /var/lib/mongodb --journal --logpath /var/log/mongodb/mongod.log --port 27017 --bind_ip 127.0.0.1
 
 
 RUN git clone https://github.com/smartshark/vcsSHARK /root/vcsshark
