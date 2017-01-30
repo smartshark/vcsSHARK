@@ -10,4 +10,6 @@ before_install:
 
 install:
   - docker run testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py install"
-#script: "python setup.py test"
+
+script:
+  - docker run testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py test"
