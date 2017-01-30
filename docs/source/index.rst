@@ -11,9 +11,11 @@ or even parsers for new repository types. Currently only mongodb as datastore ba
 :doc:`intro`
    A short introduction on **vcsSHARK**
 
+:doc:`extension`
+   Explaination of how to extend **vcsSHARK**
+
 :doc:`api`
    The complete API documentation of **vcsSHARK**
-
 
 Contents:
 
@@ -23,6 +25,7 @@ Contents:
    :hidden:
 
    intro
+   extension
    api
 
 Indices and tables

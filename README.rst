@@ -1,7 +1,11 @@
 vcsSHARK
 ========
-.. image:: https://travis-ci.org/smartshark/mailingSHARK.svg?branch=master
-    :target: https://travis-ci.org/smartshark/mailingSHARK
+.. image:: https://travis-ci.org/smartshark/vcsSHARK.svg?branch=master
+    :target: https://travis-ci.org/smartshark/vcsSHARK
+
+vcsSHARK collects data from Version Control Systems (VCSs).
+
+Currently, only git is supported.
 
 Documentation
 ==============

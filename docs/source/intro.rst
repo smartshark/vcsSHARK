@@ -2,74 +2,102 @@
 Introduction
 ============
 
-This introduction will show how to use and extend **vcsSHARK**. Furthermore, we list all requirements for this tool here, so that an
-easy installation is possible.
+This introduction will show how the requirements of **vcsSHARK** , how it is installed, tested, and executed. Furthermore,
+a small tutorial in the end will show step by step, how to use this tool.
 
-.. WARNING:: This software is highly experimental and still in development.
+vcsFoo is written in Python and uses the official libgit2 library for collecting the data. Furthermore,
+to speed up the whole storage and parsing process, vcsFoo uses the multiprocessing library of Python. Hence, several
+processes are started for parsing and storing the data.
+
+We use a vanilla Ubuntu 16.04 operating system as basis for the steps that we describe. If necessary, we give hints
+on how to perform this step with a different operating system.
 
 
-.. _requirements:
+.. WARNING:: This software is still in development.
 
-Requirements
+
+.. _installation:
+Installation
 ============
+The installation process is straight forward. For a vanilla Ubuntu 16.04, we need to install the following packages:
 
-There are several requirements for **vcsSHARK**:
+.. code-block:: bash
 
-*	Python3+ (only tested with python 3.5.0)
-*	Mongoengine (0.10.5) - available here: http://mongoengine.org/
-*	Pygit2 (0.23.2) - available here: http://www.pygit2.org/
-*	Pymongo (3.2) - available here: https://api.mongodb.org/python/current/
+	$ sudo apt-get install git python3-pip python3-cffi libgit2-24 libgit2-dev
+
+.. NOTE::
+	If you are using an older version of Ubuntu (or another operating system), you need to install libgit by hand.
+	The installation process is explained here: http://www.pygit2.org/install.html.
+	But, you need to choose a version, which is compatible with pygit2 0.24.2.
 
 
-.. WARNING:: Make sure, that the following packages are installed, as pygit2 may be not functioning as desired: libssl, libssl-dev, libhttp-parser-dev, libbssh-2-1-dev, libssh-dev, pkg-config, libcurl-dev, libcurl4-openssl-dev, libcurl.
+Furthermore, you need a running MongoDB. The process of setting up a MongoDB is explained here: https://docs.mongodb.com/manual/installation/
 
-.. NOTE:: It may be possible, that **vcsSHARK** also works with other versions of the named libraries. But we only tested the versions, which are given in brackets.
+
+After these requirements are met, first clone the **vcsSHARK** `repository <https://github.com/smartshark/vcsSHARK/>`_ repository
+to a folder you want. In the following, we assume that you have cloned the repository to **~/vcsSHARK**. Afterwards,
+the installation of **vcsSHARK** can be done in two different ways:
+
+via Pip
+-------
+.. code-block:: bash
+
+	$ sudo pip3 install https://github.com/smartshark/vcsSHARK/zipball/master --process-dependency-links
+
+via setup.py
+------------
+.. code-block:: bash
+
+	$ sudo python3.5 ~/vcsSHARK/setup.py install
+
+
+
+.. NOTE::
+	It is advisable to change the location, where the logs are written to.
+	They can be changed in the **pyvcsshark/loggerConfiguration.json**. There are different file handlers defined.
+	Just change the "filename"-attribute to a location of your wish.
+
 
 Tests
 =====
-**vcsSHARK** can be tested by calling 
+The tests of **vcsSHARK** can be executed by calling
 
 	.. code-block:: bash
 
-		$ python setup.py test
+		$ python3.5 ~/vcsSHARK/setup.py test
 
 The tests can be found in the folder "tests". 
 
-.. WARNING:: The generated tests are not fully complete! They just test the very basic functionality and it can happen, that something is not working but the tests say everything is fine!
+.. WARNING:: The generated tests are not fully complete. They just test the basic functionality.
 
 
-How to Use
+Execution
 ==========
-In this chapter, we explain how you can install **vcsSHARK** or use it directly from the command line. Furhtermore, a short step-by-step tutorial shows,
-how **vcsSHARK** can be used for analyzing the repository of `checkstyle <https://github.com/checkstyle/checkstyle>`_.
+In this chapter, we explain how you can execute **vcsSHARK**. Furthermore, the different execution parameters are
+explained in detail.
 
+1) Checkout the repository from which you want to collect the data.
 
-Installation
-------------
-The installation process is straight forward. First, clone the repository of **vcsSHARK**.  After you have cloned it you can either:
-
-1.	Install **vcsSHARK** via or
+2) Make sure that your MongoDB is running!
 
 	.. code-block:: bash
 
-		$ sudo python setup.py install
+		$ sudo systemctl status mongodb
 
-
-2.	Execute **vcsSHARK** via
+3) Make sure that the project from which you collect data is already in the project collection of the MongoDB. If not,
+you can add them by:
 
 	.. code-block:: bash
 
-		$ python vcsshark.py <arguments>
+		$ db.project.insert({"name": <PROJECT_NAME>})
 
 
-.. NOTE:: It is advisable to change the location, where the logs are written to. They can be changed in the **pyvcsshark/loggerConfiguration.json**. There are differnt file handlers defined. Just change the "filename"-attribute to a location of your wish.
+4) Execute **vcsSHARK** by calling
 
+	.. code-block:: bash
 
-.. _usage:
+		$ python3.5 ~/vcsSHARK/vcsshark.py
 
-Usage
------
-**vcsSHARK** is easy to use. Nevertheless, you need to checkout/clone the repository you want to analyze first. 
 
 **vcsSHARK** supports different commandline arguments:
 
@@ -80,12 +108,6 @@ Usage
 .. option:: --version, -v
 
 	shows the version
-
-.. option:: --uri <PATH>, -u <PATH>
-
-	path to the repository
-	
-		.. WARNING:: Must be a local path, therefore you need to check the repository out beforehand!
 
 .. option:: --db-driver <DRIVER>, -D <DRIVER>
 
@@ -115,40 +137,41 @@ Usage
 
 	name of the authentication database
 
-.. option:: --config-file <CONFIG_FILE>, -f <CONFIG_FILE>
-	
-	path to a custom configuration file
+.. option:: --debug <DEBUG_LEVEL>, -d <DEBUG_LEVEL>
 
-		.. NOTE:: A sample configuration file can be found in the repository (config.sample)
+	Debug level (INFO, DEBUG, WARNING, ERROR)
 
+.. option:: --project-name <PROJECT_NAME>
 
+	Name of the project, from which the data is collected
 
-Configuration File
-------------------
+.. option:: --path <PATH>
 
-The configuration file is a simple key-value pair file. An example can be found in the repository (config.sample) and here:
-
-.. include:: ../../config.sample
-	:literal:
+	Path to the checked out repository directory
 
 
-The options described in this configuration file are the same as described above in :ref:`usage`.
+Tutorial
+========
 
+In this section we show step-by-step how you can analyze and store the repository of the
+`checkstyle <https://github.com/checkstyle/checkstyle>`_ project in a mongodb.
 
-Small Tutorial
---------------
+1.	First, if you want to use the mongodb datastore you need to have a mongodb running (version 3.2+).
+How this can be achieved is explained `here <https://docs.mongodb.org/manual/>`_.
 
-In this section we show step-by-step how you can analyze and store the repository of the `checkstyle <https://github.com/checkstyle/checkstyle>`_ project in a mongodb.
+.. WARNING::
+	Make sure, that you activated the authentication of mongodb
+	(**vcsSHARK** also works without authentication, but this way it is much safer!). Hints how this can be achieved are given `here <https://docs.mongodb.org/manual/core/authentication/>`_.
 
-1.	First, if you want to use the mongodb datastore you need to have a mongodb running (version 3.0+). How this can be achieved is explained `here <https://docs.mongodb.org/manual/>`_.
-
-.. WARNING:: Make sure, that you activated the authentication of mongodb (**vcsSHARK** also works without authentication, but this way it is much safer!). Hints how this can be achieved are given `here <https://docs.mongodb.org/manual/core/authentication/>`_.
-
-2. Clone the **vcsSHARK** repository via
+2. Add checkstyle to the projects table in MongoDB.
 
 	.. code-block:: bash
 
-		$ git clone https://github.com/ftrautsch/vcsSHARK
+		$ mongo
+		$ use vcsshark
+		$ db.project.insert({"name": "checkstyle"})
+
+3. Install **vcsSHARK**. An explanation is given above.
 
 3. Enter the **vcsSHARK** directory via
 
@@ -160,115 +183,23 @@ In this section we show step-by-step how you can analyze and store the repositor
 
 	.. code-block:: bash
 
-		$ python vcsshark.py --help
+		$ python3.5 vcsshark.py --help
 
-	.. NOTE:: If you receive an error here, it is most likely, that you do not have installed all requirements mentioned in :ref:`requirements`. You can try step 5, as most requirements can be automatically installed.
+	.. NOTE:: If you receive an error here, it is most likely, that the installation process failed.
 
-5. (**optional**) Install vcsshark via the setup script
-
-	.. code-block:: bash
-
-		$ sudo python setup.py install
-
-6. Clone the checkstyle repository to your home directory (or another place)
+5. Clone the checkstyle repository to your home directory (or another place)
 
 	.. code-block:: bash
 
 		$ git clone https://github.com/checkstyle/checkstyle ~/checkstyle
 
-7. Execute **vcsSHARK** if you have installed it via:
+6. Execute **vcsSHARK**:
 
 	.. code-block:: bash
 
-		$ vcsshark -D mongo -U root -P root -DB vcsshark -H localhost -p 27017 -u ~/checkstyle -a admin
-
-	or if not:
-
-	.. code-block:: bash
-
-		$ python3.5 vcsshark.py -D mongo -U root -P root -DB vcsshark -H localhost -p 27017 -u ~/checkstyle -a admin
-
-	.. NOTE:: Here you must be in the vcsSHARK directory!
+		$ cd ~/vcsSHARK
+		$ python3.5 vcsshark.py -D mongo -DB vcsshark -H localhost -p 27017 -n checkstyle --path ~/checkstyle
 
 
-.. NOTE:: If any errors occure here, please make sure that you use the correct versions of the requirements mentioned in :ref:`requirements`.
+Thats it. The results are explained on the webpage of `SmartSHARK <http://smartshark2.informatik.uni-goettingen.de/documentation/>`_.
 
-Thats it. The database scheme for the mongodb can be found in the API documentation of the mongodb datastore.
-
-
-
-
-
-
-How to Extend
-=============
-
-**vcsSHARK** has two different extension possibilities. First, you can add new parsers for new repository types (e.g. SVN, CVS). Currently, only GIT repositories can  be parsed. Second, there is the possibility to add new datastores (e.g. MySQL). Currently, only MongoDB is supported as a datastore backend. This chapter will show what needs to be done to extend **vcsSHARK**.
-
-
-Parsers
--------
-
-All parsers are stored in pyvcsshark/parser folder. There are conditions, which must be fulfiled by a parser so that it is accepted by **vcsSHARK**:
-
-1.	The \*.py file for this parser must be stored in the pyvcsshark/parser folder.
-
-2.	It must inherit from :class:`~pyvcsshark.parser.baseparser.BaseParser` and implement the methods defined there.
-
-The process of chosing the parser is the following:
-
-*	Every parser gets instantiated
-
-*	The detect method is executed
-
-*	If a parser returns true for the detect method, this parser is used for the repository
-
-
-There are several important things to note:
-
-1.	If you want to use a logger for your implementation, get it via
-
-	.. code-block:: python
-	
-		logger = logging.getLogger("parser")
-
-
-2.	You must call the :func:`~pyvcsshark.datastores.basestore.BaseStore.addCommit` function of the datastore, that is given to the parser as argument of the parse method, to add commits.
-
-3.	You must use the models as they are defined in in the module **pyvcsshark.dbmodels.models**, as otherwise the interfaces do not match
-
-4.	The execution logic is in the application class and explained here :class:`~pyvcsshark.Application`.
-
-Datastores
-----------
-
-All datastores are stored in the pyvcsshark/datastores folder. There are conditions, which must be fulfilled by a datastore so that it is accepted by **vcsSHARK**:
-
-1.	The \*.py file for this datastore must be stored in the pyvcsshark/datastore folder.
-
-2.	It must inherit from :class:`~pyvcsshark.datastores.basestore.BaseStore` and implement the methods defined there.
-
-	.. NOTE:: The storeIdentifier property must just return a string, which represents your datastore and is not used by another datastore
-
-The process of chosing the datastore is the following:
-
-*	Every datastore gets instantiated
-
-*	The storeIdentifier property is compared to the db-driver that was chosen by the user
-
-*	If they are equal, the correct datastore was found
-
-
-There are several important things to note:
-
-1.	If you want to use a logger for your implementation, get it via 
-	
-	.. code-block:: python
-	
-		logger = logging.getLogger("datastore")
-
-2.	The :func:`~pyvcsshark.datastores.basestore.BaseStore.addCommit` method gets a commitModel of class :class:`~pyvcsshark.dbmodels.models.CommitModel` as parameter. Think about this first!
-
-3.	The execution logic is in the application class and explained here :class:`~pyvcsshark.Application`.
-
-.. NOTE:: Dont mind if your datastore do not need all the information of the :func:`~pyvcsshark.datastores.basestore.BaseStore.initialize` function.
