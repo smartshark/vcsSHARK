@@ -1,6 +1,6 @@
 vcsSHARK
 ========
-
+[![Build Status](https://travis-ci.org/smartshark/vcsSHARK.svg?branch=master)](https://travis-ci.org/smartshark/vcsSHARK)
 
 Documentation
 ==============
