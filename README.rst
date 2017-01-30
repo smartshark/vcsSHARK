@@ -1,6 +1,7 @@
 vcsSHARK
 ========
-[![Build Status](https://travis-ci.org/smartshark/vcsSHARK.svg?branch=master)](https://travis-ci.org/smartshark/vcsSHARK)
+.. image:: https://travis-ci.org/smartshark/mailingSHARK.svg?branch=master
+    :target: https://travis-ci.org/smartshark/mailingSHARK
 
 Documentation
 ==============
