@@ -7,9 +7,10 @@ services:
 
 before_install:
   - docker build -t testdocker .
+  - docker run -itd --name=mongodb mongo:3.4 /bin/bash
 
 install:
-  - docker run testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py install"
+  - docker run -itd --link mongodb testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py install"
 
 script:
-  - docker run testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py test"
+  - docker run -itd --link mongodb testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py test"
