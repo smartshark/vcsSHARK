@@ -1,3 +1,0 @@
-mongoengine
-pygit2==0.24.2
-pymongo
