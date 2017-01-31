@@ -277,5 +277,5 @@ intersphinx_mapping = {
     'pygit2': ('http://www.pygit2.org/', None),
     'mongoengine': ('http://docs.mongoengine.org/',None),
     'python': ('https://docs.python.org/3.5', None),
-    'pymongo': ('http://api.mongodb.org/python/current', None)
+    'pymongo': ('http://api.mongodb.org/python/current/', None)
 }

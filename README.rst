@@ -16,14 +16,12 @@ vcsFoo is written in Python and uses the official libgit2 library for collecting
 to speed up the whole storage and parsing process, vcsFoo uses the multiprocessing library of Python. Hence, several
 processes are started for parsing and storing the data.
 
-We use a vanilla Ubuntu 16.04 operating system as basis for the steps that we describe. If necessary, we give hints
-on how to perform this step with a different operating system.
-
+We use a vanilla Ubuntu 16.04 operating system as basis for the steps that we describe. If necessary, we give hints on how to perform this step with a different operating system.
 
 .. WARNING:: This software is still in development.
 
-
 .. _installation:
+
 Installation
 ============
 The installation process is straight forward. For a vanilla Ubuntu 16.04, we need to install the following packages:
@@ -45,14 +43,16 @@ After these requirements are met, first clone the **vcsSHARK** `repository <http
 to a folder you want. In the following, we assume that you have cloned the repository to **~/vcsSHARK**. Afterwards,
 the installation of **vcsSHARK** can be done in two different ways:
 
+=======
 via Pip
--------
+=======
 .. code-block:: bash
 
 	$ sudo pip3 install https://github.com/smartshark/vcsSHARK/zipball/master --process-dependency-links
 
+============
 via setup.py
-------------
+============
 .. code-block:: bash
 
 	$ sudo python3.5 ~/vcsSHARK/setup.py install
@@ -108,53 +108,29 @@ you can add them by:
 
 **vcsSHARK** supports different commandline arguments:
 
-.. option:: --help, -h
+--help, -h: shows the help page for this command
 
-	shows the help page for this command
+--version, -v: shows the version
 
-.. option:: --version, -v
+--db-driver <DRIVER>, -D <DRIVER>: output datastore driver. Currently only mongodb is supported
 
-	shows the version
+--db-user <USER>, -U <USER>: datastore user name
 
-.. option:: --db-driver <DRIVER>, -D <DRIVER>
+--db-password <PASSWORD>, -P <PASSWORD>: datastore password
 
-	output datastore driver. Currently only mongodb is supported
+--db-database <DATABASENAME>, -DB <DATABASENAME>: database name (e.g., name of the mongodb database that should be used)
 
-.. option:: --db-user <USER>, -U <USER>
+--db-hostname <HOSTNAME>, -H <HOSTNAME>: hostname, where the datastore runs on
 
-	datastore user name
+--db-port <PORT>, -p <PORT>: port, where the datastore runs on
 
-.. option:: --db-password <PASSWORD>, -P <PASSWORD>
+--db-authentication <DB_AUTHENTICATION> -a <DB_AUTHENTICATION>:	name of the authentication database
 
-	datastore password
+--debug <DEBUG_LEVEL>, -d <DEBUG_LEVEL>: Debug level (INFO, DEBUG, WARNING, ERROR)
 
-.. option:: --db-database <DATABASENAME>, -DB <DATABASENAME>
+--project-name <PROJECT_NAME>: Name of the project, from which the data is collected
 
-	database name (e.g., name of the mongodb database that should be used)
-
-.. option:: --db-hostname <HOSTNAME>, -H <HOSTNAME>
-
-	hostname, where the datastore runs on
-
-.. option:: --db-port <PORT>, -p <PORT>
-
-	port, where the datastore runs on
-
-.. option:: --db-authentication <DB_AUTHENTICATION> -a <DB_AUTHENTICATION>
-
-	name of the authentication database
-
-.. option:: --debug <DEBUG_LEVEL>, -d <DEBUG_LEVEL>
-
-	Debug level (INFO, DEBUG, WARNING, ERROR)
-
-.. option:: --project-name <PROJECT_NAME>
-
-	Name of the project, from which the data is collected
-
-.. option:: --path <PATH>
-
-	Path to the checked out repository directory
+--path <PATH>: Path to the checked out repository directory
 
 
 Tutorial
@@ -169,7 +145,7 @@ How this can be achieved is explained `here <https://docs.mongodb.org/manual/>`_
 .. WARNING::
 	Make sure, that you activated the authentication of mongodb
 	(**vcsSHARK** also works without authentication, but with authentication it is much safer!).
-	Hints how this can be achieved are given `here <https://docs.mongodb.org/manual/core/authentication/>`_.
+	Hints how this can be achieved are given at this `website <https://docs.mongodb.org/manual/core/authentication/>`_.
 
 2. Add checkstyle to the projects table in MongoDB.
 
