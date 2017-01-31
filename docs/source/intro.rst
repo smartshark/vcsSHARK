@@ -161,7 +161,8 @@ How this can be achieved is explained `here <https://docs.mongodb.org/manual/>`_
 
 .. WARNING::
 	Make sure, that you activated the authentication of mongodb
-	(**vcsSHARK** also works without authentication, but this way it is much safer!). Hints how this can be achieved are given `here <https://docs.mongodb.org/manual/core/authentication/>`_.
+	(**vcsSHARK** also works without authentication, but with authentication it is much safer!).
+	Hints how this can be achieved are given `here <https://docs.mongodb.org/manual/core/authentication/>`_.
 
 2. Add checkstyle to the projects table in MongoDB.
 
@@ -201,5 +202,6 @@ How this can be achieved is explained `here <https://docs.mongodb.org/manual/>`_
 		$ python3.5 vcsshark.py -D mongo -DB vcsshark -H localhost -p 27017 -n checkstyle --path ~/checkstyle
 
 
-Thats it. The results are explained on the webpage of `SmartSHARK <http://smartshark2.informatik.uni-goettingen.de/documentation/>`_.
+Thats it. The results are explained in the database documentation
+of `SmartSHARK <http://smartshark2.informatik.uni-goettingen.de/documentation/>`_.
 

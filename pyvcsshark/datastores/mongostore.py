@@ -17,7 +17,7 @@ class MongoStore(BaseStore):
     """ Datastore implementation for saving data to the mongodb. Inherits from
     :class:`pyvcsshark.datastores.basestore.BaseStore`.
 
-    :property commitqueue: instance of a :class:`multiprocessing.JoinableQueue`, which  \
+    :property commit_queue: instance of a :class:`multiprocessing.JoinableQueue`, which  \
     holds objects of :class:`pyvcsshark.dbmodels.models.CommitModel`, that should be put into the mongodb
     :property NUMBER_OF_PROCESSES: holds the number of processes by calling :func:`multiprocessing.cpu_count`
     :property logger: holds the logging instance, by calling logging.getLogger("store")
@@ -104,8 +104,9 @@ class CommitStorageProcess(multiprocessing.Process):
     and writing it into the mongodb
 
     :param queue: queue, where the :class:`pyvcsshark.dbmodels.models.CommitModel` are stored in
-    :param projectId: object id of class :class:`bson.objectid.ObjectId` from the project
-    :param lastCommitDate: object of class :class:`datetime.datetime`, which holds the last commit that was parsed
+    :param vcs_system_id: object id of class :class:`bson.objectid.ObjectId` from the vcs system
+    :param last_commit_date: object of class :class:`datetime.datetime`, which holds the last commit that was parsed
+    :param config: object of class :class:`pyvcsshark.config.Config`, which holds configuration information
     """
     def __init__(self, queue, vcs_system_id, last_commit_date, config):
         multiprocessing.Process.__init__(self)
@@ -191,6 +192,7 @@ class CommitStorageProcess(multiprocessing.Process):
         branches and tags as the commit which is processed at the moment.
 
         :param commit: object of class :class:`pyvcsshark.dbmodels.models.CommitModel`.
+        :param mongo_commit: object of the commit class from the pycoshark library (stored in MongoDB)
 
         .. NOTE:: We use the project id and the revision hash to find the commit in the datastore.
         """
@@ -248,11 +250,11 @@ class CommitStorageProcess(multiprocessing.Process):
         return tag_list
 
     def create_people(self, name, email):
-        """ Creates a people object of type :class:`pyvcsshark.dbmodels.mongomodels.People` and returns a
+        """ Creates a people object of type People (which can be found in the pycoshark library) and returns a
         object id of the type :class:`bson.objectid.ObjectId` of the stored object
 
-        :param name: name of the contributer
-        :param email: email of the contributer
+        :param name: name of the contributor
+        :param email: email of the contributor
 
         .. NOTE:: The call to :func:`mongoengine.queryset.QuerySet.upsert_one` is thread/process safe
         """
@@ -264,14 +266,12 @@ class CommitStorageProcess(multiprocessing.Process):
 
     def create_file_actions(self, files, mongo_commit_id):
         """ Creates a list of object ids of type :class:`bson.objectid.ObjectId` for the different file actions of the
-        commit by transforming the files into file actions of type :class:`pyvcsshark.dbmodels.mongomodels.FileAction`,
-        :class:`pyvcsshark.dbmodels.mongomodels.File`, and :class:`pyvcsshark.dbmodels.mongomodels.Hunk`
+        commit by transforming the files into file actions of type FileAction, File, and Hunk (pycoshark library)
 
         :param files: list of changed files of type :class:`pyvcsshark.dbmodels.models.FileModel`
         :param mongo_commit_id: mongoid of the commit which is processed
 
-        .. NOTE:: Hunks (type :class:`pyvcsshark.dbmodels.mongomodels.Hunk`)  and the file action itself are
-        inserted via bulk insert.
+        .. NOTE:: Hunks and the file action itself are inserted via bulk insert.
         """
 
         for file in files:

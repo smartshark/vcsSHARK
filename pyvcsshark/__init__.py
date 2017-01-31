@@ -41,11 +41,7 @@ def get_datastore_choices():
         
 def start():
     """ Start method to start the program. It first sets up the logging and then parses all the arguments
-    it got from the comandline. If a config file was given, the values in the config file overwrite the ones
-    given on the commandline.
-    
-    .. WARNING::
-       If a configuration file is specified, it will overwrite the values given via the commandline!
+    it got from the commandline.
     """
     
     setup_logging()

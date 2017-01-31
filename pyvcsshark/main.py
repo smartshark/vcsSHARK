@@ -14,18 +14,25 @@ class Application(object):
     
     1. The correct datastore is found (inherits from: :class:`pyvcsshark.datastores.basestore.BaseStore`) by
     looking at which one was chosen by the user and the class is instantiated
+
     2. The correct parser (inherits from: :class:`pyvcsshark.parser.baseparser.BaseParser`)
     for the specified repository is instantiated
+
     3. :func:`pyvcsshark.parser.baseparser.BaseParser.initialize` is called (concreter: the **implemented function**
-     of the **correct parser**)
+    of the **correct parser**)
+
     4. :func:`pyvcsshark.datastores.basestore.BaseStore.initialize` is called with the different configuration
     parameters and values from the parser (concreter: the **implemented function** of the **correct datastore**)
+
     5. :func:`pyvcsshark.baseparser.BaseParser.parse` is called to start the parsing process of the repository
     (concreter: the **implemented function** of the **correct parser**)
+
     6. :func:`pyvcsshark.parser.baseparser.BaseParser.finalize` is called to finalize the parsing process
     (e.g. closing files) (concreter: the **implemented function** of the **correct parser**)
+
     7. :func:`pyvcsshark.datastores.basestore.BaseStore.finalize` is called to finalize the storing process
     (e.g. closing connections) (concreter: the **implemented function** of the **correct datastore**)
+
     :param config: An instance of :class:`~pyvcsshark.Config`, which contains the configuration parameters
     """
     

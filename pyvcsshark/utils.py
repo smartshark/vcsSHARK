@@ -28,7 +28,7 @@ def find_plugins(plugin_dir):
 
 
 def get_immediate_subdirectories(a_dir):
-    """ Helper method, which gets the **immediate** subdirectoriesof a path. Is helpful, if one want to create a
+    """ Helper method, which gets the **immediate** subdirectories of a path. Is helpful, if one want to create a
     parser, which looks if certain folders are there.
 
     :param a_dir: directory from which **immediate** subdirectories should be listed """

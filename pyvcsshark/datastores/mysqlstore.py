@@ -3,6 +3,15 @@ from pyvcsshark.datastores.basestore import BaseStore
 
 class MySQLStore(BaseStore):
     def initialize(self, config, repository_url, repository_type):
+        """
+        Initializes the mongostore by connecting to the mongodb, creating the project in the project collection \
+        and setting up processes (see: :class:`pyvcsshark.datastores.mongostore.CommitStorageProcess`, which
+        read commits out of the commitqueue, process them and store them into the mongodb.
+
+        :param config: all configuration
+        :param repository_url: url of the repository, which is to be analyzed
+        :param repository_type: type of the repository, which is to be analyzed (e.g. "git")
+        """
         return
         
     @property

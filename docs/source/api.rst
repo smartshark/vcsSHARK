@@ -37,13 +37,6 @@ BaseDatastore
 MongoStore
 ----------
 
-
-Database Design
-^^^^^^^^^^^^^^^
-
-.. image:: images/dbschema.png
-
-
 API
 ^^^
 
@@ -54,34 +47,21 @@ API
 .. autoclass:: pyvcsshark.datastores.mongostore.CommitStorageProcess
    :members:
 
-.. autoclass:: pyvcsshark.dbmodels.mongomodels.Project
-
-.. autoclass:: pyvcsshark.dbmodels.mongomodels.Commit
-
-.. autoclass:: pyvcsshark.dbmodels.mongomodels.FileAction
-
-.. autoclass:: pyvcsshark.dbmodels.mongomodels.File
-
-.. autoclass:: pyvcsshark.dbmodels.mongomodels.Hunk
-
-.. autoclass:: pyvcsshark.dbmodels.mongomodels.Tag
-
-.. autoclass:: pyvcsshark.dbmodels.mongomodels.People
-
-
 
 
 Models
 ======
-.. autoclass:: pyvcsshark.dbmodels.models.CommitModel
+.. autoclass:: pyvcsshark.parser.models.CommitModel
 
-.. autoclass:: pyvcsshark.dbmodels.models.FileModel
+.. autoclass:: pyvcsshark.parser.models.FileModel
 
-.. autoclass:: pyvcsshark.dbmodels.models.TagModel
+.. autoclass:: pyvcsshark.parser.models.Hunk
 
-.. autoclass:: pyvcsshark.dbmodels.models.BranchModel
+.. autoclass:: pyvcsshark.parser.models.TagModel
 
-.. autoclass:: pyvcsshark.dbmodels.models.PeopleModel
+.. autoclass:: pyvcsshark.parser.models.BranchModel
+
+.. autoclass:: pyvcsshark.parser.models.PeopleModel
 
 
 

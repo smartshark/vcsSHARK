@@ -7,6 +7,11 @@ class ErrorLoadingConfig(Exception):
 
 
 class Config(object):
+    """
+    Holds configuration information
+
+    :param args: argumentparser of the class :class:`argparse.ArgumentParser`
+    """
     def __init__(self, args):
         self.db_driver = args.db_driver
         self.db_user = args.db_user

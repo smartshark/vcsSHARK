@@ -31,7 +31,7 @@ class BaseStore(metaclass=abc.ABCMeta):
         to get the logger.
 
     .. NOTE:: It is possible to include datastores, which are not databases like mongoDB or mysql. But you should make \
-    sure, that your datastore implementation handels the values which are given to it correctly. 
+    sure, that your datastore implementation handles the values which are given to it correctly.
 
 
     """

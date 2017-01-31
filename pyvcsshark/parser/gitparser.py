@@ -4,6 +4,7 @@ import logging
 import re
 import uuid
 import multiprocessing
+
 from pyvcsshark.parser.models import BranchModel, PeopleModel, TagModel, FileModel, CommitModel, Hunk
 
 
@@ -12,19 +13,17 @@ class GitParser(BaseParser):
     :func:`pyvcsshark.parser.gitparser.GitParser.parse`.
     
     :property SIMILARITY_THRESHOLD: sets the threshold for deciding if a file is similar to another. Default: 50%
-    :property NUMBER_OF_PROCESSES: number of processes for the parsing process. Calls
+    :property NUMBER_OF_PROCESSES: number of processes for the parsing process. Calls \
     :func:`multiprocessing.cpu_count()`.
     :property repository: object of class :class:`pygit2.Repository`, which represents the repository
-    :property commitsToBeProcessed: dictionary that is set up the following way: \
-    commitsToBeProcessed = {'<revisionHash>' : {'branches' : set(), 'tags' : []}}, where <revisionHash> must be replaced
-     with the actual hash. Therefore, \
-    this dictionary holds information about every revision and which branches this revision belongs to and which tags it
-     has.
-        
+    :property commits_to_be_processed: dictionary that is set up the following way: \
+    commits_to_be_processed = {'<revisionHash>' : {'branches' : set(), 'tags' : []}}, where <revisionHash> must be\
+    replaced with the actual hash. Therefore, this dictionary holds information about every revision and which branches\
+     this revision belongs to and which tags it has.
     :property logger: logger, which is acquired via logging.getLogger("parser")
-    :property datastore: datestore, where the commits should be saved to
-    :property commitqueue: object of class :class:`multiprocessing.JoinableQueue`, where commits are stored in that can
-     be parsed
+    :property datastore: datastore, where the commits should be saved to
+    :property commit_queue: object of class :class:`multiprocessing.JoinableQueue`, where commits are stored in that\
+    can be parsed
     
     """
     
@@ -70,7 +69,7 @@ class GitParser(BaseParser):
 
     def add_branch(self, commit_hash, branch):
         """ Does two things: First it adds the commitHash to the commitqueue, so that the parsing processes can process this commit. Second it
-        creates objects of type :class:`pyvcsshark.dbmodels.models.BranchModel` and stores it in the dictionary.
+        creates objects of type :class:`pyvcsshark.parser.models.BranchModel` and stores it in the dictionary.
         
         :param commit_hash: revision hash of the commit to be processed
         :param branch: branch that should be added for the commit
@@ -88,12 +87,13 @@ class GitParser(BaseParser):
 
     def add_tag(self, tagged_commit, tag_name, tag_object):
         """
-        Creates objects of type :class:`pyvcsshark.dbmodels.models.TagModel` and stores it in the dictionary mentioned above. 
+        Creates objects of type :class:`pyvcsshark.parser.models.TagModel` and stores it in the dictionary mentioned above.
         
         
         :param tagged_commit: revision hash of the commit to be processed
-        :param tagName: name of the tag that should be added
-        :param tag_object: in git it is possible to annotate tags. If a tag is annottated, we get a tag object of class :class:`pygit2.Tag`
+        :param tag_name: name of the tag that should be added
+        :param tag_object: in git it is possible to annotate tags. If a tag is annotated,
+         we get a tag object of class :class:`pygit2.Tag`
 
         
         .. NOTE:: It can happen, that people committed to a tag and therefore created \
@@ -122,9 +122,11 @@ class GitParser(BaseParser):
             self.commit_queue.put(commit_id)
 
     def initialize(self):
-        """ Initializes the parser. It gets all the branch and tag information and puts it into two different locations: First the commit id
-        is put into the commitqueue for the processing with the parsing processes. Second a dictionary is created, which holds the information of
-        which branches a commit is on and which tags it has
+        """
+        Initializes the parser. It gets all the branch and tag information and puts it into two different
+        locations: First the commit id is put into the commitqueue for the processing with the parsing processes.
+        Second a dictionary is created, which holds the information of which branches a commit is on and which tags it
+        has
         """
         # Get all references (branches, tags)
         references = set(self.repository.listall_references())
@@ -156,18 +158,20 @@ class GitParser(BaseParser):
 
     def parse(self, repository_path, datastore):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
-        datastore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` method of the chosen datastore. It
-        mostly uses pygit2 (see: http://www.pygit2.org/).
+        datastore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen
+        datastore. It mostly uses pygit2 (see: http://www.pygit2.org/).
         
         The parsing process is divided into several steps:
         
             1. A list of all branches and tags are created
-            2. All branches and tags are parsed. So we create dictionary of all commits with their corresponding tags and branches and add all \
-        revision hashes to the commitqueue
-            3. Add the poison pills for terminating of the parsing process to the commitqueue
-            4. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParserProcess`, which parse all commits.
+            2. All branches and tags are parsed. So we create dictionary of all commits with their corresponding tags\
+            and branches and add all revision hashes to the commitqueue
+            3. Add the poison pills for terminating of the parsing process to the commit_queue
+            4. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParserProcess`, which parse all\
+            commits.
         
-        
+        :param repository_path: Path to the repository
+        :param datastore: Datastore used to save the data to
         """
         self.datastore = datastore
         self.logger.info("Starting parsing process...")
@@ -203,7 +207,8 @@ class CommitParserProcess(multiprocessing.Process):
     :param commits_to_be_processed: dictionary, which contains information about the branches and tags of each commit
     :param repository: repository object of type :class:`pygit2.Repository`
     :param datastore: object, that is a subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`
-    :param lock: lock that is used, so that only one process at a time is calling the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function
+    :param lock: lock that is used, so that only one process at a time is calling \
+    the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function
     """
     
     def __init__(self, queue, commits_to_be_processed, repository, datastore, lock):
@@ -236,15 +241,16 @@ class CommitParserProcess(multiprocessing.Process):
     def parse_commit(self, commit):
         """ Function for parsing a commit.
         
-        1. changedFiles are created (type: list of :class:`pyvcsshark.dbmodels.models.FileModel`)
-        2. author and commiter are created (type: :class:`pyvcsshark.dbmodels.models.PeopleModel`)
+        1. changedFiles are created (type: list of :class:`pyvcsshark.parser.models.FileModel`)
+        2. author and commiter are created (type: :class:`pyvcsshark.parser.models.PeopleModel`)
         3. parents are added (list of strings)
-        4. commit model is created (type: :class:`pyvcsshark.dbmodels.models.CommitModel`)
+        4. commit model is created (type: :class:`pyvcsshark.parser.models.CommitModel`)
         5. :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is called
         
         :param commit: commit object of type :class:`pygit2.Commit`
         
-        .. NOTE:: The call to :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is thread/process safe, as a lock is used to regulate the calls
+        .. NOTE:: The call to :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is thread/process safe, as a\
+        lock is used to regulate the calls
         """
 
         # If there are parents, we need to get the normal changed files, if not we need to get the files for initial
@@ -300,7 +306,7 @@ class CommitParserProcess(multiprocessing.Process):
     def get_changed_files_for_initial_commit(self, commit):
         """
         Special function for the initial commit, as we need to diff against the empty tree. Creates
-        the changed files list, where objects of class :class:`pyvcsshark.dbmodels.models.FileModel` are added.
+        the changed files list, where objects of class :class:`pyvcsshark.parser.models.FileModel` are added.
         For every changed file in the initial commit.
         
         :param commit: commit of type :class:`pygit2.Commit`
@@ -317,9 +323,9 @@ class CommitParserProcess(multiprocessing.Process):
         return changed_files
 
     def get_changed_files_with_similiarity(self, parent, commit):
-        """ Creates a list of changed files of the class :class:`pyvcsshark.dbmodels.models.FileModel`. For every
-        changed file in the commit such an object is created. Furthermore, hunks are saved an each file is tested for similarity to
-        detect copy and move operations
+        """ Creates a list of changed files of the class :class:`pyvcsshark.parser.models.FileModel`. For every
+        changed file in the commit such an object is created. Furthermore, hunks are saved an each file is tested for
+        similarity to detect copy and move operations
         
         :param parent: Object of class :class:`pygit2.Commit`, that represents the parent commit
         :param commit: Object of class :class:`pygit2.Commit`, that represents the child commit
