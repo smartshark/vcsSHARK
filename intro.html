@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. Introduction &mdash; vcsSHARK 1.0.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="vcsSHARK 1.0.0 documentation" href="index.html"/>
+        <link rel="next" title="2. How to Extend" href="extension.html"/>
+        <link rel="prev" title="Welcome to vcsSHARK’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> vcsSHARK
+          
+
+          
+            
+            <img src="_static/SmartSHARK_read_the_docs_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">1.1. Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#via-pip">1.1.1. via Pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#via-setup-py">1.1.2. via setup.py</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tests">1.2. Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#execution">1.3. Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial">1.4. Tutorial</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extension.html">2. How to Extend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">3. API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">vcsSHARK</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>1. Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/intro.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>This introduction will show how the requirements of <strong>vcsSHARK</strong> , how it is installed, tested, and executed. Furthermore,
+a small tutorial in the end will show step by step, how to use this tool.</p>
+<p>vcsFoo is written in Python and uses the official libgit2 library for collecting the data. Furthermore,
+to speed up the whole storage and parsing process, vcsFoo uses the multiprocessing library of Python. Hence, several
+processes are started for parsing and storing the data.</p>
+<p>We use a vanilla Ubuntu 16.04 operating system as basis for the steps that we describe. If necessary, we give hints
+on how to perform this step with a different operating system.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This software is still in development.</p>
+</div>
+<div class="section" id="installation">
+<span id="id1"></span><h2>1.1. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The installation process is straight forward. For a vanilla Ubuntu 16.04, we need to install the following packages:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get install git python3-pip python3-cffi libgit2-24 libgit2-dev
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are using an older version of Ubuntu (or another operating system), you need to install libgit by hand.
+The installation process is explained here: <a class="reference external" href="http://www.pygit2.org/install.html">http://www.pygit2.org/install.html</a>.
+But, you need to choose a version, which is compatible with pygit2 0.24.2.</p>
+</div>
+<p>Furthermore, you need a running MongoDB. The process of setting up a MongoDB is explained here: <a class="reference external" href="https://docs.mongodb.com/manual/installation/">https://docs.mongodb.com/manual/installation/</a></p>
+<p>After these requirements are met, first clone the <strong>vcsSHARK</strong> <a class="reference external" href="https://github.com/smartshark/vcsSHARK/">repository</a> repository
+to a folder you want. In the following, we assume that you have cloned the repository to <strong>~/vcsSHARK</strong>. Afterwards,
+the installation of <strong>vcsSHARK</strong> can be done in two different ways:</p>
+<div class="section" id="via-pip">
+<h3>1.1.1. via Pip<a class="headerlink" href="#via-pip" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo pip3 install https://github.com/smartshark/vcsSHARK/zipball/master --process-dependency-links
+</pre></div>
+</div>
+</div>
+<div class="section" id="via-setup-py">
+<h3>1.1.2. via setup.py<a class="headerlink" href="#via-setup-py" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo python3.5 ~/vcsSHARK/setup.py install
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is advisable to change the location, where the logs are written to.
+They can be changed in the <strong>pyvcsshark/loggerConfiguration.json</strong>. There are different file handlers defined.
+Just change the &#8220;filename&#8221;-attribute to a location of your wish.</p>
+</div>
+</div>
+</div>
+<div class="section" id="tests">
+<h2>1.2. Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<p>The tests of <strong>vcsSHARK</strong> can be executed by calling</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/setup.py <span class="nb">test</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The tests can be found in the folder &#8220;tests&#8221;.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The generated tests are not fully complete. They just test the basic functionality.</p>
+</div>
+</div>
+<div class="section" id="execution">
+<h2>1.3. Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h2>
+<p>In this chapter, we explain how you can execute <strong>vcsSHARK</strong>. Furthermore, the different execution parameters are
+explained in detail.</p>
+<ol class="arabic">
+<li><p class="first">Checkout the repository from which you want to collect the data.</p>
+</li>
+<li><p class="first">Make sure that your MongoDB is running!</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo systemctl status mongodb
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<p>3) Make sure that the project from which you collect data is already in the project collection of the MongoDB. If not,
+you can add them by:</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</span>: &lt;PROJECT_NAME&gt;<span class="o">})</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic" start="4">
+<li><p class="first">Execute <strong>vcsSHARK</strong> by calling</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/vcsshark.py
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<p><strong>vcsSHARK</strong> supports different commandline arguments:</p>
+<dl class="option">
+<dt id="cmdoption--help">
+<span id="cmdoption-h"></span><code class="descname">--help</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-h</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--help" title="Permalink to this definition">¶</a></dt>
+<dd><p>shows the help page for this command</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--version">
+<span id="cmdoption-v"></span><code class="descname">--version</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--version" title="Permalink to this definition">¶</a></dt>
+<dd><p>shows the version</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--db-driver">
+<span id="cmdoption-D"></span><code class="descname">--db-driver</code><code class="descclassname"> &lt;DRIVER&gt;</code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"> &lt;DRIVER&gt;</code><a class="headerlink" href="#cmdoption--db-driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>output datastore driver. Currently only mongodb is supported</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--db-user">
+<span id="cmdoption-U"></span><code class="descname">--db-user</code><code class="descclassname"> &lt;USER&gt;</code><code class="descclassname">, </code><code class="descname">-U</code><code class="descclassname"> &lt;USER&gt;</code><a class="headerlink" href="#cmdoption--db-user" title="Permalink to this definition">¶</a></dt>
+<dd><p>datastore user name</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--db-password">
+<span id="cmdoption-P"></span><code class="descname">--db-password</code><code class="descclassname"> &lt;PASSWORD&gt;</code><code class="descclassname">, </code><code class="descname">-P</code><code class="descclassname"> &lt;PASSWORD&gt;</code><a class="headerlink" href="#cmdoption--db-password" title="Permalink to this definition">¶</a></dt>
+<dd><p>datastore password</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--db-database">
+<span id="cmdoption-DB"></span><code class="descname">--db-database</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><code class="descclassname">, </code><code class="descname">-DB</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><a class="headerlink" href="#cmdoption--db-database" title="Permalink to this definition">¶</a></dt>
+<dd><p>database name (e.g., name of the mongodb database that should be used)</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--db-hostname">
+<span id="cmdoption-H"></span><code class="descname">--db-hostname</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><code class="descclassname">, </code><code class="descname">-H</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><a class="headerlink" href="#cmdoption--db-hostname" title="Permalink to this definition">¶</a></dt>
+<dd><p>hostname, where the datastore runs on</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--db-port">
+<span id="cmdoption-p"></span><code class="descname">--db-port</code><code class="descclassname"> &lt;PORT&gt;</code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"> &lt;PORT&gt;</code><a class="headerlink" href="#cmdoption--db-port" title="Permalink to this definition">¶</a></dt>
+<dd><p>port, where the datastore runs on</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--db-authentication">
+<code class="descname">--db-authentication</code><code class="descclassname"> &lt;DB_AUTHENTICATION&gt; -a &lt;DB_AUTHENTICATION&gt;</code><a class="headerlink" href="#cmdoption--db-authentication" title="Permalink to this definition">¶</a></dt>
+<dd><p>name of the authentication database</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--debug">
+<span id="cmdoption-d"></span><code class="descname">--debug</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><code class="descclassname">, </code><code class="descname">-d</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><a class="headerlink" href="#cmdoption--debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Debug level (INFO, DEBUG, WARNING, ERROR)</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--project-name">
+<code class="descname">--project-name</code><code class="descclassname"> &lt;PROJECT_NAME&gt;</code><a class="headerlink" href="#cmdoption--project-name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the project, from which the data is collected</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--path">
+<code class="descname">--path</code><code class="descclassname"> &lt;PATH&gt;</code><a class="headerlink" href="#cmdoption--path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the checked out repository directory</p>
+</dd></dl>
+
+</div>
+<div class="section" id="tutorial">
+<h2>1.4. Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<p>In this section we show step-by-step how you can analyze and store the repository of the
+<a class="reference external" href="https://github.com/checkstyle/checkstyle">checkstyle</a> project in a mongodb.</p>
+<p>1.      First, if you want to use the mongodb datastore you need to have a mongodb running (version 3.2+).
+How this can be achieved is explained here: <a class="reference external" href="https://docs.mongodb.org/manual/">https://docs.mongodb.org/manual/</a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Make sure, that you activated the authentication of mongodb
+(<strong>vcsSHARK</strong> also works without authentication, but with authentication it is much safer!).
+Hints how this can be achieved are given <a class="reference external" href="https://docs.mongodb.org/manual/core/authentication/">here</a>.</p>
+</div>
+<ol class="arabic" start="2">
+<li><p class="first">Add checkstyle to the projects table in MongoDB.</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ mongo
+$ use vcsshark
+$ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;checkstyle&quot;</span><span class="o">})</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Install <strong>vcsSHARK</strong>. An explanation is given above.</p>
+</li>
+</ol>
+<ol class="arabic" start="3">
+<li><p class="first">Enter the <strong>vcsSHARK</strong> directory via</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> vcsSHARK
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Test if everything works as expected</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3.5 vcsshark.py --help
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you receive an error here, it is most likely, that the installation process failed.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Clone the checkstyle repository to your home directory (or another place)</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone https://github.com/checkstyle/checkstyle ~/checkstyle
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Execute <strong>vcsSHARK</strong>:</p>
+<blockquote>
+<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/vcsSHARK
+$ python3.5 vcsshark.py -D mongo -DB vcsshark -H localhost -p <span class="m">27017</span> -n checkstyle --path ~/checkstyle
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<p>Thats it. The results are explained in the database documentation
+of <a class="reference external" href="http://smartshark2.informatik.uni-goettingen.de/documentation/">SmartSHARK</a>.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="extension.html" class="btn btn-neutral float-right" title="2. How to Extend" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to vcsSHARK’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Fabian Trautsch.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
