@@ -33,7 +33,7 @@ html:
 .PHONY: deploy
 deploy:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
-	ghp-import -n $(BUILDDIR)
+	ghp-import -n $(BUILDDIR) -m "Travis documentation push"
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
 	git push -fq https://$(TRAVIS_GH_TOKEN)@github.com/smartshark/vcsSHARK.git gh-pages

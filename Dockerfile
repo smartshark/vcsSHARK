@@ -12,6 +12,10 @@ RUN pip3 install Sphinx
 RUN pip3 install sphinx_rtd_theme
 RUN pip3 install ghp_import
 
+# Configure GIT
+RUN git config --global user.email "smartshark@cs.uni-goettingen.de"
+RUN git config --global user.name "Travis CI"
+
 # Clone repository
 RUN git clone --recursive https://github.com/smartshark/vcsSHARK /root/vcsshark
 

@@ -20,4 +20,4 @@ script:
   - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3 setup.py test"
 
 after_success:
-  - docker run --env-file .env --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3 setup.py install; make deploy"
+  - docker run --env-file .env --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; make deploy > /dev/null"
