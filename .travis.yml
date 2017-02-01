@@ -8,6 +8,7 @@ services:
   - docker
 
 before_install:
+  - $(printenv | grep -E '^TRAVIS_' | sed 's/TRAVIS_/-e /g') > .env
   - docker build -t testdocker .
   - docker network create -d bridge mongodb-net
   - docker run -d --net=mongodb-net --name=mongodb mongo:3.4
@@ -23,4 +24,4 @@ script:
   - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3 setup.py install; make html"
 
 after_success:
-  - docker run $(printenv | grep -E '^TRAVIS_' | sed 's/TRAVIS_/-e /g') --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; make deploy"
+  - docker run --env-file .env --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3 setup.py install; make deploy"
