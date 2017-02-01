@@ -14,3 +14,6 @@ RUN pip3 install ghp_import
 
 # Clone repository
 RUN git clone --recursive https://github.com/smartshark/vcsSHARK /root/vcsshark
+
+# Install vcsshark requirements
+RUN pip3 install -r /root/vcsshark/requirements.txt

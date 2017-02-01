@@ -59,7 +59,7 @@ deploy:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
-	ghp_import -n $(BUILDDIR)
+	ghp-import -n $(BUILDDIR)
 	@echo $TRAVIS_GH_TOKEN
 	# git push -fq https://$TRAVIS_GH_TOKEN@github.com/vcsSHARK.git gh-pages
 
