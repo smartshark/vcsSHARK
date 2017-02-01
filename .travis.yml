@@ -13,14 +13,14 @@ before_install:
   - docker run -d --net=mongodb-net --name=mongodb mongo:3.4
 
 install:
-  - pip install travis-sphinx
+  #- pip install travis-sphinx
   - pip install sphinx_rtd_theme
-  - pip install ghp_import
+  #- pip install ghp_import
   - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py install"
 
 script:
   - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py test"
-  - travis-sphinx build
+  - sphinx-build -b html /root/vcsshark/docs/source /root/vcsshark/docs/build
 
-after_success:
-  - travis-sphinx deploy
+#after_success:
+#  - travis-sphinx deploy

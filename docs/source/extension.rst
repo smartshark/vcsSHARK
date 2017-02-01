@@ -53,7 +53,7 @@ datastore so that it is accepted by **vcsSHARK**:
 
 2.	It must inherit from :class:`~pyvcsshark.datastores.basestore.BaseStore` and implement the methods defined there.
 
-	.. NOTE:: The store_identifier property must just return a string, which represents your datastore and is
+	.. NOTE:: The store_identifier property must just return a string, which represents your datastore and is \
 	not used by another datastore
 
 The process of choosing the datastore is the following:
@@ -78,5 +78,5 @@ of class :class:`~pyvcsshark.dbmodels.models.CommitModel` as parameter. Think ab
 
 3.	The execution logic is in the application class and explained here :class:`~pyvcsshark.Application`.
 
-.. NOTE:: Dont mind if your datastore do not need all the
+.. NOTE:: Dont mind if your datastore do not need all the \
 information of the :func:`~pyvcsshark.datastores.basestore.BaseStore.initialize` function.
