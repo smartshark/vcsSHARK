@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
     <link rel="top" title="vcsSHARK 1.0.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
@@ -141,13 +144,13 @@
 <span class="sd">    returns true if all these three are the case</span>
 <span class="sd">    </span>
 <span class="sd">    :param prospective_dir: path to the directory&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">prospective_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">prospective_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">prospective_dir</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;readable_dir:{0} is not a valid path&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prospective_dir</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;readable_dir:</span><span class="si">{0}</span><span class="s2"> is not a valid path&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prospective_dir</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">prospective_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">prospective_dir</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;readable_dir:{0} is not a readable dir&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prospective_dir</span><span class="p">))</span></div>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;readable_dir:</span><span class="si">{0}</span><span class="s2"> is not a readable dir&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prospective_dir</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="find_plugins"><a class="viewcode-back" href="../../api.html#pyvcsshark.utils.find_plugins">[docs]</a><span class="k">def</span> <span class="nf">find_plugins</span><span class="p">(</span><span class="n">plugin_dir</span><span class="p">):</span>

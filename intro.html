@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="vcsSHARK 1.0.0 documentation" href="index.html"/>
         <link rel="next" title="2. How to Extend" href="extension.html"/>
         <link rel="prev" title="Welcome to vcsSHARK’s documentation!" href="index.html"/> 
@@ -132,7 +135,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/intro.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -237,74 +240,74 @@ you can add them by:</p>
 </ol>
 <p><strong>vcsSHARK</strong> supports different commandline arguments:</p>
 <dl class="option">
-<dt id="cmdoption--help">
-<span id="cmdoption-h"></span><code class="descname">--help</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-h</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--help" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-help">
+<code class="descname">--help</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-h</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-help" title="Permalink to this definition">¶</a></dt>
 <dd><p>shows the help page for this command</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--version">
-<span id="cmdoption-v"></span><code class="descname">--version</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--version" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-version">
+<code class="descname">--version</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-version" title="Permalink to this definition">¶</a></dt>
 <dd><p>shows the version</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--db-driver">
-<span id="cmdoption-D"></span><code class="descname">--db-driver</code><code class="descclassname"> &lt;DRIVER&gt;</code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"> &lt;DRIVER&gt;</code><a class="headerlink" href="#cmdoption--db-driver" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-db-driver">
+<code class="descname">--db-driver</code><code class="descclassname"> &lt;DRIVER&gt;</code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"> &lt;DRIVER&gt;</code><a class="headerlink" href="#cmdoption-db-driver" title="Permalink to this definition">¶</a></dt>
 <dd><p>output datastore driver. Currently only mongodb is supported</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--db-user">
-<span id="cmdoption-U"></span><code class="descname">--db-user</code><code class="descclassname"> &lt;USER&gt;</code><code class="descclassname">, </code><code class="descname">-U</code><code class="descclassname"> &lt;USER&gt;</code><a class="headerlink" href="#cmdoption--db-user" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-db-user">
+<code class="descname">--db-user</code><code class="descclassname"> &lt;USER&gt;</code><code class="descclassname">, </code><code class="descname">-U</code><code class="descclassname"> &lt;USER&gt;</code><a class="headerlink" href="#cmdoption-db-user" title="Permalink to this definition">¶</a></dt>
 <dd><p>datastore user name</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--db-password">
-<span id="cmdoption-P"></span><code class="descname">--db-password</code><code class="descclassname"> &lt;PASSWORD&gt;</code><code class="descclassname">, </code><code class="descname">-P</code><code class="descclassname"> &lt;PASSWORD&gt;</code><a class="headerlink" href="#cmdoption--db-password" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-db-password">
+<code class="descname">--db-password</code><code class="descclassname"> &lt;PASSWORD&gt;</code><code class="descclassname">, </code><code class="descname">-P</code><code class="descclassname"> &lt;PASSWORD&gt;</code><a class="headerlink" href="#cmdoption-db-password" title="Permalink to this definition">¶</a></dt>
 <dd><p>datastore password</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--db-database">
-<span id="cmdoption-DB"></span><code class="descname">--db-database</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><code class="descclassname">, </code><code class="descname">-DB</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><a class="headerlink" href="#cmdoption--db-database" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-db-database">
+<code class="descname">--db-database</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><code class="descclassname">, </code><code class="descname">-DB</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><a class="headerlink" href="#cmdoption-db-database" title="Permalink to this definition">¶</a></dt>
 <dd><p>database name (e.g., name of the mongodb database that should be used)</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--db-hostname">
-<span id="cmdoption-H"></span><code class="descname">--db-hostname</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><code class="descclassname">, </code><code class="descname">-H</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><a class="headerlink" href="#cmdoption--db-hostname" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-db-hostname">
+<code class="descname">--db-hostname</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><code class="descclassname">, </code><code class="descname">-H</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><a class="headerlink" href="#cmdoption-db-hostname" title="Permalink to this definition">¶</a></dt>
 <dd><p>hostname, where the datastore runs on</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--db-port">
-<span id="cmdoption-p"></span><code class="descname">--db-port</code><code class="descclassname"> &lt;PORT&gt;</code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"> &lt;PORT&gt;</code><a class="headerlink" href="#cmdoption--db-port" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-db-port">
+<code class="descname">--db-port</code><code class="descclassname"> &lt;PORT&gt;</code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"> &lt;PORT&gt;</code><a class="headerlink" href="#cmdoption-db-port" title="Permalink to this definition">¶</a></dt>
 <dd><p>port, where the datastore runs on</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--db-authentication">
-<code class="descname">--db-authentication</code><code class="descclassname"> &lt;DB_AUTHENTICATION&gt; -a &lt;DB_AUTHENTICATION&gt;</code><a class="headerlink" href="#cmdoption--db-authentication" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-db-authentication">
+<code class="descname">--db-authentication</code><code class="descclassname"> &lt;DB_AUTHENTICATION&gt; -a &lt;DB_AUTHENTICATION&gt;</code><a class="headerlink" href="#cmdoption-db-authentication" title="Permalink to this definition">¶</a></dt>
 <dd><p>name of the authentication database</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--debug">
-<span id="cmdoption-d"></span><code class="descname">--debug</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><code class="descclassname">, </code><code class="descname">-d</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><a class="headerlink" href="#cmdoption--debug" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-debug">
+<code class="descname">--debug</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><code class="descclassname">, </code><code class="descname">-d</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><a class="headerlink" href="#cmdoption-debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>Debug level (INFO, DEBUG, WARNING, ERROR)</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--project-name">
-<code class="descname">--project-name</code><code class="descclassname"> &lt;PROJECT_NAME&gt;</code><a class="headerlink" href="#cmdoption--project-name" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-project-name">
+<code class="descname">--project-name</code><code class="descclassname"> &lt;PROJECT_NAME&gt;</code><a class="headerlink" href="#cmdoption-project-name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name of the project, from which the data is collected</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--path">
-<code class="descname">--path</code><code class="descclassname"> &lt;PATH&gt;</code><a class="headerlink" href="#cmdoption--path" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-path">
+<code class="descname">--path</code><code class="descclassname"> &lt;PATH&gt;</code><a class="headerlink" href="#cmdoption-path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to the checked out repository directory</p>
 </dd></dl>
 

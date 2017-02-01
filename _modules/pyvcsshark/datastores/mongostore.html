@@ -30,6 +30,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
     <link rel="top" title="vcsSHARK 1.0.0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
@@ -133,11 +136,11 @@
             
   <h1>Source code for pyvcsshark.datastores.mongostore</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">pymongo.errors</span> <span class="kn">import</span> <span class="n">DocumentTooLarge</span><span class="p">,</span> <span class="n">DuplicateKeyError</span>
+<span class="kn">from</span> <span class="nn">pymongo.errors</span> <span class="k">import</span> <span class="n">DocumentTooLarge</span><span class="p">,</span> <span class="n">DuplicateKeyError</span>
 
-<span class="kn">from</span> <span class="nn">pyvcsshark.datastores.basestore</span> <span class="kn">import</span> <span class="n">BaseStore</span>
-<span class="kn">from</span> <span class="nn">mongoengine</span> <span class="kn">import</span> <span class="n">connect</span><span class="p">,</span> <span class="n">NotUniqueError</span><span class="p">,</span> <span class="n">DoesNotExist</span>
-<span class="kn">from</span> <span class="nn">pycoshark.mongomodels</span> <span class="kn">import</span> <span class="n">VCSSystem</span><span class="p">,</span> <span class="n">Project</span><span class="p">,</span> <span class="n">Commit</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">People</span><span class="p">,</span> <span class="n">FileAction</span><span class="p">,</span> <span class="n">Hunk</span>
+<span class="kn">from</span> <span class="nn">pyvcsshark.datastores.basestore</span> <span class="k">import</span> <span class="n">BaseStore</span>
+<span class="kn">from</span> <span class="nn">mongoengine</span> <span class="k">import</span> <span class="n">connect</span><span class="p">,</span> <span class="n">NotUniqueError</span><span class="p">,</span> <span class="n">DoesNotExist</span>
+<span class="kn">from</span> <span class="nn">pycoshark.mongomodels</span> <span class="k">import</span> <span class="n">VCSSystem</span><span class="p">,</span> <span class="n">Project</span><span class="p">,</span> <span class="n">Commit</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">People</span><span class="p">,</span> <span class="n">FileAction</span><span class="p">,</span> <span class="n">Hunk</span>
 
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -157,11 +160,11 @@
 <span class="sd">    :property logger: holds the logging instance, by calling logging.getLogger(&quot;store&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">commit_queue</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">commit_queue</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">NUMBER_OF_PROCESSES</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">BaseStore</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">BaseStore</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MongoStore.initialize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.MongoStore.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">repository_url</span><span class="p">,</span> <span class="n">repository_type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initializes the mongostore by connecting to the mongodb, creating the project in the project collection \</span>
@@ -182,7 +185,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connecting to MongoDB...&quot;</span><span class="p">)</span>
 
         <span class="n">connect</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">db_database</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_password</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_hostname</span><span class="p">,</span>
-                <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_port</span><span class="p">,</span> <span class="n">authentication_source</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_authentication</span><span class="p">,</span> <span class="n">connect</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_port</span><span class="p">,</span> <span class="n">authentication_source</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_authentication</span><span class="p">,</span> <span class="n">connect</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Get project_id</span>
         <span class="k">try</span><span class="p">:</span>
@@ -201,15 +204,15 @@
         <span class="n">last_commit</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="n">vcs_system_id</span><span class="p">)</span>\
             <span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;committer_date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-committer_date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">last_commit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">last_commit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">last_commit_date</span> <span class="o">=</span> <span class="n">last_commit</span><span class="o">.</span><span class="n">committer_date</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">last_commit_date</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">last_commit_date</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Start worker, they will wait till something comes into the queue and then process it</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_PROCESSES</span><span class="p">):</span>
             <span class="n">process</span> <span class="o">=</span> <span class="n">CommitStorageProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="p">,</span> <span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">last_commit_date</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-            <span class="n">process</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting storage Process...&quot;</span><span class="p">)</span></div>
@@ -243,9 +246,9 @@
 <span class="sd">    :param config: object of class :class:`pyvcsshark.config.Config`, which holds configuration information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">last_commit_date</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-        <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">connect</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">db_database</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_password</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_hostname</span><span class="p">,</span>
-                <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_port</span><span class="p">,</span> <span class="n">authentication_source</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_authentication</span><span class="p">,</span> <span class="n">connect</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_port</span><span class="p">,</span> <span class="n">authentication_source</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db_authentication</span><span class="p">,</span> <span class="n">connect</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span> <span class="o">=</span> <span class="n">vcs_system_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_commit_date</span> <span class="o">=</span> <span class="n">last_commit_date</span>
@@ -268,14 +271,14 @@
 
 <span class="sd">        .. WARNING:: We only look for changed tags and branches here for already processed commits!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">commit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
             <span class="c1"># Check if commitdate &gt; lastcommit date</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_commit_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">commit</span><span class="o">.</span><span class="n">committerDate</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_commit_date</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_commit_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">commit</span><span class="o">.</span><span class="n">committerDate</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_commit_date</span><span class="p">:</span>
                 <span class="n">mongo_commit</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">revision_hash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
-                <span class="k">if</span> <span class="n">mongo_commit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">mongo_commit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># We have parsed that commit before, now we need to check if branches or tags were changed</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">check_and_update_branches_and_tags</span><span class="p">(</span><span class="n">commit</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="p">)</span>
 
@@ -364,7 +367,7 @@
     <span class="k">def</span> <span class="nf">create_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit_id</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
         <span class="n">tag_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">tagger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">tagger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">tagger_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_people</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">tag</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">mongo_tag</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="n">commit_id</span><span class="o">=</span><span class="n">commit_id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">tag</span><span class="o">.</span><span class="n">message</span><span class="p">,</span><span class="n">tagger_id</span><span class="o">=</span><span class="n">tagger_id</span><span class="p">,</span>
@@ -408,35 +411,35 @@
 <span class="sd">        .. NOTE:: Hunks and the file action itself are inserted via bulk insert.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
 
             <span class="c1"># Check if the file was a copy or move action (then the oldPath attribute is not None)</span>
-            <span class="n">old_file_id</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="k">if</span> <span class="nb">file</span><span class="o">.</span><span class="n">oldPath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">old_file_id</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">oldPath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">old_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">oldPath</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                    <span class="n">old_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">oldPath</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
                 <span class="k">except</span> <span class="p">(</span><span class="n">DuplicateKeyError</span><span class="p">,</span> <span class="n">NotUniqueError</span><span class="p">):</span>
-                    <span class="n">old_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">oldPath</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                    <span class="n">old_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">oldPath</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
 
             <span class="c1"># Create a new file object</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">new_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                <span class="n">new_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
             <span class="k">except</span> <span class="p">(</span><span class="n">DuplicateKeyError</span><span class="p">,</span> <span class="n">NotUniqueError</span><span class="p">):</span>
-                <span class="n">new_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                <span class="n">new_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
 
             <span class="c1"># Create the new file action</span>
             <span class="n">file_action</span> <span class="o">=</span> <span class="n">FileAction</span><span class="p">(</span><span class="n">file_id</span><span class="o">=</span><span class="n">new_file_id</span><span class="p">,</span>
                                      <span class="n">commit_id</span><span class="o">=</span><span class="n">mongo_commit_id</span><span class="p">,</span>
-                                     <span class="n">size_at_commit</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
-                                     <span class="n">lines_added</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">linesAdded</span><span class="p">,</span>
-                                     <span class="n">lines_deleted</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">linesDeleted</span><span class="p">,</span>
-                                     <span class="n">is_binary</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">isBinary</span><span class="p">,</span>
-                                     <span class="n">mode</span><span class="o">=</span><span class="nb">file</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                                     <span class="n">size_at_commit</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+                                     <span class="n">lines_added</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">linesAdded</span><span class="p">,</span>
+                                     <span class="n">lines_deleted</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">linesDeleted</span><span class="p">,</span>
+                                     <span class="n">is_binary</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">isBinary</span><span class="p">,</span>
+                                     <span class="n">mode</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
                                      <span class="n">old_file_id</span><span class="o">=</span><span class="n">old_file_id</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
             <span class="c1"># Create hunk objects for bulk insert</span>
             <span class="n">hunks</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">hunk</span> <span class="ow">in</span> <span class="nb">file</span><span class="o">.</span><span class="n">hunks</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">hunk</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">hunks</span><span class="p">:</span>
                 <span class="n">mongo_hunk</span> <span class="o">=</span> <span class="n">Hunk</span><span class="p">(</span><span class="n">file_action_id</span><span class="o">=</span><span class="n">file_action</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">new_start</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">new_start</span><span class="p">,</span> <span class="n">new_lines</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">new_lines</span><span class="p">,</span>
                                   <span class="n">old_start</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">old_start</span><span class="p">,</span> <span class="n">old_lines</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">old_lines</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
                 <span class="n">hunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mongo_hunk</span><span class="p">)</span>
@@ -444,7 +447,7 @@
             <span class="c1"># Get hunk ids from insert if hunks is not empty</span>
             <span class="k">if</span> <span class="n">hunks</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">Hunk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">hunks</span><span class="p">,</span> <span class="n">load_bulk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                    <span class="n">Hunk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">hunks</span><span class="p">,</span> <span class="n">load_bulk</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">DocumentTooLarge</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">hunk</span> <span class="ow">in</span> <span class="n">hunks</span><span class="p">:</span>
                         <span class="k">try</span><span class="p">:</span>
