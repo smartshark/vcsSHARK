@@ -20,7 +20,7 @@ install:
 
 script:
   - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3.5 setup.py test"
-  - sphinx-build -b html /root/vcsshark/docs/source /root/vcsshark/docs/build
+  - docker run --net=mongodb-net testdocker /bin/sh -c "sphinx-build -b html /root/vcsshark/docs/source /root/vcsshark/docs/build"
 
 #after_success:
 #  - travis-sphinx deploy
