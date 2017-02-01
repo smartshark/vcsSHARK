@@ -17,6 +17,7 @@ on how to perform this step with a different operating system.
 
 
 .. _installation:
+
 Installation
 ============
 The installation process is straight forward. For a vanilla Ubuntu 16.04, we need to install the following packages:
@@ -157,7 +158,7 @@ In this section we show step-by-step how you can analyze and store the repositor
 `checkstyle <https://github.com/checkstyle/checkstyle>`_ project in a mongodb.
 
 1.	First, if you want to use the mongodb datastore you need to have a mongodb running (version 3.2+).
-How this can be achieved is explained `here <https://docs.mongodb.org/manual/>`_.
+How this can be achieved is explained here: https://docs.mongodb.org/manual/.
 
 .. WARNING::
 	Make sure, that you activated the authentication of mongodb
