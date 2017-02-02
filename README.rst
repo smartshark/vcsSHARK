@@ -5,6 +5,10 @@ vcsSHARK
 
 vcsSHARK collects data from Version Control Systems (VCSs). Currently, only git is supported.
 
+Documentation
+-------------
+https://smartshark.github.io/vcsSHARK/
+
 ============
 Introduction
 ============
