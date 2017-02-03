@@ -16,6 +16,11 @@ on how to perform this step with a different operating system.
 .. WARNING:: This software is still in development.
 
 
+Model Documentation
+===================
+The documentation for the used database models can be found here: https://smartshark.github.io/pycoSHARK/api.html
+
+
 .. _installation:
 
 Installation

@@ -89,14 +89,15 @@
             
                 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation">1.1. Installation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#via-pip">1.1.1. via Pip</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#via-setup-py">1.1.2. via setup.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-documentation">1.1. Model Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">1.2. Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#via-pip">1.2.1. via Pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#via-setup-py">1.2.2. via setup.py</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#tests">1.2. Tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#execution">1.3. Execution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tutorial">1.4. Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tests">1.3. Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#execution">1.4. Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial">1.5. Tutorial</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="extension.html">2. How to Extend</a></li>
@@ -158,8 +159,12 @@ on how to perform this step with a different operating system.</p>
 <p class="first admonition-title">Warning</p>
 <p class="last">This software is still in development.</p>
 </div>
+<div class="section" id="model-documentation">
+<h2>1.1. Model Documentation<a class="headerlink" href="#model-documentation" title="Permalink to this headline">¶</a></h2>
+<p>The documentation for the used database models can be found here: <a class="reference external" href="https://smartshark.github.io/pycoSHARK/api.html">https://smartshark.github.io/pycoSHARK/api.html</a></p>
+</div>
 <div class="section" id="installation">
-<span id="id1"></span><h2>1.1. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2>1.2. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>The installation process is straight forward. For a vanilla Ubuntu 16.04, we need to install the following packages:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get install git python3-pip python3-cffi libgit2-24 libgit2-dev
 </pre></div>
@@ -175,13 +180,13 @@ But, you need to choose a version, which is compatible with pygit2 0.24.2.</p>
 to a folder you want. In the following, we assume that you have cloned the repository to <strong>~/vcsSHARK</strong>. Afterwards,
 the installation of <strong>vcsSHARK</strong> can be done in two different ways:</p>
 <div class="section" id="via-pip">
-<h3>1.1.1. via Pip<a class="headerlink" href="#via-pip" title="Permalink to this headline">¶</a></h3>
+<h3>1.2.1. via Pip<a class="headerlink" href="#via-pip" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo pip3 install https://github.com/smartshark/vcsSHARK/zipball/master --process-dependency-links
 </pre></div>
 </div>
 </div>
 <div class="section" id="via-setup-py">
-<h3>1.1.2. via setup.py<a class="headerlink" href="#via-setup-py" title="Permalink to this headline">¶</a></h3>
+<h3>1.2.2. via setup.py<a class="headerlink" href="#via-setup-py" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo python3.5 ~/vcsSHARK/setup.py install
 </pre></div>
 </div>
@@ -194,7 +199,7 @@ Just change the &#8220;filename&#8221;-attribute to a location of your wish.</p>
 </div>
 </div>
 <div class="section" id="tests">
-<h2>1.2. Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<h2>1.3. Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
 <p>The tests of <strong>vcsSHARK</strong> can be executed by calling</p>
 <blockquote>
 <div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/setup.py <span class="nb">test</span>
@@ -208,7 +213,7 @@ Just change the &#8220;filename&#8221;-attribute to a location of your wish.</p>
 </div>
 </div>
 <div class="section" id="execution">
-<h2>1.3. Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h2>
+<h2>1.4. Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h2>
 <p>In this chapter, we explain how you can execute <strong>vcsSHARK</strong>. Furthermore, the different execution parameters are
 explained in detail.</p>
 <ol class="arabic">
@@ -313,7 +318,7 @@ you can add them by:</p>
 
 </div>
 <div class="section" id="tutorial">
-<h2>1.4. Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<h2>1.5. Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
 <p>In this section we show step-by-step how you can analyze and store the repository of the
 <a class="reference external" href="https://github.com/checkstyle/checkstyle">checkstyle</a> project in a mongodb.</p>
 <p>1.      First, if you want to use the mongodb datastore you need to have a mongodb running (version 3.2+).
