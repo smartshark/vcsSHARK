@@ -9,6 +9,10 @@ Documentation
 -------------
 https://smartshark.github.io/vcsSHARK/
 
+Model Documentation
+-------------------
+The documentation for the used database models can be found here: https://smartshark.github.io/pycoSHARK/api.html
+
 ============
 Introduction
 ============
@@ -47,16 +51,16 @@ After these requirements are met, first clone the **vcsSHARK** `repository <http
 to a folder you want. In the following, we assume that you have cloned the repository to **~/vcsSHARK**. Afterwards,
 the installation of **vcsSHARK** can be done in two different ways:
 
-=======
+
 via Pip
-=======
+-------
 .. code-block:: bash
 
 	$ sudo pip3 install https://github.com/smartshark/vcsSHARK/zipball/master --process-dependency-links
 
-============
+
 via setup.py
-============
+------------
 .. code-block:: bash
 
 	$ sudo python3.5 ~/vcsSHARK/setup.py install
