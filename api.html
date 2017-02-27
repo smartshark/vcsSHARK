@@ -306,13 +306,13 @@ the methods to create a new datastore.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Property projectName:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">name of the project, which should be stored</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">name of the project, which should be stored</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property projectURL:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">url of the repository of the project, which should be stored</td>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">url of the repository of the project, which should be stored</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property repositoryType:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">type of the repository of the project, which should be stored</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">type of the repository of the project, which should be stored</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metaclass</strong> &#8211; name of the abstract metaclass</td>
 </tr>
@@ -410,13 +410,13 @@ the methods to create a new datastore.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Property commit_queue:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">instance of a <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.JoinableQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">multiprocessing.JoinableQueue</span></code></a>, which      holds objects of <code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code>, that should be put into the mongodb</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">instance of a <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.JoinableQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">multiprocessing.JoinableQueue</span></code></a>, which      holds objects of <code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code>, that should be put into the mongodb</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property NUMBER_OF_PROCESSES:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">holds the number of processes by calling <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.cpu_count" title="(in Python v3.5)"><code class="xref py py-func docutils literal"><span class="pre">multiprocessing.cpu_count()</span></code></a></td>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">holds the number of processes by calling <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.cpu_count" title="(in Python v3.5)"><code class="xref py py-func docutils literal"><span class="pre">multiprocessing.cpu_count()</span></code></a></td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property logger:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">holds the logging instance, by calling logging.getLogger(&#8220;store&#8221;)</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">holds the logging instance, by calling logging.getLogger(&#8220;store&#8221;)</td>
 </tr>
 </tbody>
 </table>
@@ -824,25 +824,25 @@ put here, as only the parser is specific to the repository type</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Property SIMILARITY_THRESHOLD:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">sets the threshold for deciding if a file is similar to another. Default: 50%</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">sets the threshold for deciding if a file is similar to another. Default: 50%</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property NUMBER_OF_PROCESSES:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">number of processes for the parsing process. Calls     <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.cpu_count" title="(in Python v3.5)"><code class="xref py py-func docutils literal"><span class="pre">multiprocessing.cpu_count()</span></code></a>.</td>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">number of processes for the parsing process. Calls     <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.cpu_count" title="(in Python v3.5)"><code class="xref py py-func docutils literal"><span class="pre">multiprocessing.cpu_count()</span></code></a>.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property repository:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">object of class <a class="reference external" href="http://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2 v0.25)"><code class="xref py py-class docutils literal"><span class="pre">pygit2.Repository</span></code></a>, which represents the repository</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">object of class <a class="reference external" href="http://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2 v0.25)"><code class="xref py py-class docutils literal"><span class="pre">pygit2.Repository</span></code></a>, which represents the repository</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property commits_to_be_processed:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">dictionary that is set up the following way:     commits_to_be_processed = {&#8216;&lt;revisionHash&gt;&#8217; : {&#8216;branches&#8217; : set(), &#8216;tags&#8217; : []}}, where &lt;revisionHash&gt; must be    replaced with the actual hash. Therefore, this dictionary holds information about every revision and which branches     this revision belongs to and which tags it has.</td>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">dictionary that is set up the following way:     commits_to_be_processed = {&#8216;&lt;revisionHash&gt;&#8217; : {&#8216;branches&#8217; : set(), &#8216;tags&#8217; : []}}, where &lt;revisionHash&gt; must be    replaced with the actual hash. Therefore, this dictionary holds information about every revision and which branches     this revision belongs to and which tags it has.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property logger:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">logger, which is acquired via logging.getLogger(&#8220;parser&#8221;)</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">logger, which is acquired via logging.getLogger(&#8220;parser&#8221;)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property datastore:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">datastore, where the commits should be saved to</td>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">datastore, where the commits should be saved to</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property commit_queue:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">object of class <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.JoinableQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">multiprocessing.JoinableQueue</span></code></a>, where commits are stored in that    can be parsed</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">object of class <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.JoinableQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">multiprocessing.JoinableQueue</span></code></a>, where commits are stored in that    can be parsed</td>
 </tr>
 </tbody>
 </table>
@@ -958,7 +958,7 @@ the commits</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Property logger:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">logger acquired by calling logging.getLogger(&#8220;parser&#8221;)</p>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first">logger acquired by calling logging.getLogger(&#8220;parser&#8221;)</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
