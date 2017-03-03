@@ -134,6 +134,8 @@ you can add them by:
 
 --db-authentication <DB_AUTHENTICATION> -a <DB_AUTHENTICATION>:	name of the authentication database
 
+--ssl: enables ssl for the connection to the mongodb; Default: False
+
 --debug <DEBUG_LEVEL>, -d <DEBUG_LEVEL>: Debug level (INFO, DEBUG, WARNING, ERROR)
 
 --project-name <PROJECT_NAME>: Name of the project, from which the data is collected

@@ -20,7 +20,7 @@ from pyvcsshark.parser.models import CommitModel, BranchModel, TagModel,\
 
 class ArgparserMock(object):
     def __init__(self, db_driver, db_user, db_password, db_database, db_hostname, db_port, db_authentication, path,
-                 debug_level, project_name):
+                 debug_level, project_name, ssl):
         self.db_driver = db_driver
         self.db_user = db_user
         self.db_password = db_password
@@ -31,6 +31,7 @@ class ArgparserMock(object):
         self.path = path
         self.debug = debug_level
         self.project_name = project_name
+        self.ssl = ssl
 
 
 class Test(unittest.TestCase):
@@ -52,7 +53,7 @@ class Test(unittest.TestCase):
         parser = ArgparserMock('mongo', config['Database']['db_user'], config['Database']['db_password'],
                                config['Database']['db_database'], config['Database']['db_hostname'],
                                config['Database']['db_port'], config['Database']['db_authentication'], '..',
-                               'ERROR', 'testproject')
+                               'ERROR', 'testproject', False)
 
         cls.config = Config(parser)
 

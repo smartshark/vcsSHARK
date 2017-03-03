@@ -2,8 +2,9 @@ import sys
 from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
 from pyvcsshark.datastores.basestore import BaseStore
-from mongoengine import connect, NotUniqueError, DoesNotExist
+from mongoengine import connect, DoesNotExist, NotUniqueError
 from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk
+from pycoshark.utils import create_mongodb_uri_string
 
 import multiprocessing
 import logging
@@ -47,8 +48,11 @@ class MongoStore(BaseStore):
         # We define, that the user we authenticate with is in the admin database
         logger.info("Connecting to MongoDB...")
 
-        connect(config.db_database, username=config.db_user, password=config.db_password, host=config.db_hostname,
-                port=config.db_port, authentication_source=config.db_authentication, connect=False)
+        uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
+                                        config.db_authentication, config.ssl_enabled)
+        connect(config.db_database, host=uri, connect=False)
+
+
 
         # Get project_id
         try:
@@ -110,8 +114,9 @@ class CommitStorageProcess(multiprocessing.Process):
     """
     def __init__(self, queue, vcs_system_id, last_commit_date, config):
         multiprocessing.Process.__init__(self)
-        connect(config.db_database, username=config.db_user, password=config.db_password, host=config.db_hostname,
-                port=config.db_port, authentication_source=config.db_authentication, connect=False)
+        uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
+                                        config.db_authentication, config.ssl_enabled)
+        connect(config.db_database, host=uri, connect=False)
         self.queue = queue
         self.vcs_system_id = vcs_system_id
         self.last_commit_date = last_commit_date
@@ -233,11 +238,11 @@ class CommitStorageProcess(multiprocessing.Process):
             if tag.tagger is not None:
                 tagger_id = self.create_people(tag.tagger.name, tag.tagger.email)
                 try:
-                    mongo_tag = Tag(commit_id=commit_id, name=tag.name, message=tag.message,tagger_id=tagger_id,
+                    mongo_tag = Tag(commit_id=commit_id, name=tag.name, message=tag.message, tagger_id=tagger_id,
                                     date=tag.taggerDate, date_offset=tag.taggerOffset,
                                     vcs_system_id=self.vcs_system_id).save()
                 except (DuplicateKeyError, NotUniqueError):
-                    mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name)\
+                    mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name) \
                         .only('id', 'name').get()
             else:
                 try:
@@ -316,5 +321,4 @@ class CommitStorageProcess(multiprocessing.Process):
                         try:
                             hunk.save()
                         except DocumentTooLarge:
-                            #TODO
-                            pass
+                            logger.info("Document was too large for commit: %s" % mongo_commit_id)

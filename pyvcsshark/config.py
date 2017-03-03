@@ -23,6 +23,7 @@ class Config(object):
         self.path = args.path.rstrip('/')
         self.debug_level = args.debug
         self.project_name = args.project_name
+        self.ssl_enabled = args.ssl
 
     def __str__(self):
         return "Driver: %s, User: %s, Password: %s, Database: %s, Hostname: %s, Port: %s, AuthenticationDB: %s, " \

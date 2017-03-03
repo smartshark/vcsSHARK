@@ -23,12 +23,12 @@
 		{
 			"name": "commit",
 			"shard_key": [{"revision_hash": 1}, {"vcs_system_id": 1}],
-			"unique": true
+            "unique": true
 		},
         {
 			"name": "file",
 			"shard_key": [{"path": 1}, {"vcs_system_id": 1}],
-			"unique": true
+            "unique": true
 		},
         {
 			"name": "file_action",
@@ -41,11 +41,12 @@
         {
 			"name": "people",
 			"shard_key": [{"email": 1}, {"name": 1}],
-			"unique": true
+            "unique": true
 		},
         {
 			"name": "tag",
-			"shard_key": [{"name": "1"}, {"commit_id": 1}]
+			"shard_key": [{"name": "1"}, {"commit_id": 1}],
+            "unique": true
 		},
 		{
 			"name": "vcs_system",
@@ -131,7 +132,14 @@
             "required": false,
             "position": 10,
             "type": "execute",
-            "description": "databse against which users are authenticated"
+            "description": "database against which users are authenticated"
+        },
+        {
+            "name": "ssl_enabled",
+            "required": false,
+            "position": 11,
+            "type": "execute",
+            "description": "needs to be set if database uses ssl connection"
         }
     ]
 }
