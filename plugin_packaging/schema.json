@@ -253,13 +253,13 @@
                "desc": "Identifier of the document"
             },
             {  
-               "type":"DateType",
+               "type":"StringType",
                "logical_type":"Location",
                "field_name":"url",
                "desc": "URL of the vcs_system (e.g. https://github.com/smartshark/vcsSHARK)"
             },
             {
-               "type":"StringType",
+               "type":"DateType",
                "logical_type":"Date",
                "field_name":"last_updated",
                "desc": "Date of the last parsing of this vcs_system "
