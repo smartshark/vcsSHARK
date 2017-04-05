@@ -1,3 +1,5 @@
+import sys
+
 from pyvcsshark.parser.baseparser import BaseParser
 import pygit2
 import logging
@@ -75,15 +77,18 @@ class GitParser(BaseParser):
         :param branch: branch that should be added for the commit
         """
         string_commit_hash = str(commit_hash)
-        
-        branchModel = BranchModel(branch)
+
+        if branch is None:
+            branch_model = None
+        else:
+            branch_model = BranchModel(branch)
         
         # If the commit is already in the dict, we only need to append the branch (because then it was already parsed)
         if string_commit_hash in self.commits_to_be_processed:
-            self.commits_to_be_processed[string_commit_hash]['branches'].add(branchModel)
+            self.commits_to_be_processed[string_commit_hash]['branches'].add(branch_model)
         else:
             self.commit_queue.put(string_commit_hash)
-            self.commits_to_be_processed[string_commit_hash] = {'branches': {branchModel}, 'tags': []}
+            self.commits_to_be_processed[string_commit_hash] = {'branches': {branch_model}, 'tags': []}
 
     def add_tag(self, tagged_commit, tag_name, tag_object):
         """
@@ -155,6 +160,11 @@ class GitParser(BaseParser):
             tagged_commit = self.repository.lookup_reference(tag).peel()
             self.add_tag(tagged_commit, tag, tag_object)
 
+            # The tagged_commit can have children that are not on any branch, but we may need it anyway --> collect it
+            # and add it only if we have not collected it before
+            for child in self.repository.walk(tagged_commit.id, pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
+                if str(child.id) not in self.commits_to_be_processed:
+                    self.add_branch(child.id, None)
 
     def parse(self, repository_path, datastore):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the

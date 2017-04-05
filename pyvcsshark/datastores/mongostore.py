@@ -142,82 +142,59 @@ class CommitStorageProcess(multiprocessing.Process):
         while True:
             commit = self.queue.get()
 
-            # Check if commitdate > lastcommit date
-            if self.last_commit_date is not None and commit.committerDate <= self.last_commit_date:
-                mongo_commit = Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit.id).first()
-
-                if mongo_commit is not None:
-                    # We have parsed that commit before, now we need to check if branches or tags were changed
-                    self.check_and_update_branches_and_tags(commit, mongo_commit)
-
-                    # Nothing more than branches or tags can be changed, therefore we only need to update the commit
-                    self.queue.task_done()
-                    continue
-
-            # Try to get the commit. If it is already existent, then return directly
+            # Try to get the commit
+            already_stored = False
             try:
                 mongo_commit = Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit.id).get()
+                already_stored = True
             except DoesNotExist:
                 mongo_commit = Commit(
                     vcs_system_id=self.vcs_system_id,
                     revision_hash=commit.id
                 ).save()
 
-            # Create people
-            mongo_commit.author_id = self.create_people(commit.author.name, commit.author.email)
-            mongo_commit.author_date = commit.authorDate
-            mongo_commit.author_date_offset = commit.authorOffset
-
-            mongo_commit.committer_id = self.create_people(commit.committer.name, commit.committer.email)
-            mongo_commit.committer_date = commit.committerDate
-            mongo_commit.committer_date_offset = commit.committerOffset
-
-            # Create tags
-            self.create_tags(mongo_commit.id, commit.tags)
-
-            # Create branchlist
-            mongo_commit.branches = self.create_branch_list(commit.branches)
-
-            # Set parent hashes
-            mongo_commit.parents = commit.parents
-
-            # Set message
-            mongo_commit.message = commit.message
-
-            # Create fileActions
-            self.create_file_actions(commit.changedFiles, mongo_commit.id)
+            # Only tags and branches can change, so if a commit is already stored we set them new
+            if already_stored:
+                self.only_set_tags_and_branches(mongo_commit, commit)
+            else:
+                self.set_whole_commit(mongo_commit, commit)
 
             # Save Revision object#
             mongo_commit.save()
 
             self.queue.task_done()
 
-    def check_and_update_branches_and_tags(self, commit, mongo_commit):
-        """ Method that checks if the commit that was stored in the database has the same
-        branches and tags as the commit which is processed at the moment.
+    def only_set_tags_and_branches(self, mongo_commit, commit):
+        # Create tags
+        self.create_tags(mongo_commit.id, commit.tags)
 
-        :param commit: object of class :class:`pyvcsshark.dbmodels.models.CommitModel`.
-        :param mongo_commit: object of the commit class from the pycoshark library (stored in MongoDB)
+        # Create branchlist
+        mongo_commit.branches = self.create_branch_list(commit.branches)
 
-        .. NOTE:: We use the project id and the revision hash to find the commit in the datastore.
-        """
+    def set_whole_commit(self, mongo_commit, commit):
+        # Create tags
+        self.create_tags(mongo_commit.id, commit.tags)
 
-        old_tags = list(Tag.objects(commit_id=mongo_commit.id).all())
+        # Create branchlist
+        mongo_commit.branches = self.create_branch_list(commit.branches)
 
-        # Directly creates the new tags and associates it with the new commit
-        new_tags = self.create_tags(mongo_commit.id, commit.tags)
+        # Create people
+        mongo_commit.author_id = self.create_people(commit.author.name, commit.author.email)
+        mongo_commit.author_date = commit.authorDate
+        mongo_commit.author_date_offset = commit.authorOffset
 
-        # If they are not equal, we need to delete old tags
-        if old_tags != new_tags:
-            for old_tag in old_tags:
-                if old_tag not in new_tags:
-                    Tag.objects(id=old_tag.id).delete()
+        mongo_commit.committer_id = self.create_people(commit.committer.name, commit.committer.email)
+        mongo_commit.committer_date = commit.committerDate
+        mongo_commit.committer_date_offset = commit.committerOffset
 
-        # If they are not equal we need to update the commit
-        old_branches = set(mongo_commit.branches)
-        new_branches = set(self.create_branch_list(commit.branches))
-        if old_branches != new_branches:
-            mongo_commit.update(branches=new_branches)
+        # Set parent hashes
+        mongo_commit.parents = commit.parents
+
+        # Set message
+        mongo_commit.message = commit.message
+
+        # Create fileActions
+        self.create_file_actions(commit.changedFiles, mongo_commit.id)
 
     def create_branch_list(self, branches):
         """Creates a list of the different branch names, where a commit belongs to. We go through the \
@@ -228,7 +205,11 @@ class CommitStorageProcess(multiprocessing.Process):
         """
         branch_list = []
         for branch in branches:
-            branch_list.append(branch.name)
+            if branch is not None:
+                branch_list.append(branch.name)
+
+        if len(branch_list) == 0:
+            branch_list = None
 
         return branch_list
 
