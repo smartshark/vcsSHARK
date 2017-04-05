@@ -304,82 +304,59 @@
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">commit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
-            <span class="c1"># Check if commitdate &gt; lastcommit date</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_commit_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">commit</span><span class="o">.</span><span class="n">committerDate</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_commit_date</span><span class="p">:</span>
-                <span class="n">mongo_commit</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">revision_hash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-
-                <span class="k">if</span> <span class="n">mongo_commit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="c1"># We have parsed that commit before, now we need to check if branches or tags were changed</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">check_and_update_branches_and_tags</span><span class="p">(</span><span class="n">commit</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="p">)</span>
-
-                    <span class="c1"># Nothing more than branches or tags can be changed, therefore we only need to update the commit</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
-                    <span class="k">continue</span>
-
-            <span class="c1"># Try to get the commit. If it is already existent, then return directly</span>
+            <span class="c1"># Try to get the commit</span>
+            <span class="n">already_stored</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">mongo_commit</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">revision_hash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="n">already_stored</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span> <span class="n">DoesNotExist</span><span class="p">:</span>
                 <span class="n">mongo_commit</span> <span class="o">=</span> <span class="n">Commit</span><span class="p">(</span>
                     <span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span>
                     <span class="n">revision_hash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
-            <span class="c1"># Create people</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">author_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_people</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">author_date</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">authorDate</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">author_date_offset</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">authorOffset</span>
-
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">committer_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_people</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">committer_date</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">committerDate</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">committer_date_offset</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">committerOffset</span>
-
-            <span class="c1"># Create tags</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">create_tags</span><span class="p">(</span><span class="n">mongo_commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
-
-            <span class="c1"># Create branchlist</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_branch_list</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
-
-            <span class="c1"># Set parent hashes</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">parents</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">parents</span>
-
-            <span class="c1"># Set message</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">message</span>
-
-            <span class="c1"># Create fileActions</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">create_file_actions</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">changedFiles</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="c1"># Only tags and branches can change, so if a commit is already stored we set them new</span>
+            <span class="k">if</span> <span class="n">already_stored</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">only_set_tags_and_branches</span><span class="p">(</span><span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_whole_commit</span><span class="p">(</span><span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span>
 
             <span class="c1"># Save Revision object#</span>
             <span class="n">mongo_commit</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="CommitStorageProcess.check_and_update_branches_and_tags"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess.check_and_update_branches_and_tags">[docs]</a>    <span class="k">def</span> <span class="nf">check_and_update_branches_and_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Method that checks if the commit that was stored in the database has the same</span>
-<span class="sd">        branches and tags as the commit which is processed at the moment.</span>
+    <span class="k">def</span> <span class="nf">only_set_tags_and_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">):</span>
+        <span class="c1"># Create tags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_tags</span><span class="p">(</span><span class="n">mongo_commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
 
-<span class="sd">        :param commit: object of class :class:`pyvcsshark.dbmodels.models.CommitModel`.</span>
-<span class="sd">        :param mongo_commit: object of the commit class from the pycoshark library (stored in MongoDB)</span>
+        <span class="c1"># Create branchlist</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_branch_list</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
 
-<span class="sd">        .. NOTE:: We use the project id and the revision hash to find the commit in the datastore.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">set_whole_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">):</span>
+        <span class="c1"># Create tags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_tags</span><span class="p">(</span><span class="n">mongo_commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
 
-        <span class="n">old_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">commit_id</span><span class="o">=</span><span class="n">mongo_commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+        <span class="c1"># Create branchlist</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_branch_list</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
 
-        <span class="c1"># Directly creates the new tags and associates it with the new commit</span>
-        <span class="n">new_tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_tags</span><span class="p">(</span><span class="n">mongo_commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+        <span class="c1"># Create people</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">author_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_people</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">author_date</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">authorDate</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">author_date_offset</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">authorOffset</span>
 
-        <span class="c1"># If they are not equal, we need to delete old tags</span>
-        <span class="k">if</span> <span class="n">old_tags</span> <span class="o">!=</span> <span class="n">new_tags</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">old_tag</span> <span class="ow">in</span> <span class="n">old_tags</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">old_tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_tags</span><span class="p">:</span>
-                    <span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">old_tag</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">committer_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_people</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">committer_date</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">committerDate</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">committer_date_offset</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">committerOffset</span>
 
-        <span class="c1"># If they are not equal we need to update the commit</span>
-        <span class="n">old_branches</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">mongo_commit</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
-        <span class="n">new_branches</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">create_branch_list</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">branches</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">old_branches</span> <span class="o">!=</span> <span class="n">new_branches</span><span class="p">:</span>
-            <span class="n">mongo_commit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">branches</span><span class="o">=</span><span class="n">new_branches</span><span class="p">)</span></div>
+        <span class="c1"># Set parent hashes</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">parents</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">parents</span>
+
+        <span class="c1"># Set message</span>
+        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">commit</span><span class="o">.</span><span class="n">message</span>
+
+        <span class="c1"># Create fileActions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_file_actions</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">changedFiles</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CommitStorageProcess.create_branch_list"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_branch_list">[docs]</a>    <span class="k">def</span> <span class="nf">create_branch_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branches</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates a list of the different branch names, where a commit belongs to. We go through the \</span>
@@ -390,7 +367,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">branch_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">branches</span><span class="p">:</span>
-            <span class="n">branch_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">branch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">branch_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">branch_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">branch_list</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">return</span> <span class="n">branch_list</span></div>
 

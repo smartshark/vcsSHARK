@@ -505,29 +505,6 @@ read commits out of the commitqueue, process them and store them into the mongod
 </tbody>
 </table>
 <dl class="method">
-<dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.check_and_update_branches_and_tags">
-<code class="descname">check_and_update_branches_and_tags</code><span class="sig-paren">(</span><em>commit</em>, <em>mongo_commit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.check_and_update_branches_and_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.check_and_update_branches_and_tags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method that checks if the commit that was stored in the database has the same
-branches and tags as the commit which is processed at the moment.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>commit</strong> &#8211; object of class <code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code>.</li>
-<li><strong>mongo_commit</strong> &#8211; object of the commit class from the pycoshark library (stored in MongoDB)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">We use the project id and the revision hash to find the commit in the datastore.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.create_branch_list">
 <code class="descname">create_branch_list</code><span class="sig-paren">(</span><em>branches</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_branch_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_branch_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a list of the different branch names, where a commit belongs to. We go through the         branches property of the class <code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code>, which is a list of         different branch objects of class <cite>pyvcsshark.dbmodels.models.CommitModel</cite></p>

@@ -160,7 +160,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyvcsshark.parser.gitparser</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pyvcsshark.parser.baseparser</span> <span class="k">import</span> <span class="n">BaseParser</span>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">pyvcsshark.parser.baseparser</span> <span class="k">import</span> <span class="n">BaseParser</span>
 <span class="kn">import</span> <span class="nn">pygit2</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -237,15 +239,18 @@
 <span class="sd">        :param branch: branch that should be added for the commit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">string_commit_hash</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">commit_hash</span><span class="p">)</span>
-        
-        <span class="n">branchModel</span> <span class="o">=</span> <span class="n">BranchModel</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">branch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">branch_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">branch_model</span> <span class="o">=</span> <span class="n">BranchModel</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
         
         <span class="c1"># If the commit is already in the dict, we only need to append the branch (because then it was already parsed)</span>
         <span class="k">if</span> <span class="n">string_commit_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">[</span><span class="n">string_commit_hash</span><span class="p">][</span><span class="s1">&#39;branches&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">branchModel</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">[</span><span class="n">string_commit_hash</span><span class="p">][</span><span class="s1">&#39;branches&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">branch_model</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">string_commit_hash</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">[</span><span class="n">string_commit_hash</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;branches&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">branchModel</span><span class="p">},</span> <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="p">[]}</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">[</span><span class="n">string_commit_hash</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;branches&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">branch_model</span><span class="p">},</span> <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="p">[]}</span></div>
 
 <div class="viewcode-block" id="GitParser.add_tag"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.add_tag">[docs]</a>    <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tagged_commit</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">,</span> <span class="n">tag_object</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -315,8 +320,13 @@
             <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">lookup_reference</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
             <span class="n">tag_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="p">[</span><span class="n">reference</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">hex</span><span class="p">]</span>
             <span class="n">tagged_commit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">lookup_reference</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">peel</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_tag</span><span class="p">(</span><span class="n">tagged_commit</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">tag_object</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_tag</span><span class="p">(</span><span class="n">tagged_commit</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">tag_object</span><span class="p">)</span>
 
+            <span class="c1"># The tagged_commit can have children that are not on any branch, but we may need it anyway --&gt; collect it</span>
+            <span class="c1"># and add it only if we have not collected it before</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tagged_commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">GIT_SORT_TIME</span> <span class="o">|</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">GIT_SORT_TOPOLOGICAL</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_branch</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GitParser.parse"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repository_path</span><span class="p">,</span> <span class="n">datastore</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Parses the repository, which is located at the repository_path and save the parsed commits in the</span>
