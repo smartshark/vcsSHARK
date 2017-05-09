@@ -305,33 +305,20 @@
             <span class="n">commit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
             <span class="c1"># Try to get the commit</span>
-            <span class="n">already_stored</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">mongo_commit</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">revision_hash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-                <span class="n">already_stored</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span> <span class="n">DoesNotExist</span><span class="p">:</span>
                 <span class="n">mongo_commit</span> <span class="o">=</span> <span class="n">Commit</span><span class="p">(</span>
                     <span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span>
                     <span class="n">revision_hash</span><span class="o">=</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
-            <span class="c1"># Only tags and branches can change, so if a commit is already stored we set them new</span>
-            <span class="k">if</span> <span class="n">already_stored</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">only_set_tags_and_branches</span><span class="p">(</span><span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">set_whole_commit</span><span class="p">(</span><span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_whole_commit</span><span class="p">(</span><span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span>
 
             <span class="c1"># Save Revision object#</span>
             <span class="n">mongo_commit</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span></div>
-
-    <span class="k">def</span> <span class="nf">only_set_tags_and_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">):</span>
-        <span class="c1"># Create tags</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_tags</span><span class="p">(</span><span class="n">mongo_commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
-
-        <span class="c1"># Create branchlist</span>
-        <span class="n">mongo_commit</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_branch_list</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_whole_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mongo_commit</span><span class="p">,</span> <span class="n">commit</span><span class="p">):</span>
         <span class="c1"># Create tags</span>
@@ -439,19 +426,23 @@
                 <span class="n">new_file_id</span> <span class="o">=</span> <span class="n">File</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
 
             <span class="c1"># Create the new file action</span>
-            <span class="n">file_action</span> <span class="o">=</span> <span class="n">FileAction</span><span class="p">(</span><span class="n">file_id</span><span class="o">=</span><span class="n">new_file_id</span><span class="p">,</span>
-                                     <span class="n">commit_id</span><span class="o">=</span><span class="n">mongo_commit_id</span><span class="p">,</span>
-                                     <span class="n">size_at_commit</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
-                                     <span class="n">lines_added</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">linesAdded</span><span class="p">,</span>
-                                     <span class="n">lines_deleted</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">linesDeleted</span><span class="p">,</span>
-                                     <span class="n">is_binary</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">isBinary</span><span class="p">,</span>
-                                     <span class="n">mode</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-                                     <span class="n">old_file_id</span><span class="o">=</span><span class="n">old_file_id</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">file_action_id</span> <span class="o">=</span> <span class="n">FileAction</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">file_id</span><span class="o">=</span><span class="n">new_file_id</span><span class="p">,</span> <span class="n">commit_id</span><span class="o">=</span><span class="n">mongo_commit_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                <span class="n">Hunk</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">file_action_id</span><span class="o">=</span><span class="n">file_action_id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">DoesNotExist</span><span class="p">:</span>
+                <span class="n">file_action_id</span> <span class="o">=</span> <span class="n">FileAction</span><span class="p">(</span><span class="n">file_id</span><span class="o">=</span><span class="n">new_file_id</span><span class="p">,</span>
+                                            <span class="n">commit_id</span><span class="o">=</span><span class="n">mongo_commit_id</span><span class="p">,</span>
+                                            <span class="n">size_at_commit</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+                                            <span class="n">lines_added</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">linesAdded</span><span class="p">,</span>
+                                            <span class="n">lines_deleted</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">linesDeleted</span><span class="p">,</span>
+                                            <span class="n">is_binary</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">isBinary</span><span class="p">,</span>
+                                            <span class="n">mode</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                                            <span class="n">old_file_id</span><span class="o">=</span><span class="n">old_file_id</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
 
             <span class="c1"># Create hunk objects for bulk insert</span>
             <span class="n">hunks</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">hunk</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">hunks</span><span class="p">:</span>
-                <span class="n">mongo_hunk</span> <span class="o">=</span> <span class="n">Hunk</span><span class="p">(</span><span class="n">file_action_id</span><span class="o">=</span><span class="n">file_action</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">new_start</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">new_start</span><span class="p">,</span> <span class="n">new_lines</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">new_lines</span><span class="p">,</span>
+                <span class="n">mongo_hunk</span> <span class="o">=</span> <span class="n">Hunk</span><span class="p">(</span><span class="n">file_action_id</span><span class="o">=</span><span class="n">file_action_id</span><span class="p">,</span> <span class="n">new_start</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">new_start</span><span class="p">,</span> <span class="n">new_lines</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">new_lines</span><span class="p">,</span>
                                   <span class="n">old_start</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">old_start</span><span class="p">,</span> <span class="n">old_lines</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">old_lines</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">hunk</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
                 <span class="n">hunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mongo_hunk</span><span class="p">)</span>
 
