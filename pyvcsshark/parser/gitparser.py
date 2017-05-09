@@ -82,7 +82,7 @@ class GitParser(BaseParser):
             branch_model = None
         else:
             branch_model = BranchModel(branch)
-        
+
         # If the commit is already in the dict, we only need to append the branch (because then it was already parsed)
         if string_commit_hash in self.commits_to_be_processed:
             self.commits_to_be_processed[string_commit_hash]['branches'].add(branch_model)

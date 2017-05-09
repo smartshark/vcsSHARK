@@ -143,33 +143,20 @@ class CommitStorageProcess(multiprocessing.Process):
             commit = self.queue.get()
 
             # Try to get the commit
-            already_stored = False
             try:
                 mongo_commit = Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit.id).get()
-                already_stored = True
             except DoesNotExist:
                 mongo_commit = Commit(
                     vcs_system_id=self.vcs_system_id,
                     revision_hash=commit.id
                 ).save()
 
-            # Only tags and branches can change, so if a commit is already stored we set them new
-            if already_stored:
-                self.only_set_tags_and_branches(mongo_commit, commit)
-            else:
-                self.set_whole_commit(mongo_commit, commit)
+            self.set_whole_commit(mongo_commit, commit)
 
             # Save Revision object#
             mongo_commit.save()
 
             self.queue.task_done()
-
-    def only_set_tags_and_branches(self, mongo_commit, commit):
-        # Create tags
-        self.create_tags(mongo_commit.id, commit.tags)
-
-        # Create branchlist
-        mongo_commit.branches = self.create_branch_list(commit.branches)
 
     def set_whole_commit(self, mongo_commit, commit):
         # Create tags
@@ -277,19 +264,23 @@ class CommitStorageProcess(multiprocessing.Process):
                 new_file_id = File.objects(vcs_system_id=self.vcs_system_id, path=file.path).only('id').get().id
 
             # Create the new file action
-            file_action = FileAction(file_id=new_file_id,
-                                     commit_id=mongo_commit_id,
-                                     size_at_commit=file.size,
-                                     lines_added=file.linesAdded,
-                                     lines_deleted=file.linesDeleted,
-                                     is_binary=file.isBinary,
-                                     mode=file.mode,
-                                     old_file_id=old_file_id).save()
+            try:
+                file_action_id = FileAction.objects(file_id=new_file_id, commit_id=mongo_commit_id).get().id
+                Hunk.objects(file_action_id=file_action_id).all().delete()
+            except DoesNotExist:
+                file_action_id = FileAction(file_id=new_file_id,
+                                            commit_id=mongo_commit_id,
+                                            size_at_commit=file.size,
+                                            lines_added=file.linesAdded,
+                                            lines_deleted=file.linesDeleted,
+                                            is_binary=file.isBinary,
+                                            mode=file.mode,
+                                            old_file_id=old_file_id).save().id
 
             # Create hunk objects for bulk insert
             hunks = []
             for hunk in file.hunks:
-                mongo_hunk = Hunk(file_action_id=file_action.id, new_start=hunk.new_start, new_lines=hunk.new_lines,
+                mongo_hunk = Hunk(file_action_id=file_action_id, new_start=hunk.new_start, new_lines=hunk.new_lines,
                                   old_start=hunk.old_start, old_lines=hunk.old_lines, content=hunk.content)
                 hunks.append(mongo_hunk)
 
