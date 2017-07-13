@@ -201,8 +201,8 @@
     <span class="n">projectURL</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">repositoryType</span> <span class="o">=</span> <span class="kc">None</span>
     
-    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<div class="viewcode-block" id="BaseStore.initialize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.basestore.BaseStore.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">repository_url</span><span class="p">,</span> <span class="n">repository_type</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStore.initialize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.basestore.BaseStore.initialize">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">repository_url</span><span class="p">,</span> <span class="n">repository_type</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initializes the datastore</span>
 <span class="sd">        </span>
 <span class="sd">        :param config: all configuration</span>
@@ -216,8 +216,8 @@
         <span class="sd">&quot;&quot;&quot;Must return a string identifier for the datastore (e.g. **mongo**) &quot;&quot;&quot;</span>
         <span class="k">return</span>
 
-    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<div class="viewcode-block" id="BaseStore.add_commit"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.basestore.BaseStore.add_commit">[docs]</a>    <span class="k">def</span> <span class="nf">add_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit_model</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStore.add_commit"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.basestore.BaseStore.add_commit">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit_model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add the commit to the datastore. How this is handled depends on the implementation.</span>
 <span class="sd">        </span>
 <span class="sd">        :param commit_model: instance of :class:`~pyvcsshark.dbmodels.models.CommitModel`, which includes all \</span>
@@ -229,13 +229,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span></div>
     
-    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-<div class="viewcode-block" id="BaseStore.finalize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.basestore.BaseStore.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStore.finalize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.basestore.BaseStore.finalize">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Is called in the end to finalize the datastore (e.g. closing files or connections)&quot;&quot;&quot;</span>
         <span class="k">return</span></div>
 
-    <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="BaseStore.find_correct_datastore"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.basestore.BaseStore.find_correct_datastore">[docs]</a>    <span class="k">def</span> <span class="nf">find_correct_datastore</span><span class="p">(</span><span class="n">datastore_identifier</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStore.find_correct_datastore"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.basestore.BaseStore.find_correct_datastore">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">find_correct_datastore</span><span class="p">(</span><span class="n">datastore_identifier</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finds the correct datastore by looking at the datastore.storeIdentifier property</span>
 
 <span class="sd">        :param datastore_identifier: string that represents the correct datastore (e.g. **mongo**)</span>
