@@ -78,7 +78,8 @@ class MongoStore(BaseStore):
 
         # Start worker, they will wait till something comes into the queue and then process it
         for i in range(self.NUMBER_OF_PROCESSES):
-            process = CommitStorageProcess(self.commit_queue, vcs_system_id, last_commit_date, config)
+            name = "StorageProcess-%d" % i
+            process = CommitStorageProcess(self.commit_queue, vcs_system_id, last_commit_date, config, name)
             process.daemon = True
             process.start()
 
@@ -112,7 +113,7 @@ class CommitStorageProcess(multiprocessing.Process):
     :param last_commit_date: object of class :class:`datetime.datetime`, which holds the last commit that was parsed
     :param config: object of class :class:`pyvcsshark.config.Config`, which holds configuration information
     """
-    def __init__(self, queue, vcs_system_id, last_commit_date, config):
+    def __init__(self, queue, vcs_system_id, last_commit_date, config, name):
         multiprocessing.Process.__init__(self)
         uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
                                         config.db_authentication, config.ssl_enabled)
@@ -120,6 +121,7 @@ class CommitStorageProcess(multiprocessing.Process):
         self.queue = queue
         self.vcs_system_id = vcs_system_id
         self.last_commit_date = last_commit_date
+        self.proc_name = name
 
     def run(self):
         """ Endless loop for the processes, which consists of several steps:
@@ -141,6 +143,7 @@ class CommitStorageProcess(multiprocessing.Process):
         """
         while True:
             commit = self.queue.get()
+            logger.debug("Process %s is processing commit with hash %s." % (self.proc_name, commit.id))
 
             # Try to get the commit
             try:
@@ -153,34 +156,42 @@ class CommitStorageProcess(multiprocessing.Process):
 
             self.set_whole_commit(mongo_commit, commit)
 
-            # Save Revision object#
+            # Save Revision object
             mongo_commit.save()
+            logger.debug("Process %s saved commit with hash %s. Queue size: %d" % (self.proc_name, commit.id, self.queue.qsize()))
 
             self.queue.task_done()
 
     def set_whole_commit(self, mongo_commit, commit):
         # Create tags
+        logger.debug("Process %s is creating tags for commit with hash %s." % (self.proc_name, commit.id))
         self.create_tags(mongo_commit.id, commit.tags)
 
         # Create branchlist
+        logger.debug("Process %s is creating branches for commit with hash %s." % (self.proc_name, commit.id))
         mongo_commit.branches = self.create_branch_list(commit.branches)
 
         # Create people
+        logger.debug("Process %s is setting author for commit with hash %s." % (self.proc_name, commit.id))
         mongo_commit.author_id = self.create_people(commit.author.name, commit.author.email)
         mongo_commit.author_date = commit.authorDate
         mongo_commit.author_date_offset = commit.authorOffset
 
+        logger.debug("Process %s is setting committer for commit with hash %s." % (self.proc_name, commit.id))
         mongo_commit.committer_id = self.create_people(commit.committer.name, commit.committer.email)
         mongo_commit.committer_date = commit.committerDate
         mongo_commit.committer_date_offset = commit.committerOffset
 
         # Set parent hashes
+        logger.debug("Process %s is setting parents for commit with hash %s." % (self.proc_name, commit.id))
         mongo_commit.parents = commit.parents
 
         # Set message
+        logger.debug("Process %s is setting message for commit with hash %s." % (self.proc_name, commit.id))
         mongo_commit.message = commit.message
 
         # Create fileActions
+        logger.debug("Process %s is setting file actions for commit with hash %s." % (self.proc_name, commit.id))
         self.create_file_actions(commit.changedFiles, mongo_commit.id)
 
     def create_branch_list(self, branches):
@@ -206,17 +217,21 @@ class CommitStorageProcess(multiprocessing.Process):
             if tag.tagger is not None:
                 tagger_id = self.create_people(tag.tagger.name, tag.tagger.email)
                 try:
+                    logger.debug("Process %s is creating tag %s with tagger." % (self.proc_name, tag.name))
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, message=tag.message, tagger_id=tagger_id,
                                     date=tag.taggerDate, date_offset=tag.taggerOffset,
                                     vcs_system_id=self.vcs_system_id).save()
                 except (DuplicateKeyError, NotUniqueError):
+                    logger.debug("Process %s found tag with tagger with name %s." % (self.proc_name, tag.name))
                     mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name) \
                         .only('id', 'name').get()
             else:
                 try:
+                    logger.debug("Process %s is creating tag %s." % (self.proc_name, tag.name))
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, date=tag.taggerDate,
                                     date_offset=tag.taggerOffset, vcs_system_id=self.vcs_system_id).save()
                 except (DuplicateKeyError, NotUniqueError):
+                    logger.debug("Process %s is found tag %s." % (self.proc_name, tag.name))
                     mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name).only('id', 'name').get()
 
             tag_list.append(mongo_tag)
@@ -232,8 +247,10 @@ class CommitStorageProcess(multiprocessing.Process):
         .. NOTE:: The call to :func:`mongoengine.queryset.QuerySet.upsert_one` is thread/process safe
         """
         try:
+            logger.debug("Process %s is creating person with email %s and name %s." % (self.proc_name, email, name))
             people_id = People(name=name, email=email).save().id
         except (DuplicateKeyError, NotUniqueError):
+            logger.debug("Process %s found person with email %s and name %s." % (self.proc_name, email, name))
             people_id = People.objects(name=name, email=email).only('id').get().id
         return people_id
 
@@ -252,20 +269,27 @@ class CommitStorageProcess(multiprocessing.Process):
             # Check if the file was a copy or move action (then the oldPath attribute is not None)
             old_file_id = None
             if file.oldPath is not None:
+                logger.debug("Process %s is creating old file with path %s." % (self.proc_name, file.oldPath))
                 try:
                     old_file_id = File(vcs_system_id=self.vcs_system_id, path=file.oldPath).save().id
                 except (DuplicateKeyError, NotUniqueError):
+                    logger.debug("Process %s found old file with path %s." % (self.proc_name, file.oldPath))
                     old_file_id = File.objects(vcs_system_id=self.vcs_system_id, path=file.oldPath).only('id').get().id
 
             # Create a new file object
             try:
+                logger.debug("Process %s is creating file with path %s." % (self.proc_name, file.path))
                 new_file_id = File(vcs_system_id=self.vcs_system_id, path=file.path).save().id
             except (DuplicateKeyError, NotUniqueError):
+                logger.debug("Process %s found file with path %s." % (self.proc_name, file.path))
                 new_file_id = File.objects(vcs_system_id=self.vcs_system_id, path=file.path).only('id').get().id
 
             # Create the new file action
             try:
+                logger.debug("Process %s is creating file action with file_id %s." % (self.proc_name, new_file_id))
                 file_action_id = FileAction.objects(file_id=new_file_id, commit_id=mongo_commit_id).get().id
+
+                logger.debug("Process %s is deleting all hunks for file action id %s." % (self.proc_name, file_action_id))
                 Hunk.objects(file_action_id=file_action_id).all().delete()
             except DoesNotExist:
                 file_action_id = FileAction(file_id=new_file_id,
@@ -278,6 +302,7 @@ class CommitStorageProcess(multiprocessing.Process):
                                             old_file_id=old_file_id).save().id
 
             # Create hunk objects for bulk insert
+            logger.debug("Process %s is creating hunks for bulk insert." % self.proc_name)
             hunks = []
             for hunk in file.hunks:
                 mongo_hunk = Hunk(file_action_id=file_action_id, new_start=hunk.new_start, new_lines=hunk.new_lines,
@@ -287,6 +312,7 @@ class CommitStorageProcess(multiprocessing.Process):
             # Get hunk ids from insert if hunks is not empty
             if hunks:
                 try:
+                    logger.debug("Process %s is inserting hunks..." % self.proc_name)
                     Hunk.objects.insert(hunks, load_bulk=False)
                 except DocumentTooLarge:
                     for hunk in hunks:

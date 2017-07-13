@@ -63,7 +63,7 @@ def start():
     parser.add_argument('-D', '--db-driver', help='Output database driver. Currently only mongoDB is supported',
                         default='mongo', choices=datastore_choices)
     parser.add_argument('-d', '--debug', help='Debug level', choices=['INFO', 'DEBUG', 'WARNING', 'ERROR'],
-                        default='DEBUG')
+                        default='INFO')
     parser.add_argument('-n', '--project-name', help='Name of the project, that is analyzed', required=True)
     parser.add_argument('--path', help='Path to the checked out repository directory', default=os.getcwd(),
                         type=readable_dir)
