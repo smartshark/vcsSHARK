@@ -496,7 +496,7 @@ read commits out of the commitqueue, process them and store them into the mongod
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>queue</strong> – queue, where the <code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code> are stored in</li>
-<li><strong>vcs_system_id</strong> – object id of class <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.4.0)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> from the vcs system</li>
+<li><strong>vcs_system_id</strong> – object id of class <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.5.1)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> from the vcs system</li>
 <li><strong>last_commit_date</strong> – object of class <a class="reference external" href="https://docs.python.org/3.5/library/datetime.html#datetime.datetime" title="(in Python v3.5)"><code class="xref py py-class docutils literal"><span class="pre">datetime.datetime</span></code></a>, which holds the last commit that was parsed</li>
 <li><strong>config</strong> – object of class <code class="xref py py-class docutils literal"><span class="pre">pyvcsshark.config.Config</span></code>, which holds configuration information</li>
 </ul>
@@ -521,7 +521,7 @@ read commits out of the commitqueue, process them and store them into the mongod
 <dl class="method">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.create_file_actions">
 <code class="descname">create_file_actions</code><span class="sig-paren">(</span><em>files</em>, <em>mongo_commit_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_file_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_file_actions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a list of object ids of type <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.4.0)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> for the different file actions of the
+<dd><p>Creates a list of object ids of type <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.5.1)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> for the different file actions of the
 commit by transforming the files into file actions of type FileAction, File, and Hunk (pycoshark library)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -545,7 +545,7 @@ commit by transforming the files into file actions of type FileAction, File, and
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.create_people">
 <code class="descname">create_people</code><span class="sig-paren">(</span><em>name</em>, <em>email</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_people"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_people" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a people object of type People (which can be found in the pycoshark library) and returns a
-object id of the type <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.4.0)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> of the stored object</p>
+object id of the type <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.5.1)"><code class="xref py py-class docutils literal"><span class="pre">bson.objectid.ObjectId</span></code></a> of the stored object</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
