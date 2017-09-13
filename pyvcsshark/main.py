@@ -65,8 +65,3 @@ class Application(object):
         elapsed = timeit.default_timer() - start_time
         
         logger.info("Execution time: %0.5f s" % elapsed)
-
-            
-            
-            
-            
