@@ -266,7 +266,9 @@ class CommitParserProcess(multiprocessing.Process):
         # If there are parents, we need to get the normal changed files, if not we need to get the files for initial
         # commit
         if commit.parents:
-            changed_files = self.get_changed_files_with_similiarity(commit.parents[0], commit)
+            changed_files = []
+            for parent in commit.parents:
+                changed_files += self.get_changed_files_with_similiarity(parent, commit)
         else:
             changed_files = self.get_changed_files_for_initial_commit(commit)
             
