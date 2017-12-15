@@ -428,7 +428,9 @@
         <span class="c1"># If there are parents, we need to get the normal changed files, if not we need to get the files for initial</span>
         <span class="c1"># commit</span>
         <span class="k">if</span> <span class="n">commit</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
-            <span class="n">changed_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_changed_files_with_similiarity</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">commit</span><span class="p">)</span>
+            <span class="n">changed_files</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">commit</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
+                <span class="n">changed_files</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_changed_files_with_similiarity</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">changed_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_changed_files_for_initial_commit</span><span class="p">(</span><span class="n">commit</span><span class="p">)</span>
             
