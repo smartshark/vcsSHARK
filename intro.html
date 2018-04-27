@@ -25,26 +25,19 @@
   
 
   
-  
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="vcsSHARK 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="2. How to Extend" href="extension.html"/>
-        <link rel="prev" title="Welcome to vcsSHARK’s documentation!" href="index.html"/> 
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. How to Extend" href="extension.html" />
+    <link rel="prev" title="Welcome to vcsSHARK’s documentation!" href="index.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -61,7 +54,7 @@
 
           
             
-            <img src="_static/SmartSHARK_read_the_docs_logo.png" class="logo" />
+            <img src="_static/SmartSHARK_read_the_docs_logo.png" class="logo" alt="Logo"/>
           
           </a>
 
@@ -119,7 +112,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">vcsSHARK</a>
@@ -127,9 +120,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -191,7 +185,7 @@ on how to perform this step with a different operating system.</p>
 <div class="section" id="installation">
 <span id="id1"></span><h2>1.2. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>The installation process is straight forward. For a vanilla Ubuntu 16.04, we need to install the following packages:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo apt-get install git python3-pip python3-cffi libgit2-24 libgit2-dev
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install git python3-pip python3-cffi libgit2-24 libgit2-dev
 </pre></div>
 </div>
 <div class="admonition note">
@@ -206,13 +200,13 @@ to a folder you want. In the following, we assume that you have cloned the repos
 the installation of <strong>vcsSHARK</strong> can be done in two different ways:</p>
 <div class="section" id="via-pip">
 <h3>1.2.1. via Pip<a class="headerlink" href="#via-pip" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo pip3 install https://github.com/smartshark/vcsSHARK/zipball/master --process-dependency-links
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo pip3 install https://github.com/smartshark/vcsSHARK/zipball/master --process-dependency-links
 </pre></div>
 </div>
 </div>
 <div class="section" id="via-setup-py">
 <h3>1.2.2. via setup.py<a class="headerlink" href="#via-setup-py" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo python3.5 ~/vcsSHARK/setup.py install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo python3.5 ~/vcsSHARK/setup.py install
 </pre></div>
 </div>
 <div class="admonition note">
@@ -227,7 +221,7 @@ Just change the “filename”-attribute to a location of your wish.</p>
 <h2>1.3. Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
 <p>The tests of <strong>vcsSHARK</strong> can be executed by calling</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/setup.py <span class="nb">test</span>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/setup.py <span class="nb">test</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -246,7 +240,7 @@ explained in detail.</p>
 </li>
 <li><p class="first">Make sure that your MongoDB is running!</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo systemctl status mongodb
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo systemctl status mongodb
 </pre></div>
 </div>
 </div></blockquote>
@@ -255,14 +249,14 @@ explained in detail.</p>
 <p>3) Make sure that the project from which you collect data is already in the project collection of the MongoDB. If not,
 you can add them by:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</span>: &lt;PROJECT_NAME&gt;<span class="o">})</span>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</span>: &lt;PROJECT_NAME&gt;<span class="o">})</span>
 </pre></div>
 </div>
 </div></blockquote>
 <ol class="arabic" start="4">
 <li><p class="first">Execute <strong>vcsSHARK</strong> by calling</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/vcsshark.py
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/vcsshark.py
 </pre></div>
 </div>
 </div></blockquote>
@@ -363,7 +357,7 @@ Hints how this can be achieved are given <a class="reference external" href="htt
 <ol class="arabic" start="2">
 <li><p class="first">Add checkstyle to the projects table in MongoDB.</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ mongo
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mongo
 $ use vcsshark
 $ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;checkstyle&quot;</span><span class="o">})</span>
 </pre></div>
@@ -376,14 +370,14 @@ $ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</s
 <ol class="arabic" start="3">
 <li><p class="first">Enter the <strong>vcsSHARK</strong> directory via</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> vcsSHARK
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> vcsSHARK
 </pre></div>
 </div>
 </div></blockquote>
 </li>
 <li><p class="first">Test if everything works as expected</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3.5 vcsshark.py --help
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 vcsshark.py --help
 </pre></div>
 </div>
 <div class="admonition note">
@@ -394,14 +388,14 @@ $ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</s
 </li>
 <li><p class="first">Clone the checkstyle repository to your home directory (or another place)</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone https://github.com/checkstyle/checkstyle ~/checkstyle
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/checkstyle/checkstyle ~/checkstyle
 </pre></div>
 </div>
 </div></blockquote>
 </li>
 <li><p class="first">Execute <strong>vcsSHARK</strong>:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/vcsSHARK
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/vcsSHARK
 $ python3.5 vcsshark.py -D mongo -DB vcsshark -H localhost -p <span class="m">27017</span> -n checkstyle --path ~/checkstyle
 </pre></div>
 </div>
@@ -415,9 +409,7 @@ of <a class="reference external" href="http://smartshark2.informatik.uni-goettin
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -439,7 +431,7 @@ of <a class="reference external" href="http://smartshark2.informatik.uni-goettin
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -458,6 +450,7 @@ of <a class="reference external" href="http://smartshark2.informatik.uni-goettin
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'1.0.0',
+            LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -475,14 +468,13 @@ of <a class="reference external" href="http://smartshark2.informatik.uni-goettin
     <script type="text/javascript" src="_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
