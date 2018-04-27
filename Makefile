@@ -32,6 +32,8 @@ html:
 
 .PHONY: deploy
 deploy:
+	cd plugin_packaging && ./build_plugin.sh && cd ..
+	
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
 	ghp-import -n $(BUILDDIR) -m "Travis documentation push"
 	@echo

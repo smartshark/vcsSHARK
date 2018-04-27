@@ -21,3 +21,13 @@ script:
 
 after_success:
   - docker run --env-file .env --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; make deploy > /dev/null"
+  - SRD=`docker ps -alq` && docker cp $SRD:/root/vcsshark/plugin_packaging/vcsSHARK_plugin.tar .
+
+deploy:
+  provider: releases
+  api_key: ${TRAVIS_GH_TOKEN}
+  file: "vcsSHARK_plugin.tar"
+  skip_cleanup: true
+  on:
+    repo: smartshark/vcsSHARK
+    tags: true
