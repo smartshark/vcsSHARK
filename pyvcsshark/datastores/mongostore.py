@@ -3,7 +3,7 @@ from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
 from pyvcsshark.datastores.basestore import BaseStore
 from mongoengine import connect, DoesNotExist, NotUniqueError
-from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk
+from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk, Branch
 from pycoshark.utils import create_mongodb_uri_string
 
 import multiprocessing
@@ -45,14 +45,17 @@ class MongoStore(BaseStore):
 
         # Create queue for multiprocessing
         self.commit_queue = multiprocessing.JoinableQueue()
+
+        # we need an extra queue for branches because all commits need to be finished before we can process branches
+        self.branch_queue = multiprocessing.JoinableQueue()
+        self.config = config
+
         # We define, that the user we authenticate with is in the admin database
         logger.info("Connecting to MongoDB...")
 
         uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
                                         config.db_authentication, config.ssl_enabled)
         connect(config.db_database, host=uri, connect=False)
-
-
 
         # Get project_id
         try:
@@ -62,13 +65,13 @@ class MongoStore(BaseStore):
             sys.exit(1)
 
         # Check if vcssystem already exist, and use upsert
-        vcs_system_id = VCSSystem.objects(url=repository_url).upsert_one(url=repository_url,
-                                                                         repository_type=repository_type,
-                                                                         last_updated=datetime.datetime.today(),
-                                                                         project_id=project_id).id
+        self.vcs_system_id = VCSSystem.objects(url=repository_url).upsert_one(url=repository_url,
+                                                                              repository_type=repository_type,
+                                                                              last_updated=datetime.datetime.today(),
+                                                                              project_id=project_id).id
 
         # Get the last commit by date of the project (if there is any)
-        last_commit = Commit.objects(vcs_system_id=vcs_system_id)\
+        last_commit = Commit.objects(vcs_system_id=self.vcs_system_id)\
             .only('committer_date').order_by('-committer_date').first()
 
         if last_commit is not None:
@@ -79,7 +82,7 @@ class MongoStore(BaseStore):
         # Start worker, they will wait till something comes into the queue and then process it
         for i in range(self.NUMBER_OF_PROCESSES):
             name = "StorageProcess-%d" % i
-            process = CommitStorageProcess(self.commit_queue, vcs_system_id, last_commit_date, config, name)
+            process = CommitStorageProcess(self.commit_queue, self.vcs_system_id, last_commit_date, self.config, name)
             process.daemon = True
             process.start()
 
@@ -96,11 +99,70 @@ class MongoStore(BaseStore):
         self.commit_queue.put(commit_model)
         return
 
+    def add_branch(self, branch_model):
+        """Add branch to extra queue"""
+        self.branch_queue.put(branch_model)
+        return
+
     def finalize(self):
-        """Wait till all commits are processed, by calling a join on the queue"""
+        """As we depend on commits beeing finished with branches (for the references) we must wait first for them to finish before we can start our branch processing."""
         self.commit_queue.join()
+
+        # after commits are finished, process branches
+        for i in range(self.NUMBER_OF_PROCESSES):
+            name = "StorageProcessBranch-%d" % i
+            process = BranchStorageProcess(self.branch_queue, self.vcs_system_id, self.config, name)
+            process.daemon = True
+            process.start()
+
+        # wait for branches to finish
+        self.branch_queue.join()
         logger.info("Storing Process complete...")
         return
+
+
+class BranchStorageProcess(multiprocessing.Process):
+
+    def __init__(self, queue, vcs_system_id, config, name):
+        multiprocessing.Process.__init__(self)
+        uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
+                                        config.db_authentication, config.ssl_enabled)
+        connect(config.db_database, host=uri, connect=False)
+        self.queue = queue
+        self.vcs_system_id = vcs_system_id
+        self.proc_name = name
+
+    def run(self):
+        """Endless loop for the processes.
+
+        1. Get a object of class :class:`pyvcsshark.dbmodels.models.BranchModel` from the queue
+        2. Check if this branch was stored before and if so: update the branch, if not create branch
+        """
+        while True:
+            branch = self.queue.get()
+            print(branch)
+            logger.debug("Process {} is processing branch {} -> {}".format(self.proc_name, branch.name, branch.target))
+
+            # get commit OID for Target ref
+            mongo_commit = Commit.objects.get(vcs_system_id=self.vcs_system_id, revision_hash=branch.target)
+
+            # Try to get the commit
+            try:
+                mongo_branch = Branch.objects.get(vcs_system_id=self.vcs_system_id, name=branch.name)
+            except DoesNotExist:
+                mongo_branch = Branch(
+                    vcs_system_id=self.vcs_system_id,
+                    name=branch.name,
+                    commit_id=mongo_commit.id
+                ).save()
+
+            mongo_branch.commit_id = mongo_commit.id
+            mongo_branch.is_origin_head = branch.is_origin_head
+            mongo_branch.save()
+
+            logger.debug("Process %s saved branch %s. Queue size: %d" % (self.proc_name, branch.name, self.queue.qsize()))
+
+            self.queue.task_done()
 
 
 class CommitStorageProcess(multiprocessing.Process):

@@ -7,7 +7,7 @@ import re
 import uuid
 import multiprocessing
 
-from pyvcsshark.parser.models import BranchModel, PeopleModel, TagModel, FileModel, CommitModel, Hunk
+from pyvcsshark.parser.models import BranchModel, PeopleModel, TagModel, FileModel, CommitModel, Hunk, BranchTipModel
 
 
 class GitParser(BaseParser):
@@ -38,10 +38,10 @@ class GitParser(BaseParser):
         self.commits_to_be_processed = {}
         self.logger = logging.getLogger("parser")
         self.datastore = None
-       
+
         self.commit_queue = multiprocessing.JoinableQueue()
-        
-    @property   
+
+    @property
     def repository_type(self):
         return 'git'
 
@@ -57,9 +57,9 @@ class GitParser(BaseParser):
         return url
 
     def finalize(self):
-        """Finalization process for paser"""
+        """Finalization process for parser"""
         return
-  
+
     def detect(self, repository_path):
         """Try to detect the repository, if its not there an exception is raised and therfore false can be returned"""
         try:
@@ -72,7 +72,7 @@ class GitParser(BaseParser):
     def add_branch(self, commit_hash, branch):
         """ Does two things: First it adds the commitHash to the commitqueue, so that the parsing processes can process this commit. Second it
         creates objects of type :class:`pyvcsshark.parser.models.BranchModel` and stores it in the dictionary.
-        
+
         :param commit_hash: revision hash of the commit to be processed
         :param branch: branch that should be added for the commit
         """
@@ -93,14 +93,13 @@ class GitParser(BaseParser):
     def add_tag(self, tagged_commit, tag_name, tag_object):
         """
         Creates objects of type :class:`pyvcsshark.parser.models.TagModel` and stores it in the dictionary mentioned above.
-        
-        
+
         :param tagged_commit: revision hash of the commit to be processed
         :param tag_name: name of the tag that should be added
         :param tag_object: in git it is possible to annotate tags. If a tag is annotated,
          we get a tag object of class :class:`pygit2.Tag`
 
-        
+
         .. NOTE:: It can happen, that people committed to a tag and therefore created \
         a "tag-branch" which is normally not possible in git. Therefore, we go through all tags and check \
         if they respond to a commit, which is already in the dictionary. \
@@ -126,6 +125,25 @@ class GitParser(BaseParser):
             self.commits_to_be_processed[commit_id] = {'branches': set([]), 'tags': [tag_model]}
             self.commit_queue.put(commit_id)
 
+    def _set_branch_tips(self, branches):
+        """This sets the tips (last commits) for all remote branches.
+
+        Normally we would also multiprocess here but as this is a quick operation we do not need
+        the additional overhead of defining a new BranchParserProcess.
+        """
+        self.branches = {}
+        for branch_name in list(self.repository.branches.remote):
+            if str(branch_name).lower().startswith('origin/'):
+                branch = self.repository.branches.remote[branch_name]
+                if branch_name != 'origin/HEAD':
+                    # print('head: {}'.format(branch.target.replace('refs/remotes/', ''))
+                    self.branches[branch_name] = {'target': str(branch.target), 'is_origin_head': False}
+
+        # set origin_head we know its there and that it has a target that we also know
+        om = self.repository.branches['origin/HEAD']
+        om_target = om.target.replace('refs/remotes/', '')
+        self.branches[om_target]['is_origin_head'] = True
+
     def initialize(self):
         """
         Initializes the parser. It gets all the branch and tag information and puts it into two different
@@ -135,13 +153,16 @@ class GitParser(BaseParser):
         """
         # Get all references (branches, tags)
         references = set(self.repository.listall_references())
-        
+
         # Get all tags
         regex = re.compile('^refs/tags')
         tags = set(filter(lambda r: regex.match(r), self.repository.listall_references()))
-        
+
         # Get all branches
-        branches = references-tags
+        branches = references - tags
+
+        # set all tips for every branch
+        self._set_branch_tips(branches)
 
         self.logger.info("Getting branch information...")
         for branch in branches:
@@ -185,11 +206,15 @@ class GitParser(BaseParser):
         """
         self.datastore = datastore
         self.logger.info("Starting parsing process...")
-        
+
+        # first we want the branches queue filled
+        for name, val in self.branches.items():
+            self.datastore.add_branch(BranchTipModel(name, val['target'], val['is_origin_head']))
+
         # Set up the poison pills
         for i in range(self.NUMBER_OF_PROCESSES):
             self.commit_queue.put(None)
-        
+
         # Parsing all commits of the queue
         self.logger.info("Parsing commits...")
         lock = multiprocessing.Lock()
@@ -198,7 +223,7 @@ class GitParser(BaseParser):
                                          lock)
             thread.daemon = True
             thread.start()
-        
+
         self.commit_queue.join()
         self.logger.info("Parsing complete...")
 

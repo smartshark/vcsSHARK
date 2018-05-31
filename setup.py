@@ -8,12 +8,12 @@ if not sys.version_info[0] == 3:
 
 setup(
     name="vcsSHARK",
-    version='1.0.0',
+    version='1.1.2',
     author='Fabian Trautsch',
     author_email='trautsch@cs.uni-goettingen.de',
     description='vcsSHARK is a tool to analyze source code repositories',
-    install_requires=['mongoengine', 'pygit2==0.24.2', 'pymongo', 'pycoshark>=1.0.3'],
-    dependency_links=['git+https://github.com/smartshark/pycoSHARK.git@1.0.3#egg=pycoshark-1.0.3'],
+    install_requires=['mongoengine', 'pygit2==0.26.2', 'pymongo', 'pycoshark>=1.0.21'],
+    dependency_links=['git+https://github.com/smartshark/pycoSHARK.git@1.0.21#egg=pycoshark-1.0.21'],
     url='https://github.com/smartshark/vcsSHARK',
     download_url='https://github.com/smartshark/vcsSHARK/zipball/master',
     packages=find_packages(),
@@ -22,7 +22,7 @@ setup(
             'vcsshark = pyvcsshark:start'
         ]
     },
-    test_suite = 'tests',
+    test_suite='tests',
     zip_safe=False,
     include_package_data=True,
     package_data={

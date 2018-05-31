@@ -200,10 +200,9 @@ class Hunk(object):
         return "@@ -%s,%s +%s,%s @@ \n %s" % (self.old_start, self.old_lines, self.new_start, self.new_lines, self.content)
 
 
-
 class TagModel(object):
     """ Model that holds the information for the different tags.
-    
+
     :param name: name of the tag
     :param message: message of the tag
     :param tagger: creator of the tag. Must be of type :class:`pyvcsshark.dbmodels.models.PeopleModel`.
@@ -217,7 +216,6 @@ class TagModel(object):
         self.taggerDate = taggerDate
         self.taggerOffset = taggerOffset
 
-           
     @property
     def taggerDate(self):
         return self._taggerDate
@@ -241,18 +239,30 @@ class TagModel(object):
         if(value is not None and not isinstance(value, PeopleModel)):
             raise Exception("Tagger is not a People model!")
         self._tagger = value
-            
-    
-        
+
+
+class BranchTipModel(object):
+
+    def __init__(self, name, target_revision_hash, is_origin_head):
+        self.name = name
+        self.target = target_revision_hash
+        self.is_origin_head = is_origin_head
+
+        def __repr__(self):
+            return '{} -> {} is_origin_head: {}'.format(self.name, self.target, self.is_origin_head)
+
+        def __str__(self):
+            return self.name
+
 
 class BranchModel(object):
     """ Model which holds the branch information.
-    
+
     :param name: name of the branch
     """
     def __init__(self, name):
         self.name = name
-        
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.name == other.name
@@ -261,17 +271,17 @@ class BranchModel(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
-    
+
     def __hash__(self):
         return hash(repr(self))
 
+
 class PeopleModel(object):
     """ Model that holds the people information.
-    
+
     :param name: name of the person
     :param email: email of the person
     """
     def __init__(self, name=None, email=None):
         self.name = name
         self.email = email
-
