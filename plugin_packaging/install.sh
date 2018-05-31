@@ -51,7 +51,8 @@ if [ ! -z ${VIRTUAL_ENV+x} ]; then
 	export LDFLAGS="-Wl,-rpath='$VIRTUAL_ENV/lib',--enable-new-dtags $LDFLAGS"
 fi  
 
-ldconfig
+# not working in hpc system
+# /usr/sbin/ldconfig
 
 cd $PLUGIN_PATH
 
