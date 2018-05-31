@@ -1,4 +1,4 @@
 mongoengine
 pygit2==0.24.2
 pymongo
-git+https://github.com/smartshark/pycoSHARK.git@1.0.3#egg=pycoshark-1.0.3
+git+https://github.com/smartshark/pycoSHARK.git@1.0.21#egg=pycoshark-1.0.21
