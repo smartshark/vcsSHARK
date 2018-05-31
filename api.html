@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>3. API Documentation &mdash; vcsSHARK 1.0.0 documentation</title>
+  <title>3. API Documentation &mdash; vcsSHARK 1.1.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.0
+                1.1
               </div>
             
           
@@ -440,6 +440,12 @@ the methods to create a new datastore.</p>
 </tbody>
 </table>
 <dl class="method">
+<dt id="pyvcsshark.datastores.mongostore.MongoStore.add_branch">
+<code class="descname">add_branch</code><span class="sig-paren">(</span><em>branch_model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.add_branch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.add_branch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add branch to extra queue</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore.add_commit">
 <code class="descname">add_commit</code><span class="sig-paren">(</span><em>commit_model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.add_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.add_commit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds commits of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code> to the commitqueue</p>
@@ -448,7 +454,7 @@ the methods to create a new datastore.</p>
 <dl class="method">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore.finalize">
 <code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.finalize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wait till all commits are processed, by calling a join on the queue</p>
+<dd><p>As we depend on commits beeing finished with branches (for the references) we must wait first for them to finish before we can start our branch processing.</p>
 </dd></dl>
 
 <dl class="method">
@@ -894,7 +900,7 @@ we get a tag object of class <code class="xref py py-class docutils literal notr
 <dl class="method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.finalize">
 <code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.finalize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finalization process for paser</p>
+<dd><p>Finalization process for parser</p>
 </dd></dl>
 
 <dl class="method">
@@ -1108,7 +1114,7 @@ If a process encounters that None, he will stop and terminate.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0',
+            VERSION:'1.1.2',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -1129,9 +1135,7 @@ If a process encounters that None, he will stop and terminate.</p>
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 

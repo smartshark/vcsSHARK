@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyvcsshark.parser.gitparser &mdash; vcsSHARK 1.0.0 documentation</title>
+  <title>pyvcsshark.parser.gitparser &mdash; vcsSHARK 1.1.2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.0
+                1.1
               </div>
             
           
@@ -160,7 +160,7 @@
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 
-<span class="kn">from</span> <span class="nn">pyvcsshark.parser.models</span> <span class="k">import</span> <span class="n">BranchModel</span><span class="p">,</span> <span class="n">PeopleModel</span><span class="p">,</span> <span class="n">TagModel</span><span class="p">,</span> <span class="n">FileModel</span><span class="p">,</span> <span class="n">CommitModel</span><span class="p">,</span> <span class="n">Hunk</span>
+<span class="kn">from</span> <span class="nn">pyvcsshark.parser.models</span> <span class="k">import</span> <span class="n">BranchModel</span><span class="p">,</span> <span class="n">PeopleModel</span><span class="p">,</span> <span class="n">TagModel</span><span class="p">,</span> <span class="n">FileModel</span><span class="p">,</span> <span class="n">CommitModel</span><span class="p">,</span> <span class="n">Hunk</span><span class="p">,</span> <span class="n">BranchTipModel</span>
 
 
 <div class="viewcode-block" id="GitParser"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser">[docs]</a><span class="k">class</span> <span class="nc">GitParser</span><span class="p">(</span><span class="n">BaseParser</span><span class="p">):</span>
@@ -191,10 +191,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;parser&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datastore</span> <span class="o">=</span> <span class="kc">None</span>
-       
+
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">JoinableQueue</span><span class="p">()</span>
-        
-    <span class="nd">@property</span>   
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">repository_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;git&#39;</span>
 
@@ -210,9 +210,9 @@
         <span class="k">return</span> <span class="n">url</span></div>
 
 <div class="viewcode-block" id="GitParser.finalize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Finalization process for paser&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Finalization process for parser&quot;&quot;&quot;</span>
         <span class="k">return</span></div>
-  
+
 <div class="viewcode-block" id="GitParser.detect"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repository_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Try to detect the repository, if its not there an exception is raised and therfore false can be returned&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -225,7 +225,7 @@
 <div class="viewcode-block" id="GitParser.add_branch"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.add_branch">[docs]</a>    <span class="k">def</span> <span class="nf">add_branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">,</span> <span class="n">branch</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Does two things: First it adds the commitHash to the commitqueue, so that the parsing processes can process this commit. Second it</span>
 <span class="sd">        creates objects of type :class:`pyvcsshark.parser.models.BranchModel` and stores it in the dictionary.</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param commit_hash: revision hash of the commit to be processed</span>
 <span class="sd">        :param branch: branch that should be added for the commit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -246,14 +246,13 @@
 <div class="viewcode-block" id="GitParser.add_tag"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.add_tag">[docs]</a>    <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tagged_commit</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">,</span> <span class="n">tag_object</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates objects of type :class:`pyvcsshark.parser.models.TagModel` and stores it in the dictionary mentioned above.</span>
-<span class="sd">        </span>
-<span class="sd">        </span>
+
 <span class="sd">        :param tagged_commit: revision hash of the commit to be processed</span>
 <span class="sd">        :param tag_name: name of the tag that should be added</span>
 <span class="sd">        :param tag_object: in git it is possible to annotate tags. If a tag is annotated,</span>
 <span class="sd">         we get a tag object of class :class:`pygit2.Tag`</span>
 
-<span class="sd">        </span>
+
 <span class="sd">        .. NOTE:: It can happen, that people committed to a tag and therefore created \</span>
 <span class="sd">        a &quot;tag-branch&quot; which is normally not possible in git. Therefore, we go through all tags and check \</span>
 <span class="sd">        if they respond to a commit, which is already in the dictionary. \</span>
@@ -279,6 +278,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">[</span><span class="n">commit_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;branches&#39;</span><span class="p">:</span> <span class="nb">set</span><span class="p">([]),</span> <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">tag_model</span><span class="p">]}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">commit_id</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="nf">_set_branch_tips</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branches</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This sets the tips (last commits) for all remote branches.</span>
+
+<span class="sd">        Normally we would also multiprocess here but as this is a quick operation we do not need</span>
+<span class="sd">        the additional overhead of defining a new BranchParserProcess.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">branch_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">branches</span><span class="o">.</span><span class="n">remote</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">branch_name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;origin/&#39;</span><span class="p">):</span>
+                <span class="n">branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">branches</span><span class="o">.</span><span class="n">remote</span><span class="p">[</span><span class="n">branch_name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">branch_name</span> <span class="o">!=</span> <span class="s1">&#39;origin/HEAD&#39;</span><span class="p">:</span>
+                    <span class="c1"># print(&#39;head: {}&#39;.format(branch.target.replace(&#39;refs/remotes/&#39;, &#39;&#39;))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">[</span><span class="n">branch_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">target</span><span class="p">),</span> <span class="s1">&#39;is_origin_head&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+
+        <span class="c1"># set origin_head we know its there and that it has a target that we also know</span>
+        <span class="n">om</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">branches</span><span class="p">[</span><span class="s1">&#39;origin/HEAD&#39;</span><span class="p">]</span>
+        <span class="n">om_target</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;refs/remotes/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">[</span><span class="n">om_target</span><span class="p">][</span><span class="s1">&#39;is_origin_head&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
 <div class="viewcode-block" id="GitParser.initialize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the parser. It gets all the branch and tag information and puts it into two different</span>
@@ -288,13 +306,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get all references (branches, tags)</span>
         <span class="n">references</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">listall_references</span><span class="p">())</span>
-        
+
         <span class="c1"># Get all tags</span>
         <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^refs/tags&#39;</span><span class="p">)</span>
         <span class="n">tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">listall_references</span><span class="p">()))</span>
-        
+
         <span class="c1"># Get all branches</span>
-        <span class="n">branches</span> <span class="o">=</span> <span class="n">references</span><span class="o">-</span><span class="n">tags</span>
+        <span class="n">branches</span> <span class="o">=</span> <span class="n">references</span> <span class="o">-</span> <span class="n">tags</span>
+
+        <span class="c1"># set all tips for every branch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_branch_tips</span><span class="p">(</span><span class="n">branches</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Getting branch information...&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">branches</span><span class="p">:</span>
@@ -338,11 +359,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datastore</span> <span class="o">=</span> <span class="n">datastore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting parsing process...&quot;</span><span class="p">)</span>
-        
+
+        <span class="c1"># first we want the branches queue filled</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datastore</span><span class="o">.</span><span class="n">add_branch</span><span class="p">(</span><span class="n">BranchTipModel</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;is_origin_head&#39;</span><span class="p">]))</span>
+
         <span class="c1"># Set up the poison pills</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_PROCESSES</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-        
+
         <span class="c1"># Parsing all commits of the queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsing commits...&quot;</span><span class="p">)</span>
         <span class="n">lock</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
@@ -351,7 +376,7 @@
                                          <span class="n">lock</span><span class="p">)</span>
             <span class="n">thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsing complete...&quot;</span><span class="p">)</span>
 
@@ -574,7 +599,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'1.0.0',
+            VERSION:'1.1.2',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -595,9 +620,7 @@
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 
