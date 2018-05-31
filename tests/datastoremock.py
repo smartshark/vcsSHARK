@@ -17,6 +17,7 @@ class DatastoreMock(object):
     def __init__(self):
         self.datastore = {}
         self.queue = multiprocessing.SimpleQueue()
+        self.branch_queue = multiprocessing.SimpleQueue()
         return
 
     def initialize(self, dbname=None, host=None, port=None, user=None , 
@@ -30,10 +31,13 @@ class DatastoreMock(object):
         self.queue.put(commitModel)
 
     def add_branch(self, branchModel):
-        self.queue.put(branchModel)
+        self.branch_queue.put(branchModel)
 
     def finalize(self): 
         return
 
     def get_commit_queue(self):
         return self.queue
+
+    def get_branch_queue(self):
+        return self.branch_queue
