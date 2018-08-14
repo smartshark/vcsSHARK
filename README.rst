@@ -32,16 +32,16 @@ We use a vanilla Ubuntu 16.04 operating system as basis for the steps that we de
 
 Installation
 ============
-The installation process is straight forward. For a vanilla Ubuntu 16.04, we need to install the following packages:
+The installation process is straight forward. For a vanilla Ubuntu 18.04, we need to install the following packages:
 
 .. code-block:: bash
 
-	$ sudo apt-get install git python3-pip python3-cffi libgit2-24 libgit2-dev
+	$ sudo apt-get install git python3-pip python3-cffi libgit2-26 libgit2-dev
 
 .. NOTE::
 	If you are using an older version of Ubuntu (or another operating system), you need to install libgit by hand.
 	The installation process is explained here: http://www.pygit2.org/install.html.
-	But, you need to choose a version, which is compatible with pygit2 0.24.2.
+	But, you need to choose a version, which is compatible with pygit2 0.26.2.
 
 
 Furthermore, you need a running MongoDB. The process of setting up a MongoDB is explained here: https://docs.mongodb.com/manual/installation/
