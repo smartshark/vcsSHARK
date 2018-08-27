@@ -69,7 +69,7 @@ class GitParser(BaseParser):
         except Exception:
             return False
 
-    def add_branch(self, commit_hash, branch):
+    def add_branch(self, commit_hash, branch_model):
         """ Does two things: First it adds the commitHash to the commitqueue, so that the parsing processes can process this commit. Second it
         creates objects of type :class:`pyvcsshark.parser.models.BranchModel` and stores it in the dictionary.
 
@@ -77,11 +77,6 @@ class GitParser(BaseParser):
         :param branch: branch that should be added for the commit
         """
         string_commit_hash = str(commit_hash)
-
-        if branch is None:
-            branch_model = None
-        else:
-            branch_model = BranchModel(branch)
 
         # If the commit is already in the dict, we only need to append the branch (because then it was already parsed)
         if string_commit_hash in self.commits_to_be_processed:
@@ -169,9 +164,10 @@ class GitParser(BaseParser):
             self.logger.info("Getting information from branch %s" % (branch))
             commit = self.repository.lookup_reference(branch).peel()
             # Walk through every child
+            branch_model = BranchModel(branch)
             for child in self.repository.walk(commit.id,
                                               pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
-                self.add_branch(child.id, branch)
+                self.add_branch(child.id, branch_model)
 
         self.logger.info("Getting tags...")
         # Walk through every tag and put the information in the dictionary via the addtag method
