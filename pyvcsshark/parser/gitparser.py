@@ -63,8 +63,8 @@ class GitParser(BaseParser):
     def detect(self, repository_path):
         """Try to detect the repository, if its not there an exception is raised and therfore false can be returned"""
         try:
-            discovered_path = pygit2.discover_repository(repository_path)
-            self.repository = pygit2.Repository(discovered_path)
+            self.discovered_path = pygit2.discover_repository(repository_path)
+            self.repository = pygit2.Repository(self.discovered_path)
             return True
         except Exception:
             return False
@@ -219,7 +219,7 @@ class GitParser(BaseParser):
         self.logger.info("Parsing commits...")
         lock = multiprocessing.Lock()
         for i in range(self.NUMBER_OF_PROCESSES):
-            thread = CommitParserProcess(self.commit_queue, self.commits_to_be_processed, self.repository, self.datastore,
+            thread = CommitParserProcess(self.commit_queue, self.commits_to_be_processed, self.discovered_path, self.datastore,
                                          lock)
             thread.daemon = True
             thread.start()
@@ -246,13 +246,12 @@ class CommitParserProcess(multiprocessing.Process):
     the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function
     """
     
-    def __init__(self, queue, commits_to_be_processed, repository, datastore, lock):
+    def __init__(self, queue, commits_to_be_processed, discovered_path, datastore, lock):
         multiprocessing.Process.__init__(self)
         self.queue = queue
         self.commits_to_be_processed = commits_to_be_processed
         self.datastore = datastore
-        self.logger = logging.getLogger("parser")
-        self.repository = repository
+        self.discovered_path = discovered_path
         self.lock = lock
         
     def run(self):
@@ -261,6 +260,8 @@ class CommitParserProcess(multiprocessing.Process):
         We use the poisonous pill technique here. Means, our queue has #Processes times "None" in it in the end.
         If a process encounters that None, he will stop and terminate.
         """
+        self.repository = pygit2.Repository(self.discovered_path)
+        self.logger = logging.getLogger("parser")
         while True:
             next_task = self.queue.get()
             # If process pulls the poisoned pill, he exits
