@@ -408,21 +408,21 @@ class CommitParserProcess(multiprocessing.Process):
 
             # Check change mode
             mode = 'X'
-            if patch.delta.status == 1:
+            if patch.delta.status == pygit2.GIT_DELTA_ADDED:
                 mode = 'A'
-            elif patch.delta.status == 2:
+            elif patch.delta.status == pygit2.GIT_DELTA_DELETED:
                 mode = 'D'
-            elif patch.delta.status == 3:
+            elif patch.delta.status == pygit2.GIT_DELTA_MODIFIED:
                 mode = 'M'
-            elif patch.delta.status == 4:
+            elif patch.delta.status == pygit2.GIT_DELTA_RENAMED:
                 mode = 'R'
-            elif patch.delta.status == 5:
+            elif patch.delta.status == pygit2.GIT_DELTA_COPIED:
                 mode = 'C'
-            elif patch.delta.status == 6:
+            elif patch.delta.status == pygit2.GIT_DELTA_IGNORED:
                 mode = 'I'
-            elif patch.delta.status == 7:
+            elif patch.delta.status == pygit2.GIT_DELTA_UNTRACKED:
                 mode = 'U'
-            elif patch.delta.status == 8:
+            elif patch.delta.status == pygit2.GIT_DELTA_TYPECHANGE:
                 mode = 'T'
 
             changed_file = FileModel(patch.delta.new_file.path, patch.delta.new_file.size,
