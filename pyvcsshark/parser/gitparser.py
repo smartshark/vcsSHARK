@@ -127,12 +127,11 @@ class GitParser(BaseParser):
         the additional overhead of defining a new BranchParserProcess.
         """
         self.branches = {}
-        for branch_name in list(self.repository.branches.remote):
-            if str(branch_name).lower().startswith('origin/'):
-                branch = self.repository.branches.remote[branch_name]
-                if branch_name != 'origin/HEAD':
-                    # print('head: {}'.format(branch.target.replace('refs/remotes/', ''))
-                    self.branches[branch_name] = {'target': str(branch.target), 'is_origin_head': False}
+        regex = re.compile('^refs/remotes/origin/')
+        for branch in filter(lambda b: regex.match(b.name), branches):
+            branch_name = branch.name.replace('refs/remotes/', '')
+            if branch_name != 'origin/HEAD':
+                self.branches[branch_name] = {'target': str(branch.target), 'is_origin_head': False}
 
         # set origin_head we know its there and that it has a target that we also know
         om = self.repository.branches['origin/HEAD']
@@ -147,11 +146,11 @@ class GitParser(BaseParser):
         has
         """
         # Get all references (branches, tags)
-        references = set(self.repository.listall_references())
+        references = set(self.repository.listall_reference_objects())
 
         # Get all tags
-        regex = re.compile('^refs/tags')
-        tags = set(filter(lambda r: regex.match(r), self.repository.listall_references()))
+        regex = re.compile(r'^refs/tags')
+        tags = set(filter(lambda r: regex.match(r.name), references))
 
         # Get all branches
         branches = references - tags
@@ -160,22 +159,25 @@ class GitParser(BaseParser):
         self._set_branch_tips(branches)
 
         self.logger.info("Getting branch information...")
-        for branch in branches:
-            self.logger.info("Getting information from branch %s" % (branch))
-            commit = self.repository.lookup_reference(branch).peel()
+        count = len(branches)
+        for i, branch in enumerate(branches):
+            branch_name = branch.name
+            self.logger.info("({}/{}) {}".format(i, count, branch_name))
+            commit = branch.peel()
             # Walk through every child
-            branch_model = BranchModel(branch)
+            branch_model = BranchModel(branch_name)
             for child in self.repository.walk(commit.id,
                                               pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
                 self.add_branch(child.id, branch_model)
 
         self.logger.info("Getting tags...")
         # Walk through every tag and put the information in the dictionary via the addtag method
-        for tag in tags:
-            reference = self.repository.lookup_reference(tag)
-            tag_object = self.repository[reference.target.hex]
-            tagged_commit = self.repository.lookup_reference(tag).peel()
-            self.add_tag(tagged_commit, tag, tag_object)
+        count = len(tags)
+        for i, tag in enumerate(tags):
+            tag_name = tag.name
+            self.logger.info("({}/{}) {}".format(i, count, tag_name))
+            tagged_commit = tag.peel()
+            self.add_tag(tagged_commit, tag_name, tag.target)
 
             # The tagged_commit can have children that are not on any branch, but we may need it anyway --> collect it
             # and add it only if we have not collected it before
