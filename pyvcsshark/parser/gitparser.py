@@ -4,6 +4,7 @@ from pyvcsshark.parser.baseparser import BaseParser
 import pygit2
 import logging
 import re
+import traceback
 import uuid
 import multiprocessing
 
@@ -17,15 +18,12 @@ class GitParser(BaseParser):
     :property SIMILARITY_THRESHOLD: sets the threshold for deciding if a file is similar to another. Default: 50%
     :func:`multiprocessing.cpu_count()`.
     :property repository: object of class :class:`pygit2.Repository`, which represents the repository
-    :property commits_to_be_processed: dictionary that is set up the following way: \
-    commits_to_be_processed = {'<revisionHash>' : {'branches' : set(), 'tags' : []}}, where <revisionHash> must be\
+    :property commit_info: dictionary that is set up the following way: \
+    commit_info = {'<revisionHash>' : {'branches' : set(), 'tags' : []}}, where <revisionHash> must be\
     replaced with the actual hash. Therefore, this dictionary holds information about every revision and which branches\
      this revision belongs to and which tags it has.
     :property logger: logger, which is acquired via logging.getLogger("parser")
     :property datastore: datastore, where the commits should be saved to
-    :property commit_queue: object of class :class:`multiprocessing.JoinableQueue`, where commits are stored in that\
-    can be parsed
-
     """
 
     # Includes rename and copy threshold, 50% is the default git threshold
@@ -33,11 +31,10 @@ class GitParser(BaseParser):
 
     def __init__(self):
         self.repository = None
-        self.commits_to_be_processed = {}
+        self.commit_info = {}
         self.logger = logging.getLogger("parser")
         self.datastore = None
 
-        self.commit_queue = multiprocessing.JoinableQueue()
 
     @property
     def repository_type(self):
@@ -68,9 +65,8 @@ class GitParser(BaseParser):
             return False
 
     def add_commit(self, commit_hash):
-        if commit_hash not in self.commits_to_be_processed:
-            self.commit_queue.put(commit_hash)
-            self.commits_to_be_processed[commit_hash] = {'branches': set([]), 'tags': []}
+        if commit_hash not in self.commit_info:
+            self.commit_info[commit_hash] = {'branches': set([]), 'tags': []}
 
     def add_branch(self, commit_hash, branch_model):
         """ Does two things: First it adds the commitHash to the commitqueue, so that the parsing processes can process this commit. Second it
@@ -80,7 +76,7 @@ class GitParser(BaseParser):
         :param branch: branch that should be added for the commit
         """
         self.add_commit(commit_hash)
-        self.commits_to_be_processed[commit_hash]['branches'].add(branch_model)
+        self.commit_info[commit_hash]['branches'].add(branch_model)
 
     def add_tag(self, tagged_commit, tag_name, tag_object):
         """
@@ -124,7 +120,7 @@ class GitParser(BaseParser):
         # As it can happen that we have commits with tags that are not on any branch (e.g. project Zookeeper), we need
         # to take care of that here
         self.add_commit(commit_id)
-        self.commits_to_be_processed[commit_id]['tags'].append(tag_model)
+        self.commit_info[commit_id]['tags'].append(tag_model)
 
     def _set_branch_tips(self, branches):
         """This sets the tips (last commits) for all remote branches.
@@ -155,13 +151,15 @@ class GitParser(BaseParser):
 
     def initialize(self):
         """
-        Initializes the parser. It gets all the branch and tag information and puts it into two different
-        locations: First the commit id is put into the commitqueue for the processing with the parsing processes.
-        Second a dictionary is created, which holds the information of which branches a commit is on and which tags it
-        has
+        Collects information for the parser.
+        For each branch and tag the repository is walked topologically. Each
+        found commit is added to the commit list.
+        Additionally for each commit it's tags a branches it belongs to are
+        saved to the commit_info dictionary.
         """
         # Get all references (branches, tags)
         references = set(self.repository.listall_reference_objects())
+        self.logger.info("Found {} references...".format(len(references)))
 
         # Get all tags
         regex = re.compile(r'^refs/tags')
@@ -200,7 +198,7 @@ class GitParser(BaseParser):
             # The tagged_commit can have children that are not on any branch, but we may need it anyway --> collect it
             # and add it only if we have not collected it before
             try:
-                if str(tagged_commit.id) not in self.commits_to_be_processed:
+                if str(tagged_commit.id) not in self.commit_info:
                     self._walk(tagged_commit, lambda id: self.add_commit(id))
             except ValueError as e:
                 # we may hit a tag that does not point to a commit but to a blob, therefore we can not walk over it until libgit implements this
@@ -215,11 +213,10 @@ class GitParser(BaseParser):
 
         The parsing process is divided into several steps:
 
-            1. A list of all branches and tags are created
+            1. A list of all branches and tags are created (see GitParser.initialize)
             2. All branches and tags are parsed. So we create dictionary of all commits with their corresponding tags\
-            and branches and add all revision hashes to the commitqueue
-            3. Add the poison pills for terminating of the parsing process to the commit_queue
-            4. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParserProcess`, which parse all\
+            and branches and add all revision hashes to the commit list (see GitParser.initialize)
+            3. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParserProcess`, which parse all\
             commits.
 
         :param repository_path: Path to the repository
@@ -232,72 +229,69 @@ class GitParser(BaseParser):
         for name, val in self.branches.items():
             self.datastore.add_branch(BranchTipModel(name, val['target'], val['is_origin_head']))
 
-        # Set up the poison pills
-        for i in range(self.config.cores_per_job):
-            self.commit_queue.put(None)
-
-        # Parsing all commits of the queue
-        self.logger.info("Parsing commits...")
+        # Lock for synchronizing the processes access to the datastores
         lock = multiprocessing.Lock()
-        for i in range(self.config.cores_per_job):
-            thread = CommitParserProcess(self.commit_queue, self.commits_to_be_processed, self.discovered_path, self.datastore,
-                                         lock)
-            thread.daemon = True
-            thread.start()
 
-        self.commit_queue.join()
+        # Use a pool.map to parallelize parsing of the commits
+        # Map submits chunks of size chunksize to each process as a single task,
+        # thus maxtasksperchild is set to 1.
+        commits_per_process=100
+        pool = multiprocessing.Pool(
+            processes=self.config.cores_per_job,
+            initializer=_initialize_commit_parser_process,
+            initargs=(self.config, self.discovered_path, self.datastore, lock),
+            maxtasksperchild=1)
+        pool.map(_parse_commit, self.commit_info.items(), chunksize=commits_per_process)
+        pool.close()
+        pool.join()
+
         self.logger.info("Parsing complete...")
 
         return
 
+commit_parser = None
+def _initialize_commit_parser_process(config, discovered_path, datastore, lock):
+    global commit_parser
+    commit_parser = CommitParser(config, discovered_path, datastore, lock)
 
-class CommitParserProcess(multiprocessing.Process):
+def _parse_commit(commit):
+    try:
+        global commit_parser
+        commit_parser.parse(commit[0], commit[1])
+    except Exception as e:
+        traceback.print_exc()
+        raise
+    except:
+        print('Parsing commit failed due to non-Exception exception!')
+        raise
+
+class CommitParser():
     """
-    A process, which inherits from :class:`multiprocessing.Process`, that will parse the branches it
-    gets from the queue and call the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function to add
-    the commits
+    A class that provides an API for parsing commits.
+    A single commit can be parsed by calling :fund:`pyvcsshark.parser.gitparser.CommitParser.parse`.
+    Each parsed commit is submitted to the given datastore via
+    :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit`.
 
     :property logger: logger acquired by calling logging.getLogger("parser")
 
-    :param queue: queue, where the different commithashes are stored in
-    :param commits_to_be_processed: dictionary, which contains information about the branches and tags of each commit
-    :param repository: repository object of type :class:`pygit2.Repository`
+    :param config: configuration of type :class:`pyvcsshark.config.Config`
+    :param discovered_path: path to the repository
     :param datastore: object, that is a subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`
     :param lock: lock that is used, so that only one process at a time is calling \
     the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function
     """
 
-    def __init__(self, queue, commits_to_be_processed, discovered_path, datastore, lock):
-        multiprocessing.Process.__init__(self)
-        self.queue = queue
-        self.commits_to_be_processed = commits_to_be_processed
-        self.datastore = datastore
+    def __init__(self, config, discovered_path, datastore, lock):
+        self.config = config
         self.discovered_path = discovered_path
+        self.datastore = datastore
         self.lock = lock
 
-    def run(self):
-        """
-        The process gets a commit out of the queue and processes it.
-        We use the poisonous pill technique here. Means, our queue has #Processes times "None" in it in the end.
-        If a process encounters that None, he will stop and terminate.
-        """
         self.datastore.register_subprocess()
-
         self.repository = pygit2.Repository(self.discovered_path)
         self.logger = logging.getLogger("parser")
-        while True:
-            next_task = self.queue.get()
-            # If process pulls the poisoned pill, he exits
-            if next_task is None:
-                self.queue.task_done()
-                break
-            commitHash = pygit2.Oid(hex=next_task)
-            commit = self.repository[commitHash]
-            self.parse_commit(commit)
-            self.queue.task_done()
-        return
 
-    def parse_commit(self, commit):
+    def parse(self, commit_oid, commit_info):
         """ Function for parsing a commit.
 
         1. changedFiles are created (type: list of :class:`pyvcsshark.parser.models.FileModel`)
@@ -312,6 +306,9 @@ class CommitParserProcess(multiprocessing.Process):
         lock is used to regulate the calls
         """
 
+        commit_hash = pygit2.Oid(hex=commit_oid)
+        commit = self.repository[commit_hash]
+
         # we do not want Blobs (for now)
         if commit.__class__.__name__ == 'Blob':
             return
@@ -323,9 +320,6 @@ class CommitParserProcess(multiprocessing.Process):
         if self.config.no_commit_branch_info \
             and self.datastore.contains_commit(commit_oid):
             return
-
-        commit_hash = pygit2.Oid(hex=commit_oid)
-        commit = self.repository[commit_hash]
 
         # If there are parents, we need to get the normal changed files, if not we need to get the files for initial
         # commit
@@ -342,10 +336,10 @@ class CommitParserProcess(multiprocessing.Process):
         author_model = PeopleModel(commit.author.name, commit.author.email)
         committer_model = PeopleModel(commit.committer.name, commit.committer.email)
         parent_ids = [str(parentId) for parentId in commit.parent_ids]
-        branches = self.commits_to_be_processed[string_commit_hash]['branches']
+        branches = commit_info['branches']
         branches = branches if not len(branches) == 0 else None
         commit_model = CommitModel(string_commit_hash, branches,
-                                   self.commits_to_be_processed[string_commit_hash]['tags'], parent_ids,
+                                   commit_info['tags'], parent_ids,
                                    author_model, committer_model, commit.message, changed_files, commit.author.time,
                                    commit.author.offset, commit.committer.time, commit.committer.offset)
 
@@ -353,8 +347,6 @@ class CommitParserProcess(multiprocessing.Process):
         self.lock.acquire()
         self.datastore.add_commit(commit_model)
         self.lock.release()
-
-        del self.commits_to_be_processed[string_commit_hash]
 
     def create_hunks(self, hunks, initial_commit=False):
         """
