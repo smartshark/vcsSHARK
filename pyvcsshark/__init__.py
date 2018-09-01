@@ -67,6 +67,9 @@ def start():
     parser.add_argument('-n', '--project-name', help='Name of the project, that is analyzed', required=True)
     parser.add_argument('--path', help='Path to the checked out repository directory', default=os.getcwd(),
                         type=readable_dir)
+    parser.add_argument('--no-commit-branch-info',
+                        help='Deactivate collection of commit level branch info',
+                        default=False, action='store_true')
 
     logger.info("Reading out config from command line")
 

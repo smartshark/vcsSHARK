@@ -262,6 +262,9 @@ class CommitStorageProcess(multiprocessing.Process):
 
         :param branches: list of objects of class :class:`pyvcsshark.dbmodels.models.BranchModel`
         """
+        if branches is None:
+            return []
+
         branch_list = []
         for branch in branches:
             if branch is not None:

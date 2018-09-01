@@ -19,6 +19,9 @@ class BaseParser(metaclass=abc.ABCMeta):
 
     """
 
+    def __init__(self):
+        self.config = None
+
     @abc.abstractproperty
     def repository_type(self):
         """Must return the type for the given repository. E.g. **git**"""
@@ -61,11 +64,11 @@ class BaseParser(metaclass=abc.ABCMeta):
         put here, as only the parser is specific to the repository type"""
 
     @staticmethod
-    def find_correct_parser(repository_path):
+    def find_correct_parser(config):
         """ Finds the correct parser by executing the parser.detect() method on
         the given repository path
 
-        :param repository_path: path to the repository
+        :param config: application configuration
         """
 
         # Import parser plugins
@@ -76,11 +79,12 @@ class BaseParser(metaclass=abc.ABCMeta):
         correct_parser = None
         for sc in BaseParser.__subclasses__():
             parser = sc()
-            if parser.detect(repository_path):
+            parser.config = config
+            if parser.detect(config.path):
                 return parser
 
         # Check if correct parser was found
         if correct_parser is None:
-            raise Exception("No fitting parser found for repository located at %s" % repository_path)
+            raise Exception("No fitting parser found for repository located at %s" % config.path)
         else:
             return correct_parser

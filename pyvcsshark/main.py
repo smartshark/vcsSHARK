@@ -47,7 +47,7 @@ class Application(object):
         logger.info("Using %s for storing the results of repository %s" % (datastore.__class__.__name__, config.path))
 
         try:
-            parser = BaseParser.find_correct_parser(config.path)
+            parser = BaseParser.find_correct_parser(config)
             logger.info("Using %s for parsing directory %s" % (parser.__class__.__name__, config.path))
         except Exception as e:
             traceback.print_exc()
