@@ -140,7 +140,6 @@ class BranchStorageProcess(multiprocessing.Process):
         """
         while True:
             branch = self.queue.get()
-            print(branch)
             logger.debug("Process {} is processing branch {} -> {}".format(self.proc_name, branch.name, branch.target))
 
             # get commit OID for Target ref
