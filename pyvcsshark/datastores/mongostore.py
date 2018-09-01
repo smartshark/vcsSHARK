@@ -227,16 +227,18 @@ class CommitStorageProcess(multiprocessing.Process):
             # Try to get the commit
             try:
                 mongo_commit = Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit.id).get()
+                existed = True
             except DoesNotExist:
                 mongo_commit = Commit(
                     vcs_system_id=self.vcs_system_id,
                     revision_hash=commit.id
                 ).save()
-
-            self.set_whole_commit(mongo_commit, commit)
+                existed = False
+            if not existed or not self.config.no_hunks:
+                self.set_whole_commit(mongo_commit, commit)
+                mongo_commit.save()
 
             # Save Revision object
-            mongo_commit.save()
             logger.debug("Process %s saved commit with hash %s. Queue size: %d" % (self.proc_name, commit.id, self.queue.qsize()))
 
             self.queue.task_done()
