@@ -281,6 +281,8 @@ class CommitParserProcess(multiprocessing.Process):
         We use the poisonous pill technique here. Means, our queue has #Processes times "None" in it in the end.
         If a process encounters that None, he will stop and terminate.
         """
+        self.datastore.register_subprocess()
+
         self.repository = pygit2.Repository(self.discovered_path)
         self.logger = logging.getLogger("parser")
         while True:
