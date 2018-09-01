@@ -69,6 +69,11 @@ class GitParser(BaseParser):
         except Exception:
             return False
 
+    def add_commit(self, commit_hash):
+        if commit_hash not in self.commits_to_be_processed:
+            self.commit_queue.put(commit_hash)
+            self.commits_to_be_processed[commit_hash] = {'branches': set([]), 'tags': []}
+
     def add_branch(self, commit_hash, branch_model):
         """ Does two things: First it adds the commitHash to the commitqueue, so that the parsing processes can process this commit. Second it
         creates objects of type :class:`pyvcsshark.parser.models.BranchModel` and stores it in the dictionary.
@@ -76,14 +81,8 @@ class GitParser(BaseParser):
         :param commit_hash: revision hash of the commit to be processed
         :param branch: branch that should be added for the commit
         """
-        string_commit_hash = str(commit_hash)
-
-        # If the commit is already in the dict, we only need to append the branch (because then it was already parsed)
-        if string_commit_hash in self.commits_to_be_processed:
-            self.commits_to_be_processed[string_commit_hash]['branches'].add(branch_model)
-        else:
-            self.commit_queue.put(string_commit_hash)
-            self.commits_to_be_processed[string_commit_hash] = {'branches': {branch_model}, 'tags': []}
+        self.add_commit(commit_hash)
+        self.commits_to_be_processed[commit_hash]['branches'].add(branch_model)
 
     def add_tag(self, tagged_commit, tag_name, tag_object):
         """
@@ -114,11 +113,8 @@ class GitParser(BaseParser):
 
         # As it can happen that we have commits with tags that are not on any branch (e.g. project Zookeeper), we need
         # to take care of that here
-        if commit_id in self.commits_to_be_processed:
-            self.commits_to_be_processed[commit_id]['tags'].append(tag_model)
-        else:
-            self.commits_to_be_processed[commit_id] = {'branches': set([]), 'tags': [tag_model]}
-            self.commit_queue.put(commit_id)
+        self.add_commit(commit_id)
+        self.commits_to_be_processed[commit_id]['tags'].append(tag_model)
 
     def _set_branch_tips(self, branches):
         """This sets the tips (last commits) for all remote branches.
