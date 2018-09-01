@@ -292,6 +292,17 @@ class CommitParserProcess(multiprocessing.Process):
         .. NOTE:: The call to :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is thread/process safe, as a\
         lock is used to regulate the calls
         """
+        # if the per commit branch info and hunks are not parsed
+        # and the commit exists in the database it can be skipped
+        # as commit metadata cannot change without also changing
+        # the commit hash
+        if self.config.no_commit_branch_info \
+            and self.config.no_hunks \
+            and self.datastore.contains_commit(commit_oid):
+            return
+
+        commit_hash = pygit2.Oid(hex=commit_oid)
+        commit = self.repository[commit_hash]
 
         # If there are parents, we need to get the normal changed files, if not we need to get the files for initial
         # commit
@@ -359,10 +370,10 @@ class CommitParserProcess(multiprocessing.Process):
         diff = commit.tree.diff_to_tree(context_lines=0, interhunk_lines=1)
 
         for patch in diff:
+            hunks = self.create_hunks(patch.hunks, True) if not self.config.no_hunks else None
             changed_file = FileModel(patch.delta.old_file.path, patch.delta.old_file.size,
                                      patch.line_stats[2], patch.line_stats[1],
-                                     patch.delta.is_binary, 'A',
-                                     self.create_hunks(patch.hunks, True))
+                                     patch.delta.is_binary, 'A', hunks)
             changed_files.append(changed_file)
         return changed_files
 
@@ -407,11 +418,11 @@ class CommitParserProcess(multiprocessing.Process):
             elif patch.delta.status == pygit2.GIT_DELTA_TYPECHANGE:
                 mode = 'T'
 
+            hunks = self.create_hunks(patch.hunks) if not self.config.no_hunks else None
             changed_file = FileModel(patch.delta.new_file.path, patch.delta.new_file.size,
                                      patch.line_stats[1], patch.line_stats[2],
-                                     patch.delta.is_binary, mode,
-                                     self.create_hunks(patch.hunks))
-            
+                                     patch.delta.is_binary, mode, hunks)
+
             # only add oldpath if file was copied/renamed
             if mode in ['C', 'R']:
                 changed_file.oldPath = patch.delta.old_file.path

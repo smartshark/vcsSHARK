@@ -55,6 +55,13 @@ class BaseStore(metaclass=abc.ABCMeta):
         return
 
     @abc.abstractmethod
+    def contains_commit(self, commit_hash):
+        """
+        Returns True is the commits exists in the datastore, otherwise False.
+        """
+        return
+
+    @abc.abstractmethod
     def add_commit(self, commit_model):
         """Add the commit to the datastore. How this is handled depends on the implementation.
         

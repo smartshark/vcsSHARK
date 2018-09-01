@@ -19,6 +19,9 @@ class MySQLStore(BaseStore):
         """Must return the identifier for the store. This should match the configuration options"""
         return 'mysql'
 
+    def contains_commit(self, commit_hash):
+        return
+
     def add_commit(self, commit_model):
         """Add the commit to the datastore (e.g. mongoDB, mySQL, a model, ...). How this is
         handled depends on the implementation"""

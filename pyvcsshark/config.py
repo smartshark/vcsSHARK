@@ -24,6 +24,7 @@ class Config(object):
         self.debug_level = args.debug
         self.project_name = args.project_name
         self.ssl_enabled = args.ssl
+        self.no_hunks = args.no_hunks
         self.no_commit_branch_info = args.no_commit_branch_info
 
     def __str__(self):
