@@ -144,6 +144,15 @@ class GitParser(BaseParser):
         om_target = om.target.replace('refs/remotes/', '')
         self.branches[om_target]['is_origin_head'] = True
 
+    def _walk(self, commit, func):
+        """
+        Calls func for each commit that is encountered by topologically walking
+        the repository from the given commit
+        """
+        for child in self.repository.walk(commit.id,
+            pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
+            func(str(child.id))
+
     def initialize(self):
         """
         Initializes the parser. It gets all the branch and tag information and puts it into two different
@@ -164,17 +173,18 @@ class GitParser(BaseParser):
         # set all tips for every branch
         self._set_branch_tips(branches)
 
-        self.logger.info("Getting branch information...")
+        self.logger.info("Processing branches...")
         count = len(branches)
         for i, branch in enumerate(branches):
             branch_name = branch.name
             self.logger.info("({}/{}) {}".format(i, count, branch_name))
-            commit = branch.peel()
-            # Walk through every child
-            branch_model = BranchModel(branch_name)
-            for child in self.repository.walk(commit.id,
-                                              pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
-                self.add_branch(child.id, branch_model)
+
+            # Only collect commits if no branch information should be parsed
+            if not self.config.no_commit_branch_info:
+                branch_model = BranchModel(branch_name)
+                self._walk(branch.peel(), lambda id: self.add_branch(id, branch_model))
+            else:
+                self._walk(branch.peel(), lambda id: self.add_commit(id))
 
         self.logger.info("Getting tags...")
         # Walk through every tag and put the information in the dictionary via the addtag method
@@ -190,16 +200,15 @@ class GitParser(BaseParser):
             # The tagged_commit can have children that are not on any branch, but we may need it anyway --> collect it
             # and add it only if we have not collected it before
             try:
-                for child in self.repository.walk(tagged_commit.id, pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
-                    if str(child.id) not in self.commits_to_be_processed:
-                        self.add_branch(child.id, None)
+                if str(tagged_commit.id) not in self.commits_to_be_processed:
+                    self._walk(tagged_commit, lambda id: self.add_commit(id))
             except ValueError as e:
                 # we may hit a tag that does not point to a commit but to a blob, therefore we can not walk over it until libgit implements this
                 # see: https://github.com/libgit2/libgit2/issues/3595
                 if str(e) != 'ValueError: object is not a committish':  # we do not bail on this we just ignore tags to blobs
                     raise
 
-    def parse(self, repository_path, datastore, cores_per_job):
+    def parse(self, repository_path, datastore):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
         datastore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen
         datastore. It mostly uses pygit2 (see: http://www.pygit2.org/).
@@ -224,13 +233,13 @@ class GitParser(BaseParser):
             self.datastore.add_branch(BranchTipModel(name, val['target'], val['is_origin_head']))
 
         # Set up the poison pills
-        for i in range(cores_per_job):
+        for i in range(self.config.cores_per_job):
             self.commit_queue.put(None)
 
         # Parsing all commits of the queue
         self.logger.info("Parsing commits...")
         lock = multiprocessing.Lock()
-        for i in range(cores_per_job):
+        for i in range(self.config.cores_per_job):
             thread = CommitParserProcess(self.commit_queue, self.commits_to_be_processed, self.discovered_path, self.datastore,
                                          lock)
             thread.daemon = True
@@ -320,7 +329,9 @@ class CommitParserProcess(multiprocessing.Process):
         author_model = PeopleModel(commit.author.name, commit.author.email)
         committer_model = PeopleModel(commit.committer.name, commit.committer.email)
         parent_ids = [str(parentId) for parentId in commit.parent_ids]
-        commit_model = CommitModel(string_commit_hash, self.commits_to_be_processed[string_commit_hash]['branches'],
+        branches = self.commits_to_be_processed[string_commit_hash]['branches']
+        branches = branches if not len(branches) == 0 else None
+        commit_model = CommitModel(string_commit_hash, branches,
                                    self.commits_to_be_processed[string_commit_hash]['tags'], parent_ids,
                                    author_model, committer_model, commit.message, changed_files, commit.author.time,
                                    commit.author.offset, commit.committer.time, commit.committer.offset)
