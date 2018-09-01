@@ -375,9 +375,9 @@ class CommitStorageProcess(multiprocessing.Process):
                 try:
                     logger.debug("Process %s is inserting hunks..." % self.proc_name)
                     Hunk.objects.insert(hunks, load_bulk=False)
-                except DocumentTooLarge:
+                except (DocumentTooLarge, OperationError):
                     for hunk in hunks:
                         try:
                             hunk.save()
-                        except DocumentTooLarge:
+                        except (DocumentTooLarge, OperationError):
                             logger.info("Document was too large for commit: %s" % mongo_commit_id)
