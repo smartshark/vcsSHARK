@@ -103,6 +103,13 @@ class MongoStore(BaseStore):
         """Returns the identifier **mongo** for this datastore"""
         return 'mongo'
 
+    def contains_commit(self, commit_id):
+        try:
+            Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit_id).only('_id').get()
+            return True
+        except DoesNotExist:
+            return False
+
     def add_commit(self, commit_model):
         """Adds commits of class :class:`pyvcsshark.dbmodels.models.CommitModel` to the commitqueue"""
         # add to queue
@@ -375,6 +382,9 @@ class CommitStorageProcess(multiprocessing.Process):
                                             is_binary=file.isBinary,
                                             mode=file.mode,
                                             old_file_id=old_file_id).save().id
+
+            if file.hunks is None:
+                continue
 
             # Create hunk objects for bulk insert
             logger.debug("Process %s is creating hunks for bulk insert." % self.proc_name)

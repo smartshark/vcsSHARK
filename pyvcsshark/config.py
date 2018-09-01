@@ -25,6 +25,7 @@ class Config(object):
         self.project_name = args.project_name
         self.cores_per_job = args.cores_per_job
         self.ssl_enabled = args.ssl
+        self.no_hunks = args.no_hunks
         self.no_commit_branch_info = args.no_commit_branch_info
 
     def __str__(self):

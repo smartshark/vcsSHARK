@@ -68,6 +68,8 @@ def start():
     parser.add_argument('--path', help='Path to the checked out repository directory', default=os.getcwd(),
                         type=readable_dir)
     parser.add_argument('--cores-per-job', help='Number of cores to use', default=4, type=int)
+    parser.add_argument('--no-hunks', help='Deactivate collection of hunk data',
+                        default=False, action='store_true')
     parser.add_argument('--no-commit-branch-info',
                         help='Deactivate collection of commit level branch info',
                         default=False, action='store_true')
