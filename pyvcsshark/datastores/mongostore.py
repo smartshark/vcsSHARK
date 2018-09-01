@@ -1,8 +1,8 @@
 import sys
 from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
-from pyvcsshark.datastores.basestore import BaseStore
-from mongoengine import connect, DoesNotExist, NotUniqueError
+from pyvcsshark.datastores.basestore import BaseStore, StorageProcess
+from mongoengine import connect, connection, Document, DoesNotExist, NotUniqueError, OperationError
 from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk, Branch
 from pycoshark.utils import create_mongodb_uri_string
 
@@ -82,11 +82,22 @@ class MongoStore(BaseStore):
         # Start worker, they will wait till something comes into the queue and then process it
         for i in range(self.NUMBER_OF_PROCESSES):
             name = "StorageProcess-%d" % i
-            process = CommitStorageProcess(self.commit_queue, self.vcs_system_id, last_commit_date, self.config, name)
+            process = CommitStorageProcess(self, self.commit_queue, self.vcs_system_id, last_commit_date, self.config, name)
             process.daemon = True
             process.start()
 
         logger.info("Starting storage Process...")
+
+    def register_subprocess(self):
+        connection._connections = {}
+        connection._connection_settings ={}
+        connection._dbs = {}
+        for document_class in Document.__subclasses__():
+            document_class._collection = None
+        uri = create_mongodb_uri_string(
+            self.config.db_user, self.config.db_password, self.config.db_hostname,
+            self.config.db_port, self.config.db_authentication, self.config.ssl_enabled)
+        connect(self.config.db_database, host=uri, connect=False)
 
     @property
     def store_identifier(self):
@@ -111,7 +122,7 @@ class MongoStore(BaseStore):
         # after commits are finished, process branches
         for i in range(self.NUMBER_OF_PROCESSES):
             name = "StorageProcessBranch-%d" % i
-            process = BranchStorageProcess(self.branch_queue, self.vcs_system_id, self.config, name)
+            process = BranchStorageProcess(self, self.branch_queue, self.vcs_system_id, self.config, name)
             process.daemon = True
             process.start()
 
@@ -123,11 +134,9 @@ class MongoStore(BaseStore):
 
 class BranchStorageProcess(multiprocessing.Process):
 
-    def __init__(self, queue, vcs_system_id, config, name):
+    def __init__(self, datastore, queue, vcs_system_id, config, name):
         multiprocessing.Process.__init__(self)
-        uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
-                                        config.db_authentication, config.ssl_enabled)
-        connect(config.db_database, host=uri, connect=False)
+        self.datastore = datastore
         self.queue = queue
         self.vcs_system_id = vcs_system_id
         self.proc_name = name
@@ -138,6 +147,8 @@ class BranchStorageProcess(multiprocessing.Process):
         1. Get a object of class :class:`pyvcsshark.dbmodels.models.BranchModel` from the queue
         2. Check if this branch was stored before and if so: update the branch, if not create branch
         """
+        datastore.register_subprocess()
+
         while True:
             branch = self.queue.get()
             logger.debug("Process {} is processing branch {} -> {}".format(self.proc_name, branch.name, branch.target))
@@ -174,11 +185,9 @@ class CommitStorageProcess(multiprocessing.Process):
     :param last_commit_date: object of class :class:`datetime.datetime`, which holds the last commit that was parsed
     :param config: object of class :class:`pyvcsshark.config.Config`, which holds configuration information
     """
-    def __init__(self, queue, vcs_system_id, last_commit_date, config, name):
+    def __init__(self, datastore, queue, vcs_system_id, last_commit_date, config, name):
         multiprocessing.Process.__init__(self)
-        uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
-                                        config.db_authentication, config.ssl_enabled)
-        connect(config.db_database, host=uri, connect=False)
+        self.datastore = datastore
         self.queue = queue
         self.vcs_system_id = vcs_system_id
         self.last_commit_date = last_commit_date
@@ -202,6 +211,8 @@ class CommitStorageProcess(multiprocessing.Process):
 
         .. WARNING:: We only look for changed tags and branches here for already processed commits!
         """
+        datastore.register_subprocess()
+
         while True:
             commit = self.queue.get()
             logger.debug("Process %s is processing commit with hash %s." % (self.proc_name, commit.id))
