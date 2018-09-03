@@ -64,20 +64,6 @@ class GitParser(BaseParser):
         except Exception:
             return False
 
-    def add_commit(self, commit_hash):
-        if commit_hash not in self.commit_info:
-            self.commit_info[commit_hash] = {'branches': set([]), 'tags': []}
-
-    def add_branch(self, commit_hash, branch_model):
-        """ Does two things: First it adds the commitHash to the commitqueue, so that the parsing processes can process this commit. Second it
-        creates objects of type :class:`pyvcsshark.parser.models.BranchModel` and stores it in the dictionary.
-
-        :param commit_hash: revision hash of the commit to be processed
-        :param branch: branch that should be added for the commit
-        """
-        self.add_commit(commit_hash)
-        self.commit_info[commit_hash]['branches'].add(branch_model)
-
     def add_tag(self, tagged_commit, tag_name, tag_object):
         """
         Creates objects of type :class:`pyvcsshark.parser.models.TagModel` and stores it in the dictionary mentioned above.
@@ -119,7 +105,6 @@ class GitParser(BaseParser):
 
         # As it can happen that we have commits with tags that are not on any branch (e.g. project Zookeeper), we need
         # to take care of that here
-        self.add_commit(commit_id)
         self.commit_info[commit_id]['tags'].append(tag_model)
 
     def _set_branch_tips(self, branches):
@@ -168,43 +153,41 @@ class GitParser(BaseParser):
         # Get all branches
         branches = references - tags
 
+        # Add all commits
+        pool = multiprocessing.Pool(
+            processes=self.config.cores_per_job,
+            initializer=_initialize_oid_process,
+            initargs=[self.discovered_path])
+        oids = list(map(lambda oid: str(oid), self.repository))
+        commits = pool.map(_process_oid, oids)
+        commits = list(filter(lambda obj: obj is not None, commits))
+        pool.close()
+        pool.join()
+        for commit in commits:
+            self.commit_info.setdefault(commit, {'branches': set([]), 'tags': []})
+
         # set all tips for every branch
         self._set_branch_tips(branches)
 
-        self.logger.info("Processing branches...")
-        count = len(branches)
-        for i, branch in enumerate(branches):
-            branch_name = branch.name
-            self.logger.info("({}/{}) {}".format(i, count, branch_name))
+        if not self.config.no_commit_branch_info:
+            self.logger.info("Processing branches...")
+            count = len(branches)
+            for i, branch in enumerate(branches):
+                branch_name = branch.name
+                self.logger.info("({}/{}) {}".format(i + 1, count, branch_name))
 
-            # Only collect commits if no branch information should be parsed
-            if not self.config.no_commit_branch_info:
+                commit = branch.peel()
                 branch_model = BranchModel(branch_name)
-                self._walk(branch.peel(), lambda id: self.add_branch(id, branch_model))
-            else:
-                self._walk(branch.peel(), lambda id: self.add_commit(id))
+                self._walk(commit, lambda id: self.commit_info[id]['branches'].add(branch_model))
 
-        self.logger.info("Getting tags...")
         # Walk through every tag and put the information in the dictionary via the addtag method
-        count = len(tags)
-        for i, tag in enumerate(tags):
+        self.logger.info("Getting tags...")
+        for tag in tags:
             tag_name = tag.name
-            self.logger.info("({}/{}) {}".format(i, count, tag_name))
             tagged_commit = tag.peel()
             if isinstance(tagged_commit, pygit2.Blob):
                 continue
             self.add_tag(tagged_commit, tag_name, tag.target)
-
-            # The tagged_commit can have children that are not on any branch, but we may need it anyway --> collect it
-            # and add it only if we have not collected it before
-            try:
-                if str(tagged_commit.id) not in self.commit_info:
-                    self._walk(tagged_commit, lambda id: self.add_commit(id))
-            except ValueError as e:
-                # we may hit a tag that does not point to a commit but to a blob, therefore we can not walk over it until libgit implements this
-                # see: https://github.com/libgit2/libgit2/issues/3595
-                if str(e) != 'ValueError: object is not a committish':  # we do not bail on this we just ignore tags to blobs
-                    raise
 
     def parse(self, repository_path, datastore):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
@@ -248,6 +231,16 @@ class GitParser(BaseParser):
         self.logger.info("Parsing complete...")
 
         return
+
+crawler_repository = None
+def _initialize_oid_process(discovered_path):
+    global crawler_repository
+    crawler_repository = pygit2.Repository(discovered_path)
+
+def _process_oid(oid):
+    global crawler_repository
+    if crawler_repository[oid].type == pygit2.GIT_OBJ_COMMIT:
+        return str(oid)
 
 commit_parser = None
 def _initialize_commit_parser_process(config, discovered_path, datastore, lock):
