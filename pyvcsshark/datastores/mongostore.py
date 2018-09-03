@@ -49,7 +49,7 @@ class MongoStore(BaseStore):
         self.commit_condition = multiprocessing.Condition()
 
         # we need an extra queue for branches because all commits need to be finished before we can process branches
-        self.branch_queue = multiprocessing.JoinableQueue()
+        self.branches = []
         self.config = config
 
         # We define, that the user we authenticate with is in the admin database
@@ -121,69 +121,76 @@ class MongoStore(BaseStore):
 
     def add_branch(self, branch_model):
         """Add branch to extra queue"""
-        self.branch_queue.put(branch_model)
+        self.branches.append(branch_model)
         return
 
     def finalize(self):
         """As we depend on commits beeing finished with branches (for the references) we must wait first for them to finish before we can start our branch processing."""
-        self.commit_queue.join()
+        # wait for all commits to be parsed
+        self.commit_queue.put(None)
+        self.commit_condition.acquire()
+        self.commit_condition.wait()
+        self.commit_condition.release()
 
         # after commits are finished, process branches
-        for i in range(self.NUMBER_OF_PROCESSES):
-            name = "StorageProcessBranch-%d" % i
-            process = BranchStorageProcess(self, self.branch_queue, self.vcs_system_id, self.config, name)
-            process.daemon = True
-            process.start()
+        pool = multiprocessing.Pool(
+            processes=self.NUMBER_OF_PROCESSES,
+            initializer=_initialize_branch_storage_process,
+            initargs=(self, self.vcs_system_id))
+        pool.map(_store_branch, self.branches)
+        pool.close()
+        pool.join()
 
-        # wait for branches to finish
-        self.branch_queue.join()
         logger.info("Storing Process complete...")
         return
 
+branch_storage = None
+def _initialize_branch_storage_process(datastore, vcs_system_id):
+    global branch_storage
+    branch_storage = BranchStorage(datastore, vcs_system_id)
 
-class BranchStorageProcess(multiprocessing.Process):
+def _store_branch(branch_model):
+    try:
+        global branch_storage
+        branch_storage.store(branch_model[0], branch_model[1])
+    except Exception as e:
+        traceback.print_exc()
+        raise
+    except:
+        print('Storing branch failed due to non-Exception exception!')
+        raise
 
-    def __init__(self, datastore, queue, vcs_system_id, config, name):
-        multiprocessing.Process.__init__(self)
-        self.datastore = datastore
-        self.queue = queue
+class BranchStorage():
+    def __init__(self, datastore, vcs_system_id):
+        datastore.register_subprocess()
         self.vcs_system_id = vcs_system_id
-        self.proc_name = name
+        self.proc_name = "BranchStorageProcess-" + str(os.getpid())
 
-    def run(self):
+    def store(self, branch):
         """Endless loop for the processes.
 
         1. Get a object of class :class:`pyvcsshark.dbmodels.models.BranchModel` from the queue
         2. Check if this branch was stored before and if so: update the branch, if not create branch
         """
-        datastore.register_subprocess()
+        logger.debug("Process {} is processing branch {} -> {}".format(self.proc_name, branch.name, branch.target))
 
-        while True:
-            branch = self.queue.get()
-            logger.debug("Process {} is processing branch {} -> {}".format(self.proc_name, branch.name, branch.target))
+        # get commit OID for Target ref
+        mongo_commit = Commit.objects.get(vcs_system_id=self.vcs_system_id, revision_hash=branch.target)
 
-            # get commit OID for Target ref
-            mongo_commit = Commit.objects.get(vcs_system_id=self.vcs_system_id, revision_hash=branch.target)
+        # Try to get the commit
+        try:
+            mongo_branch = Branch.objects.get(vcs_system_id=self.vcs_system_id, name=branch.name)
+        except DoesNotExist:
+            mongo_branch = Branch(
+                vcs_system_id=self.vcs_system_id,
+                name=branch.name,
+                commit_id=mongo_commit.id
+            ).save()
+        mongo_branch.commit_id = mongo_commit.id
+        mongo_branch.is_origin_head = branch.is_origin_head
+        mongo_branch.save()
 
-            # Try to get the commit
-            try:
-                mongo_branch = Branch.objects.get(vcs_system_id=self.vcs_system_id, name=branch.name)
-            except DoesNotExist:
-                mongo_branch = Branch(
-                    vcs_system_id=self.vcs_system_id,
-                    name=branch.name,
-                    commit_id=mongo_commit.id
-                ).save()
-
-            mongo_branch.commit_id = mongo_commit.id
-            mongo_branch.is_origin_head = branch.is_origin_head
-            mongo_branch.save()
-
-            logger.debug("Process %s saved branch %s. Queue size: %d" % (self.proc_name, branch.name, self.queue.qsize()))
-
-            self.queue.task_done()
-
-
+        logger.debug("Process %s saved branch %s." % (self.proc_name, branch.name))
 
 def _commit_pooler(commit_queue, commit_condition, process_count, datastore, vcs_system_id, last_commit_date, config):
     pool = multiprocessing.Pool(
