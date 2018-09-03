@@ -1,7 +1,8 @@
 import sys
+import os
 from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
-from pyvcsshark.datastores.basestore import BaseStore, StorageProcess
+from pyvcsshark.datastores.basestore import BaseStore
 from mongoengine import connect, connection, Document, DoesNotExist, NotUniqueError, OperationError
 from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk, Branch
 from pycoshark.utils import create_mongodb_uri_string
@@ -9,7 +10,7 @@ from pycoshark.utils import create_mongodb_uri_string
 import multiprocessing
 import logging
 import datetime
-
+import traceback
 
 logger = logging.getLogger("store")
 
@@ -44,7 +45,8 @@ class MongoStore(BaseStore):
         logger.info("Initializing MongoStore...")
 
         # Create queue for multiprocessing
-        self.commit_queue = multiprocessing.JoinableQueue()
+        self.commit_queue = multiprocessing.Queue()
+        self.commit_condition = multiprocessing.Condition()
 
         # we need an extra queue for branches because all commits need to be finished before we can process branches
         self.branch_queue = multiprocessing.JoinableQueue()
@@ -80,11 +82,11 @@ class MongoStore(BaseStore):
             last_commit_date = None
 
         # Start worker, they will wait till something comes into the queue and then process it
-        for i in range(self.NUMBER_OF_PROCESSES):
-            name = "StorageProcess-%d" % i
-            process = CommitStorageProcess(self, self.commit_queue, self.vcs_system_id, last_commit_date, self.config, name)
-            process.daemon = True
-            process.start()
+        worker = multiprocessing.Process(
+            target=_commit_pooler,
+            args=(self.commit_queue, self.commit_condition, self.NUMBER_OF_PROCESSES,
+                self, self.vcs_system_id, last_commit_date, self.config,))
+        worker.start()
 
         logger.info("Starting storage Process...")
 
@@ -182,7 +184,45 @@ class BranchStorageProcess(multiprocessing.Process):
             self.queue.task_done()
 
 
-class CommitStorageProcess(multiprocessing.Process):
+
+def _commit_pooler(commit_queue, commit_condition, process_count, datastore, vcs_system_id, last_commit_date, config):
+    pool = multiprocessing.Pool(
+        processes=process_count,
+        initializer=_initialize_commit_storage_process,
+        initargs=(datastore, vcs_system_id, last_commit_date, config),
+        maxtasksperchild=100)
+    while True:
+        commit = commit_queue.get()
+        if commit is None:
+            break
+        pool.apply_async(_store_commit, [commit])
+
+    # finish all jobs
+    pool.close()
+    pool.join()
+
+    # notify the main process that all commits have been parsed
+    commit_condition.acquire()
+    commit_condition.notify_all()
+    commit_condition.release()
+
+commit_storage = None
+def _initialize_commit_storage_process(datastore, vcs_system_id, last_commit_date, config):
+    global commit_storage
+    commit_storage = CommitStorage(datastore, vcs_system_id, last_commit_date, config)
+
+def _store_commit(commit_model):
+    global commit_storage
+    try:
+        commit_storage.store(commit_info[0], commit_info[1])
+    except Exception as e:
+        traceback.print_exc()
+        raise
+    except:
+        print('Storing commit failed due to non-Exception exception!')
+        raise
+
+class CommitStorage():
     """Class that inherits from :class:`multiprocessing.Process` for processing instances of class
     :class:`pyvcsshark.dbmodels.models.CommitModel` \
     and writing it into the mongodb
@@ -192,15 +232,14 @@ class CommitStorageProcess(multiprocessing.Process):
     :param last_commit_date: object of class :class:`datetime.datetime`, which holds the last commit that was parsed
     :param config: object of class :class:`pyvcsshark.config.Config`, which holds configuration information
     """
-    def __init__(self, datastore, queue, vcs_system_id, last_commit_date, config, name):
-        multiprocessing.Process.__init__(self)
-        self.datastore = datastore
-        self.queue = queue
+    def __init__(self, datastore, vcs_system_id, last_commit_date, config):
+        datastore.register_subprocess()
         self.vcs_system_id = vcs_system_id
         self.last_commit_date = last_commit_date
-        self.proc_name = name
+        self.config = config
+        self.proc_name = "CommitStorageProcess-" + str(os.getpid())
 
-    def run(self):
+    def store(self, commit):
         """ Endless loop for the processes, which consists of several steps:
 
         1. Get a object of class :class:`pyvcsshark.dbmodels.models.CommitModel` from the queue
@@ -218,30 +257,24 @@ class CommitStorageProcess(multiprocessing.Process):
 
         .. WARNING:: We only look for changed tags and branches here for already processed commits!
         """
-        datastore.register_subprocess()
+        logger.debug("Process %s is processing commit with hash %s." % (self.proc_name, commit.id))
 
-        while True:
-            commit = self.queue.get()
-            logger.debug("Process %s is processing commit with hash %s." % (self.proc_name, commit.id))
+        # Try to get the commit
+        try:
+            mongo_commit = Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit.id).get()
+            existed = True
+        except DoesNotExist:
+            mongo_commit = Commit(
+                vcs_system_id=self.vcs_system_id,
+                revision_hash=commit.id
+            ).save()
+            existed = False
+        if not existed or not self.config.no_hunks:
+            self.set_whole_commit(mongo_commit, commit)
+            mongo_commit.save()
 
-            # Try to get the commit
-            try:
-                mongo_commit = Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit.id).get()
-                existed = True
-            except DoesNotExist:
-                mongo_commit = Commit(
-                    vcs_system_id=self.vcs_system_id,
-                    revision_hash=commit.id
-                ).save()
-                existed = False
-            if not existed or not self.config.no_hunks:
-                self.set_whole_commit(mongo_commit, commit)
-                mongo_commit.save()
-
-            # Save Revision object
-            logger.debug("Process %s saved commit with hash %s. Queue size: %d" % (self.proc_name, commit.id, self.queue.qsize()))
-
-            self.queue.task_done()
+        # Save Revision object
+        logger.debug("Process %s saved commit with hash %s." % (self.proc_name, commit.id))
 
     def set_whole_commit(self, mongo_commit, commit):
         # Create tags
