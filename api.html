@@ -831,7 +831,7 @@ put here, as only the parser is specific to the repository type</p>
 <tr class="field-even field"><td>&#160;</td><td class="field-body">number of processes for the parsing process. Calls     <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.cpu_count" title="(in Python v3.5)"><code class="xref py py-func docutils literal notranslate"><span class="pre">multiprocessing.cpu_count()</span></code></a>.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">Property repository:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">object of class <a class="reference external" href="http://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Repository</span></code></a>, which represents the repository</td>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">object of class <a class="reference external" href="https://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Repository</span></code></a>, which represents the repository</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Property commits_to_be_processed:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body">dictionary that is set up the following way:     commits_to_be_processed = {‘&lt;revisionHash&gt;’ : {‘branches’ : set(), ‘tags’ : []}}, where &lt;revisionHash&gt; must be    replaced with the actual hash. Therefore, this dictionary holds information about every revision and which branches     this revision belongs to and which tags it has.</td>
@@ -971,7 +971,7 @@ the commits</p>
 <tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>queue</strong> – queue, where the different commithashes are stored in</li>
 <li><strong>commits_to_be_processed</strong> – dictionary, which contains information about the branches and tags of each commit</li>
-<li><strong>repository</strong> – repository object of type <a class="reference external" href="http://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Repository</span></code></a></li>
+<li><strong>repository</strong> – repository object of type <a class="reference external" href="https://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Repository</span></code></a></li>
 <li><strong>datastore</strong> – object, that is a subclass of <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore" title="pyvcsshark.datastores.basestore.BaseStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore</span></code></a></li>
 <li><strong>lock</strong> – lock that is used, so that only one process at a time is calling     the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> function</li>
 </ul>
@@ -989,7 +989,7 @@ the commits</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>hunks</strong> – list of objects of class <a class="reference external" href="http://www.pygit2.org/diff.html#pygit2.DiffHunk" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.DiffHunk</span></code></a></li>
+<li><strong>hunks</strong> – list of objects of class <a class="reference external" href="https://www.pygit2.org/diff.html#pygit2.DiffHunk" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.DiffHunk</span></code></a></li>
 <li><strong>initial_commit</strong> – indicates if we have an initial commit</li>
 </ul>
 </td>
