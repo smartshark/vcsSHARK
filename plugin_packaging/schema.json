@@ -83,6 +83,44 @@
          "desc": "Information about the different commits of a project are stored in this collection",
          "collection_name":"commit"
       },
+      {
+        "collection_name": "branch",
+        "desc": "Information about the branch tips of a vcs system",
+        "fields": [
+            {  
+               "type":"ObjectIdType",
+               "logical_type":"OID",
+               "field_name":"_id",
+               "desc": "Identifier of the document"
+            },
+            {  
+               "type":"ObjectIdType",
+               "logical_type":"RID",
+               "reference_to": "vcs_system",
+               "field_name":"vcs_system_id",
+               "desc": "ObjectID of the vcs_system to which this branch belongs"
+            },
+            {  
+               "type":"ObjectIdType",
+               "logical_type":"RID",
+               "reference_to": "commit",
+               "field_name":"commit_id",
+               "desc": "ObjectID of the commit to which this branch tip is pointing to"
+            },
+            {  
+               "type":"StringType",
+               "logical_type":"Text",
+               "field_name":"name",
+               "desc": "Name of the branch"
+            },
+            {  
+               "type":" BooleanType",
+               "logical_type":"Other",
+               "field_name":"is_origin_head",
+               "desc": "True if this branch is the default origin branch (usually master in git)"
+            }
+        ]
+      },
       {  
          "fields":[  
             {  
