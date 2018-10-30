@@ -14,6 +14,9 @@ class MySQLStore(BaseStore):
         """
         return
         
+    def vcsstore(self):
+        return
+
     @property
     def store_identifier(self):
         """Must return the identifier for the store. This should match the configuration options"""

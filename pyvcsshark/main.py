@@ -58,7 +58,7 @@ class Application(object):
         # are most likely required for storing into a datastore (e.g. creating a project table)
         parser.initialize()
         datastore.initialize(config, parser.get_project_url(), parser.repository_type)
-        parser.parse(config.path, datastore)
+        parser.parse(datastore.vcsstore())
         parser.finalize()
         datastore.finalize()
             

@@ -24,7 +24,8 @@ class GitParser(BaseParser):
     replaced with the actual hash. Therefore, this dictionary holds information about every revision and which branches\
      this revision belongs to and which tags it has.
     :property logger: logger, which is acquired via logging.getLogger("parser")
-    :property datastore: datastore, where the commits should be saved to
+    :property vcsstore: vcsstore, where the commits should be saved to
+
     """
     
     # Includes rename and copy threshold, 50% is the default git threshold
@@ -35,8 +36,7 @@ class GitParser(BaseParser):
         self.repository = None
         self.commit_info = {}
         self.logger = logging.getLogger("parser")
-        self.datastore = None
-
+        self.vcsstore = None
 
     @property
     def repository_type(self):
@@ -177,11 +177,11 @@ class GitParser(BaseParser):
             tagged_commit = tag.peel()
             self.add_tag(tagged_commit, tag_name, tag.target)
 
-    def parse(self, repository_path, datastore):
+    def parse(self, vcsstore):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
-        datastore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen
-        datastore. It mostly uses pygit2 (see: http://www.pygit2.org/).
-        
+        vcsstore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen
+        vcsstore. It mostly uses pygit2 (see: http://www.pygit2.org/).
+
         The parsing process is divided into several steps:
 
             1. A list of all branches and tags are created (see GitParser.initialize)
@@ -189,21 +189,17 @@ class GitParser(BaseParser):
             and branches and add all revision hashes to the commit list (see GitParser.initialize)
             3. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParserProcess`, which parse all\
             commits.
-        
-        :param repository_path: Path to the repository
-        :param datastore: Datastore used to save the data to
+
+        :param vcsstore: Datastore used to save the data to
         """
-        self.datastore = datastore
+        self.vcsstore = vcsstore
         self.logger.info("Starting parsing process...")
 
         # first we want the branches queue filled
         for name, val in self.branches.items():
-            self.datastore.add_branch(BranchTipModel(name, val['target'], val['is_origin_head']))
+            self.vcsstore.add_branch(BranchTipModel(name, val['target'], val['is_origin_head']))
 
         self.logger.info("Parsing {} commits...".format(len(self.commit_info.keys())))
-
-        # Lock for synchronizing the processes access to the datastores
-        lock = multiprocessing.Lock()
 
         # Use a pool.map to parallelize parsing of the commits
         # Map submits chunks of size chunksize to each process as a single task,
@@ -212,7 +208,7 @@ class GitParser(BaseParser):
         pool = multiprocessing.Pool(
             processes=self.NUMBER_OF_PROCESSES,
             initializer=_initialize_commit_parser_process,
-            initargs=(self.config, self.discovered_path, self.datastore, lock),
+            initargs=(self.config, self.discovered_path, self.vcsstore),
             maxtasksperchild=1)
         pool.map(_parse_commit, self.commit_info.items(), chunksize=commits_per_process)
         pool.close()
@@ -233,9 +229,9 @@ def _process_oid(oid):
         return str(oid)
 
 commit_parser = None
-def _initialize_commit_parser_process(config, discovered_path, datastore, lock):
+def _initialize_commit_parser_process(config, discovered_path, vcsstore):
     global commit_parser
-    commit_parser = CommitParser(config, discovered_path, datastore, lock)
+    commit_parser = CommitParser(config, discovered_path, vcsstore)
 
 def _parse_commit(commit):
     try:
@@ -252,25 +248,22 @@ class CommitParser():
     """
     A class that provides an API for parsing commits.
     A single commit can be parsed by calling :fund:`pyvcsshark.parser.gitparser.CommitParser.parse`.
-    Each parsed commit is submitted to the given datastore via
+    Each parsed commit is submitted to the given vcsstore via
     :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit`.
 
     :property logger: logger acquired by calling logging.getLogger("parser")
 
     :param config: configuration of type :class:`pyvcsshark.config.Config`
     :param discovered_path: path to the repository
-    :param datastore: object, that is a subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`
-    :param lock: lock that is used, so that only one process at a time is calling \
-    the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function
+    :param vcsstore: object, that is a subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`
     """
 
-    def __init__(self, config, discovered_path, datastore, lock):
+    def __init__(self, config, discovered_path, vcsstore):
         self.config = config
         self.discovered_path = discovered_path
-        self.datastore = datastore
-        self.lock = lock
+        self.vcsstore = vcsstore
 
-        self.datastore.register_subprocess()
+        self.vcsstore.register_subprocess()
         self.repository = pygit2.Repository(self.discovered_path)
         self.logger = logging.getLogger("parser")
 
@@ -294,7 +287,7 @@ class CommitParser():
         # the commit hash
         if self.config.no_commit_branch_info \
             and self.config.no_hunks \
-            and self.datastore.contains_commit(commit_oid):
+            and self.vcsstore.contains_commit(commit_oid):
             return
 
         commit_hash = pygit2.Oid(hex=commit_oid)
@@ -321,11 +314,9 @@ class CommitParser():
                                    commit_info['tags'], parent_ids,
                                    author_model, committer_model, commit.message, changed_files, commit.author.time,
                                    commit.author.offset, commit.committer.time, commit.committer.offset)
-        
-        # Make sure, that addCommit is only called by one process at a time
-        self.lock.acquire()
-        self.datastore.add_commit(commit_model)
-        self.lock.release()
+
+        # vcsstore.add_commit is required to be process safe
+        self.vcsstore.add_commit(commit_model)
 
     def create_hunks(self, hunks, initial_commit=False):
         """

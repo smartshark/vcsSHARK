@@ -2,7 +2,7 @@ import sys
 import os
 from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
-from pyvcsshark.datastores.basestore import BaseStore
+from pyvcsshark.datastores.basestore import BaseStore, BaseVCSStore
 from mongoengine import connect, connection, Document, DoesNotExist, NotUniqueError, OperationError
 from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk, Branch
 from pycoshark.utils import create_mongodb_uri_string
@@ -14,6 +14,44 @@ import traceback
 
 logger = logging.getLogger("store")
 
+class MongoVCSStore(BaseVCSStore):
+    def __init__(self, datastore, project_id, repository_url, repository_type):
+        self.datastore = datastore
+        self.project_id = project_id
+        self.repository_url = repository_url
+        self.repository_type = repository_type
+
+        query = VCSSystem.objects(
+            url=repository_url,
+            project_id=project_id)
+        self.vcs_system_id = query.upsert_one(
+            url=repository_url,
+            repository_type=repository_type,
+            last_updated=datetime.datetime.today(),
+            project_id=project_id).id
+
+    def register_subprocess(self):
+        self.datastore.register_subprocess()
+
+    def add_commit(self, commit_model):
+        """Add the commit to the datastore. How this is handled depends on the implementation.
+
+        :param commit_model: instance of :class:`~pyvcsshark.dbmodels.models.CommitModel`, which includes all \
+        important information about the commit
+
+        .. WARNING:: this function must be process safe
+        """
+        self.datastore._add_commit(commit_model)
+
+    def contains_commit(self, commit_hash):
+        """
+        Returns True is the commits exists in the datastore, otherwise False.
+        """
+        self.datastore._contains_commit(commit_hash)
+
+    def add_branch(self, branch_model):
+        """Add branch to extra queue"""
+        self.datastore._add_branch(branch_model)
 
 class MongoStore(BaseStore):
     """ Datastore implementation for saving data to the mongodb. Inherits from
@@ -41,6 +79,9 @@ class MongoStore(BaseStore):
         :param repository_type: type of the repository, which is to be analyzed (e.g. "git")
         """
 
+        self.repository_url = repository_url
+        self.repository_type = repository_type
+
         logger.setLevel(config.debug_level)
         logger.info("Initializing MongoStore...")
 
@@ -54,75 +95,40 @@ class MongoStore(BaseStore):
 
         # We define, that the user we authenticate with is in the admin database
         logger.info("Connecting to MongoDB...")
-
-        uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
-                                        config.db_authentication, config.ssl_enabled)
-        connect(config.db_database, host=uri, connect=False)
+        self._connect()
 
         # Get project_id
         try:
-            project_id = Project.objects(name=config.project_name).get().id
+            self.project_id = Project.objects(name=config.project_name).get().id
         except DoesNotExist:
             logger.error('Project with name "%s" does not exist in database!' % config.project_name)
             sys.exit(1)
 
-        # Check if vcssystem already exist, and use upsert
-        self.vcs_system_id = VCSSystem.objects(url=repository_url).upsert_one(url=repository_url,
-                                                                              repository_type=repository_type,
-                                                                              last_updated=datetime.datetime.today(),
-                                                                              project_id=project_id).id
-
-        # Get the last commit by date of the project (if there is any)
-        last_commit = Commit.objects(vcs_system_id=self.vcs_system_id)\
-            .only('committer_date').order_by('-committer_date').first()
-
-        if last_commit is not None:
-            last_commit_date = last_commit.committer_date
-        else:
-            last_commit_date = None
-
         # Start worker, they will wait till something comes into the queue and then process it
         worker = multiprocessing.Process(
             target=_commit_pooler,
-            args=(self.commit_queue, self.commit_condition, self.NUMBER_OF_PROCESSES,
-                self, self.vcs_system_id, last_commit_date, self.config,))
+            args=(self.commit_queue, self.commit_condition,
+                self.NUMBER_OF_PROCESSES, self, self.config,))
         worker.start()
 
         logger.info("Starting storage Process...")
 
+    def vcsstore(self):
+        """
+        Returns an instance of :class:`pyvcsshark.datastores.basestore.BaseVCSStore`
+        for the given repository_url
+        """
+        return MongoVCSStore(self,  self.project_id,
+            self.repository_url, self.repository_type)
+
     def register_subprocess(self):
-        connection._connections = {}
-        connection._connection_settings ={}
-        connection._dbs = {}
-        for document_class in Document.__subclasses__():
-            document_class._collection = None
-        uri = create_mongodb_uri_string(
-            self.config.db_user, self.config.db_password, self.config.db_hostname,
-            self.config.db_port, self.config.db_authentication, self.config.ssl_enabled)
-        connect(self.config.db_database, host=uri, connect=False)
+        self._reset_connection_cache()
+        self._connect()
 
     @property
     def store_identifier(self):
         """Returns the identifier **mongo** for this datastore"""
         return 'mongo'
-
-    def contains_commit(self, commit_id):
-        try:
-            Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit_id).only('_id').get()
-            return True
-        except DoesNotExist:
-            return False
-
-    def add_commit(self, commit_model):
-        """Adds commits of class :class:`pyvcsshark.dbmodels.models.CommitModel` to the commitqueue"""
-        # add to queue
-        self.commit_queue.put(commit_model)
-        return
-
-    def add_branch(self, branch_model):
-        """Add branch to extra queue"""
-        self.branches.append(branch_model)
-        return
 
     def finalize(self):
         """As we depend on commits beeing finished with branches (for the references) we must wait first for them to finish before we can start our branch processing."""
@@ -136,12 +142,42 @@ class MongoStore(BaseStore):
         pool = multiprocessing.Pool(
             processes=self.NUMBER_OF_PROCESSES,
             initializer=_initialize_branch_storage_process,
-            initargs=(self, self.vcs_system_id))
+            initargs=(self,))
         pool.map(_store_branch, self.branches)
         pool.close()
         pool.join()
 
         logger.info("Storing Process complete...")
+        return
+
+    def _reset_connection_cache(self):
+        connection._connections = {}
+        connection._connection_settings ={}
+        connection._dbs = {}
+        for document_class in Document.__subclasses__():
+            document_class._collection = None
+    def _connect(self):
+        uri = create_mongodb_uri_string(
+            self.config.db_user, self.config.db_password, self.config.db_hostname,
+            self.config.db_port, self.config.db_authentication, self.config.ssl_enabled)
+        connect(self.config.db_database, host=uri, connect=False)
+
+    def _contains_commit(self, commit_id):
+        try:
+            Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit_id).only('id').get()
+            return True
+        except DoesNotExist:
+            return False
+
+    def _add_commit(self, commit_model):
+        """Adds commits of class :class:`pyvcsshark.dbmodels.models.CommitModel` to the commitqueue"""
+        # add to queue
+        self.commit_queue.put(commit_model)
+        return
+
+    def _add_branch(self, branch_model):
+        """Add branch to extra queue"""
+        self.branches.append(branch_model)
         return
 
 branch_storage = None

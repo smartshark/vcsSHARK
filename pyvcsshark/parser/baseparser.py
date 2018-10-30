@@ -46,15 +46,14 @@ class BaseParser(metaclass=abc.ABCMeta):
         return
 
     @abc.abstractmethod
-    def parse(self, repository_path, datastore):
+    def parse(self, vcsstore):
         """Parses the repository
         
-        :param repository_path: path to the repository
-        :param datastore: subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`.
+        :param vcsstore: subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`.
         
         
-        .. NOTE:: We must call the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function in the parsing process if we want \
-        to add commits to the datastore
+        .. NOTE:: We must call the :func:`pyvcsshark.datastores.basestore.BaseVCSStore.addCommit` function in the parsing process if we want \
+        to add commits to the vcsstore
         """
         return
     
