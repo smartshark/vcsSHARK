@@ -72,6 +72,9 @@ def start():
     parser.add_argument('--no-commit-branch-info',
                         help='Deactivate collection of commit level branch info',
                         default=False, action='store_true')
+    parser.add_argument('-r', '--recursive',
+                        help='Also collect information for all submodules',
+                        default=False, action='store_true')
 
     logger.info("Reading out config from command line")
 

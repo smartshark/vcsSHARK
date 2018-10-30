@@ -29,6 +29,13 @@ class BaseVCSStore(metaclass=abc.ABCMeta):
     def add_branch(self, branch_model):
         """Add branch to extra queue"""
 
+    @abc.abstractmethod
+    def submodule(self, submodule_path, submodule_url, project_name=None):
+        """
+        Returns an instance of :class:`pyvcsshark.datastores.basestore.BaseVCSStore`
+        for the given submodule path
+        """
+
 class BaseStore(metaclass=abc.ABCMeta):
     """
     Abstract class for the datastores. One must inherit from this class and implement

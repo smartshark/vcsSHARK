@@ -26,6 +26,7 @@ class Config(object):
         self.ssl_enabled = args.ssl
         self.no_hunks = args.no_hunks
         self.no_commit_branch_info = args.no_commit_branch_info
+        self.recursive = args.recursive
 
     def __str__(self):
         return "Driver: %s, User: %s, Password: %s, Database: %s, Hostname: %s, Port: %s, AuthenticationDB: %s, " \

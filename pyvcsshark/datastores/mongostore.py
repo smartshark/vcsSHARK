@@ -4,7 +4,7 @@ from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
 from pyvcsshark.datastores.basestore import BaseStore, BaseVCSStore
 from mongoengine import connect, connection, Document, DoesNotExist, NotUniqueError, OperationError
-from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk, Branch
+from pycoshark.mongomodels import VCSSystem, VCSSubmodule, Project, Commit, Tag, File, People, FileAction, Hunk, Branch
 from pycoshark.utils import create_mongodb_uri_string
 
 import multiprocessing
@@ -52,6 +52,26 @@ class MongoVCSStore(BaseVCSStore):
     def add_branch(self, branch_model):
         """Add branch to extra queue"""
         self.datastore._add_branch(self.vcs_system_id, branch_model)
+
+    def submodule(self, submodule_path, submodule_url, project_name=None):
+        """
+        Returns an instance of :class:`pyvcsshark.datastores.basestore.BaseVCSStore`
+        for the given submodule path
+        """
+        if project_name is None:
+            project_id = self.project_id
+        else:
+            project_id = Project.objects(name=project_name).get().id
+        result = MongoVCSStore(self.datastore, project_id,
+            submodule_url, self.repository_type)
+        vcs_submodule_id = VCSSubmodule \
+            .objects(path=submodule_path, vcs_system_id=result.vcs_system_id) \
+            .upsert_one(path=submodule_path,
+                vcs_system_id=result.vcs_system_id) \
+            .id
+        VCSSystem.objects.get(id=self.vcs_system_id).update(
+            add_to_set__submodules=[vcs_submodule_id])
+        return result
 
 class MongoStore(BaseStore):
     """ Datastore implementation for saving data to the mongodb. Inherits from

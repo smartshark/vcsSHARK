@@ -14,7 +14,7 @@ from pyvcsshark.parser.models import BranchModel, PeopleModel, TagModel, FileMod
 class GitParser(BaseParser):
     """ Parser for git repositories. The general parsing process is described in
     :func:`pyvcsshark.parser.gitparser.GitParser.parse`.
-    
+
     :property SIMILARITY_THRESHOLD: sets the threshold for deciding if a file is similar to another. Default: 50%
     :property NUMBER_OF_PROCESSES: number of processes for the parsing process. Calls \
     :func:`multiprocessing.cpu_count()`.
@@ -27,7 +27,7 @@ class GitParser(BaseParser):
     :property vcsstore: vcsstore, where the commits should be saved to
 
     """
-    
+
     # Includes rename and copy threshold, 50% is the default git threshold
     SIMILARITY_THRESHOLD = 50
     NUMBER_OF_PROCESSES = multiprocessing.cpu_count()
@@ -35,6 +35,7 @@ class GitParser(BaseParser):
     def __init__(self):
         self.repository = None
         self.commit_info = {}
+        self.submodule_parser = {}
         self.logger = logging.getLogger("parser")
         self.vcsstore = None
 
@@ -50,7 +51,7 @@ class GitParser(BaseParser):
         except KeyError:
             # repository is only local
             pass
-        
+
         return url
 
     def finalize(self):
@@ -177,6 +178,26 @@ class GitParser(BaseParser):
             tagged_commit = tag.peel()
             self.add_tag(tagged_commit, tag_name, tag.target)
 
+        # Descent into each submodule by creating a GitParser instance for each
+        # submodule
+        if self.config.recursive:
+            for submodule in self.repository.listall_submodules():
+                self.logger.info('Initializing parser for submodule {}...'
+                    .format(submodule))
+                parser = GitParser()
+                parser.config = self.config
+                try:
+                    full_path = self.repository \
+                        .lookup_submodule(submodule).open().path
+                    if not parser.detect(full_path):
+                        self.logger.error('Could not create GitParser '
+                            'instance for submodule {}!'.format(submodule))
+                    parser.initialize()
+                    self.submodule_parser[submodule] = parser
+                except KeyError:
+                    self.logger.warning('Could not open submodule {}!' \
+                        .format(submodule))
+
     def parse(self, vcsstore):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
         vcsstore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen
@@ -194,6 +215,10 @@ class GitParser(BaseParser):
         """
         self.vcsstore = vcsstore
         self.logger.info("Starting parsing process...")
+
+        for submodule, parser in self.submodule_parser.items():
+            self.logger.info('Parsing submodule {}'.format(submodule))
+            parser.parse(vcsstore.submodule(submodule, parser.get_project_url()))
 
         # first we want the branches queue filled
         for name, val in self.branches.items():
@@ -269,15 +294,15 @@ class CommitParser():
 
     def parse(self, commit_oid, commit_info):
         """ Function for parsing a commit.
-        
+
         1. changedFiles are created (type: list of :class:`pyvcsshark.parser.models.FileModel`)
         2. author and commiter are created (type: :class:`pyvcsshark.parser.models.PeopleModel`)
         3. parents are added (list of strings)
         4. commit model is created (type: :class:`pyvcsshark.parser.models.CommitModel`)
         5. :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is called
-        
+
         :param commit: commit object of type :class:`pygit2.Commit`
-        
+
         .. NOTE:: The call to :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is thread/process safe, as a\
         lock is used to regulate the calls
         """
@@ -301,7 +326,7 @@ class CommitParser():
                 changed_files += self.get_changed_files_with_similiarity(parent, commit)
         else:
             changed_files = self.get_changed_files_for_initial_commit(commit)
-            
+
         string_commit_hash = str(commit.id)
 
         # Create the different models
@@ -348,7 +373,7 @@ class CommitParser():
         Special function for the initial commit, as we need to diff against the empty tree. Creates
         the changed files list, where objects of class :class:`pyvcsshark.parser.models.FileModel` are added.
         For every changed file in the initial commit.
-        
+
         :param commit: commit of type :class:`pygit2.Commit`
         """
         changed_files = []
@@ -366,14 +391,14 @@ class CommitParser():
         """ Creates a list of changed files of the class :class:`pyvcsshark.parser.models.FileModel`. For every
         changed file in the commit such an object is created. Furthermore, hunks are saved an each file is tested for
         similarity to detect copy and move operations
-        
+
         :param parent: Object of class :class:`pygit2.Commit`, that represents the parent commit
         :param commit: Object of class :class:`pygit2.Commit`, that represents the child commit
         """
-        
+
         changed_files = []
         diff = self.repository.diff(parent, commit, context_lines=0, interhunk_lines=1)
-                            
+
         opts = pygit2.GIT_DIFF_FIND_RENAMES | pygit2.GIT_DIFF_FIND_COPIES
         diff.find_similar(opts, GitParser.SIMILARITY_THRESHOLD, GitParser.SIMILARITY_THRESHOLD)
 
@@ -411,7 +436,7 @@ class CommitParser():
             # only add oldpath if file was copied/renamed
             if mode in ['C', 'R']:
                 changed_file.oldPath = patch.delta.old_file.path
-    
+
             already_checked_file_paths.add(patch.delta.new_file.path)
             changed_files.append(changed_file)
         return changed_files
