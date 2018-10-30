@@ -41,17 +41,17 @@ class MongoVCSStore(BaseVCSStore):
 
         .. WARNING:: this function must be process safe
         """
-        self.datastore._add_commit(commit_model)
+        self.datastore._add_commit(self.vcs_system_id, commit_model)
 
     def contains_commit(self, commit_hash):
         """
         Returns True is the commits exists in the datastore, otherwise False.
         """
-        self.datastore._contains_commit(commit_hash)
+        self.datastore._contains_commit(self.vcs_system_id, commit_hash)
 
     def add_branch(self, branch_model):
         """Add branch to extra queue"""
-        self.datastore._add_branch(branch_model)
+        self.datastore._add_branch(self.vcs_system_id, branch_model)
 
 class MongoStore(BaseStore):
     """ Datastore implementation for saving data to the mongodb. Inherits from
@@ -162,28 +162,29 @@ class MongoStore(BaseStore):
             self.config.db_port, self.config.db_authentication, self.config.ssl_enabled)
         connect(self.config.db_database, host=uri, connect=False)
 
-    def _contains_commit(self, commit_id):
+    def _contains_commit(self, vcs_system_id, commit_id):
         try:
-            Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit_id).only('id').get()
+            Commit.objects(vcs_system_id=vcs_system_id, revision_hash=commit_id).only('id').get()
             return True
         except DoesNotExist:
             return False
 
-    def _add_commit(self, commit_model):
+    def _add_commit(self, vcs_system_id, commit_model):
         """Adds commits of class :class:`pyvcsshark.dbmodels.models.CommitModel` to the commitqueue"""
         # add to queue
-        self.commit_queue.put(commit_model)
+        self.commit_queue.put((vcs_system_id, commit_model))
         return
 
-    def _add_branch(self, branch_model):
+    def _add_branch(self, vcs_system_id, branch_model):
         """Add branch to extra queue"""
-        self.branches.append(branch_model)
+        self.branches.append((vcs_system_id, branch_model))
         return
 
 branch_storage = None
-def _initialize_branch_storage_process(datastore, vcs_system_id):
+def _initialize_branch_storage_process(datastore):
+    datastore.register_subprocess()
     global branch_storage
-    branch_storage = BranchStorage(datastore, vcs_system_id)
+    branch_storage = BranchStorage()
 
 def _store_branch(branch_model):
     try:
@@ -197,12 +198,10 @@ def _store_branch(branch_model):
         raise
 
 class BranchStorage():
-    def __init__(self, datastore, vcs_system_id):
-        datastore.register_subprocess()
-        self.vcs_system_id = vcs_system_id
+    def __init__(self):
         self.proc_name = "BranchStorageProcess-" + str(os.getpid())
 
-    def store(self, branch):
+    def store(self, vcs_system_id, branch):
         """Endless loop for the processes.
 
         1. Get a object of class :class:`pyvcsshark.dbmodels.models.BranchModel` from the queue
@@ -211,14 +210,14 @@ class BranchStorage():
         logger.debug("Process {} is processing branch {} -> {}".format(self.proc_name, branch.name, branch.target))
 
         # get commit OID for Target ref
-        mongo_commit = Commit.objects.get(vcs_system_id=self.vcs_system_id, revision_hash=branch.target)
+        mongo_commit = Commit.objects.get(vcs_system_id=vcs_system_id, revision_hash=branch.target)
 
         # Try to get the commit
         try:
-            mongo_branch = Branch.objects.get(vcs_system_id=self.vcs_system_id, name=branch.name)
+            mongo_branch = Branch.objects.get(vcs_system_id=vcs_system_id, name=branch.name)
         except DoesNotExist:
             mongo_branch = Branch(
-                vcs_system_id=self.vcs_system_id,
+                vcs_system_id=vcs_system_id,
                 name=branch.name,
                 commit_id=mongo_commit.id
             ).save()
@@ -228,11 +227,11 @@ class BranchStorage():
 
         logger.debug("Process %s saved branch %s." % (self.proc_name, branch.name))
 
-def _commit_pooler(commit_queue, commit_condition, process_count, datastore, vcs_system_id, last_commit_date, config):
+def _commit_pooler(commit_queue, commit_condition, process_count, datastore, config):
     pool = multiprocessing.Pool(
         processes=process_count,
         initializer=_initialize_commit_storage_process,
-        initargs=(datastore, vcs_system_id, last_commit_date, config),
+        initargs=(datastore, config),
         maxtasksperchild=100)
     while True:
         commit = commit_queue.get()
@@ -250,11 +249,12 @@ def _commit_pooler(commit_queue, commit_condition, process_count, datastore, vcs
     commit_condition.release()
 
 commit_storage = None
-def _initialize_commit_storage_process(datastore, vcs_system_id, last_commit_date, config):
+def _initialize_commit_storage_process(datastore, config):
+    datastore.register_subprocess()
     global commit_storage
-    commit_storage = CommitStorage(datastore, vcs_system_id, last_commit_date, config)
+    commit_storage = CommitStorage(config)
 
-def _store_commit(commit_model):
+def _store_commit(commit_info):
     global commit_storage
     try:
         commit_storage.store(commit_info[0], commit_info[1])
@@ -271,18 +271,13 @@ class CommitStorage():
     and writing it into the mongodb
 
     :param queue: queue, where the :class:`pyvcsshark.dbmodels.models.CommitModel` are stored in
-    :param vcs_system_id: object id of class :class:`bson.objectid.ObjectId` from the vcs system
-    :param last_commit_date: object of class :class:`datetime.datetime`, which holds the last commit that was parsed
     :param config: object of class :class:`pyvcsshark.config.Config`, which holds configuration information
     """
-    def __init__(self, datastore, vcs_system_id, last_commit_date, config):
-        datastore.register_subprocess()
-        self.vcs_system_id = vcs_system_id
-        self.last_commit_date = last_commit_date
+    def __init__(self, config):
         self.config = config
         self.proc_name = "CommitStorageProcess-" + str(os.getpid())
 
-    def store(self, commit):
+    def store(self, vcs_system_id, commit):
         """ Endless loop for the processes, which consists of several steps:
 
         1. Get a object of class :class:`pyvcsshark.dbmodels.models.CommitModel` from the queue
@@ -304,25 +299,25 @@ class CommitStorage():
 
         # Try to get the commit
         try:
-            mongo_commit = Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit.id).get()
+            mongo_commit = Commit.objects(vcs_system_id=vcs_system_id, revision_hash=commit.id).get()
             existed = True
         except DoesNotExist:
             mongo_commit = Commit(
-                vcs_system_id=self.vcs_system_id,
+                vcs_system_id=vcs_system_id,
                 revision_hash=commit.id
             ).save()
             existed = False
         if not existed or not self.config.no_hunks:
-            self.set_whole_commit(mongo_commit, commit)
+            self.set_whole_commit(vcs_system_id, mongo_commit, commit)
             mongo_commit.save()
 
         # Save Revision object
         logger.debug("Process %s saved commit with hash %s." % (self.proc_name, commit.id))
 
-    def set_whole_commit(self, mongo_commit, commit):
+    def set_whole_commit(self, vcs_system_id, mongo_commit, commit):
         # Create tags
         logger.debug("Process %s is creating tags for commit with hash %s." % (self.proc_name, commit.id))
-        self.create_tags(mongo_commit.id, commit.tags)
+        self.create_tags(vcs_system_id, mongo_commit.id, commit.tags)
 
         # Create branchlist
         logger.debug("Process %s is creating branches for commit with hash %s." % (self.proc_name, commit.id))
@@ -349,7 +344,7 @@ class CommitStorage():
 
         # Create fileActions
         logger.debug("Process %s is setting file actions for commit with hash %s." % (self.proc_name, commit.id))
-        self.create_file_actions(commit.changedFiles, mongo_commit.id)
+        self.create_file_actions(vcs_system_id, commit.changedFiles, mongo_commit.id)
 
     def create_branch_list(self, branches):
         """Creates a list of the different branch names, where a commit belongs to. We go through the \
@@ -371,7 +366,7 @@ class CommitStorage():
 
         return branch_list
 
-    def create_tags(self, commit_id, tags):
+    def create_tags(self, vcs_system_id, commit_id, tags):
         tag_list = []
         for tag in tags:
             if tag.tagger is not None:
@@ -380,7 +375,7 @@ class CommitStorage():
                     logger.debug("Process %s is creating tag %s with tagger." % (self.proc_name, tag.name))
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, message=tag.message, tagger_id=tagger_id,
                                     date=tag.taggerDate, date_offset=tag.taggerOffset,
-                                    vcs_system_id=self.vcs_system_id).save()
+                                    vcs_system_id=vcs_system_id).save()
                 except (DuplicateKeyError, NotUniqueError):
                     logger.debug("Process %s found tag with tagger with name %s." % (self.proc_name, tag.name))
                     mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name) \
@@ -389,7 +384,7 @@ class CommitStorage():
                 try:
                     logger.debug("Process %s is creating tag %s." % (self.proc_name, tag.name))
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, date=tag.taggerDate,
-                                    date_offset=tag.taggerOffset, vcs_system_id=self.vcs_system_id).save()
+                                    date_offset=tag.taggerOffset, vcs_system_id=vcs_system_id).save()
                 except (DuplicateKeyError, NotUniqueError):
                     logger.debug("Process %s is found tag %s." % (self.proc_name, tag.name))
                     mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name).only('id', 'name').get()
@@ -414,7 +409,7 @@ class CommitStorage():
             people_id = People.objects(name=name, email=email).only('id').get().id
         return people_id
 
-    def create_file_actions(self, files, mongo_commit_id):
+    def create_file_actions(self, vcs_system_id, files, mongo_commit_id):
         """ Creates a list of object ids of type :class:`bson.objectid.ObjectId` for the different file actions of the
         commit by transforming the files into file actions of type FileAction, File, and Hunk (pycoshark library)
 
@@ -431,18 +426,18 @@ class CommitStorage():
             if file.oldPath is not None:
                 logger.debug("Process %s is creating old file with path %s." % (self.proc_name, file.oldPath))
                 try:
-                    old_file_id = File(vcs_system_id=self.vcs_system_id, path=file.oldPath).save().id
+                    old_file_id = File(vcs_system_id=vcs_system_id, path=file.oldPath).save().id
                 except (DuplicateKeyError, NotUniqueError):
                     logger.debug("Process %s found old file with path %s." % (self.proc_name, file.oldPath))
-                    old_file_id = File.objects(vcs_system_id=self.vcs_system_id, path=file.oldPath).only('id').get().id
+                    old_file_id = File.objects(vcs_system_id=vcs_system_id, path=file.oldPath).only('id').get().id
 
             # Create a new file object
             try:
                 logger.debug("Process %s is creating file with path %s." % (self.proc_name, file.path))
-                new_file_id = File(vcs_system_id=self.vcs_system_id, path=file.path).save().id
+                new_file_id = File(vcs_system_id=vcs_system_id, path=file.path).save().id
             except (DuplicateKeyError, NotUniqueError):
                 logger.debug("Process %s found file with path %s." % (self.proc_name, file.path))
-                new_file_id = File.objects(vcs_system_id=self.vcs_system_id, path=file.path).only('id').get().id
+                new_file_id = File.objects(vcs_system_id=vcs_system_id, path=file.path).only('id').get().id
 
             # Create the new file action
             try:
