@@ -75,6 +75,12 @@ via setup.py
 
 Tests
 =====
+Before testing the test repository has to be cloned:
+
+	.. code-block:: bash
+
+		$ git submodule update --init tests/data/testdatarepository
+
 The tests of **vcsSHARK** can be executed by calling
 
 	.. code-block:: bash
