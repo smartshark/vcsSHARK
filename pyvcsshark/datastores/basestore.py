@@ -55,9 +55,9 @@ class BaseStore(metaclass=abc.ABCMeta):
         return
 
     @abc.abstractmethod
-    def contains_commit(self, commit_hash):
+    def get_stored_commit_hashes(self):
         """
-        Returns True is the commits exists in the datastore, otherwise False.
+        Returns all commit hashes currently stored in the database.
         """
         return
 

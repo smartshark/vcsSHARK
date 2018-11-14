@@ -144,7 +144,6 @@ class GitParser(BaseParser):
         """
         # Get all references (branches, tags)
         references = set(self.repository.listall_reference_objects())
-        self.logger.info("Found {} references...".format(len(references)))
 
         # Get all tags
         regex = re.compile(r'^refs/tags')
@@ -166,6 +165,11 @@ class GitParser(BaseParser):
         for commit in commits:
             self.commit_info.setdefault(commit, {'branches': set([]), 'tags': []})
 
+        self.logger.info(
+            'Found {} references ({} branches, {} tags) and {} commits' \
+            .format(len(references), len(branches),
+                len(tags), len(self.commit_info.keys())))
+
         # set all tips for every branch
         self._set_branch_tips(branches)
 
@@ -181,7 +185,6 @@ class GitParser(BaseParser):
                 self._walk(commit, lambda id: self.commit_info[id]['branches'].add(branch_model))
 
         # Walk through every tag and put the information in the dictionary via the addtag method
-        self.logger.info("Getting tags...")
         for tag in tags:
             tag_name = tag.name
             tagged_commit = tag.peel()
@@ -211,6 +214,24 @@ class GitParser(BaseParser):
         # first we want the branches queue filled
         for name, val in self.branches.items():
             self.datastore.add_branch(BranchTipModel(name, val['target'], val['is_origin_head']))
+
+        # filter all commits that exist in the database
+        # reasoning:
+        # if the per commit branch info is not parsed
+        # and the commit exists in the database it can be skipped
+        # as commit metadata cannot change without also changing
+        # the commit hash
+        if self.config.no_commit_branch_info:
+            self.logger.info('Filtering existing commits...')
+            for commit in self.datastore.get_stored_commit_hashes():
+                if commit in self.commit_info:
+                    del self.commit_info[commit]
+            if len(self.commit_info.keys()) == 0:
+                self.logger.info('No commits to parse, '
+                    'the database is up-to-date!')
+                return
+
+        self.logger.info("Parsing {} commits...".format(len(self.commit_info.keys())))
 
         # Lock for synchronizing the processes access to the datastores
         lock = multiprocessing.Lock()
@@ -304,14 +325,6 @@ class CommitParser():
 
         # we do not want Blobs (for now)
         if commit.__class__.__name__ == 'Blob':
-            return
-
-        # if the per commit branch info is not parsed
-        # and the commit exists in the database it can be skipped
-        # as commit metadata cannot change without also changing
-        # the commit hash
-        if self.config.no_commit_branch_info \
-            and self.datastore.contains_commit(commit_oid):
             return
 
         # If there are parents, we need to get the normal changed files, if not we need to get the files for initial

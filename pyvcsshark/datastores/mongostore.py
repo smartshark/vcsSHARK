@@ -14,7 +14,6 @@ import traceback
 
 logger = logging.getLogger("store")
 
-
 class MongoStore(BaseStore):
     """ Datastore implementation for saving data to the mongodb. Inherits from
     :class:`pyvcsshark.datastores.basestore.BaseStore`.
@@ -105,12 +104,13 @@ class MongoStore(BaseStore):
         """Returns the identifier **mongo** for this datastore"""
         return 'mongo'
 
-    def contains_commit(self, commit_id):
-        try:
-            Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit_id).only('_id').get()
-            return True
-        except DoesNotExist:
-            return False
+    def get_stored_commit_hashes(self):
+        commits = Commit \
+            .objects(vcs_system_id=self.vcs_system_id) \
+            .only('revision_hash') \
+            .all() \
+            .values_list('revision_hash')
+        return [str(id) for id in commits]
 
     def add_commit(self, commit_model):
         """Adds commits of class :class:`pyvcsshark.dbmodels.models.CommitModel` to the commitqueue"""

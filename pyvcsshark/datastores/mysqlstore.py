@@ -19,7 +19,7 @@ class MySQLStore(BaseStore):
         """Must return the identifier for the store. This should match the configuration options"""
         return 'mysql'
 
-    def contains_commit(self, commit_hash):
+    def get_stored_commit_hashes(self):
         return
 
     def add_commit(self, commit_model):
