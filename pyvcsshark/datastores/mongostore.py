@@ -11,6 +11,7 @@ import multiprocessing
 import logging
 import datetime
 import traceback
+import queue
 
 logger = logging.getLogger("store")
 
@@ -24,6 +25,7 @@ class MongoStore(BaseStore):
     """
 
     commit_queue = None
+    COMMIT_BUFFER_SIZE = 1000
 
     def __init__(self):
         BaseStore.__init__(self)
@@ -42,7 +44,7 @@ class MongoStore(BaseStore):
         logger.info("Initializing MongoStore...")
 
         # Create queue for multiprocessing
-        self.commit_queue = multiprocessing.Queue()
+        self.commit_queue = multiprocessing.Queue(self.COMMIT_BUFFER_SIZE)
         self.commit_condition = multiprocessing.Condition()
 
         # we need an extra queue for branches because all commits need to be finished before we can process branches
@@ -197,11 +199,14 @@ def _commit_pooler(commit_queue, commit_condition, process_count, datastore, vcs
         initializer=_initialize_commit_storage_process,
         initargs=(datastore, vcs_system_id, last_commit_date, config),
         maxtasksperchild=100)
+    task_queue = queue.Queue(1000)
     while True:
+        if task_queue.full():
+            task_queue.get().wait()
         commit = commit_queue.get()
         if commit is None:
             break
-        pool.apply_async(_store_commit, [commit])
+        task_queue.put(pool.apply_async(_store_commit, [commit]))
 
     # finish all jobs
     pool.close()
