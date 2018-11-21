@@ -98,38 +98,32 @@ class Test(unittest.TestCase):
         db = self.mongoClient[self.config.db_database]
 
         # check if only inserted once
-        commits = db.commit.find()
-        self.assertEqual(1, commits.count())
-        commit = commits[0]
+        self.assertEqual(1, db.commit.count_documents({}))
+        commit = db.commit.find_one()
 
         # Check commit data
-        tags = db.tag.find()
-        self.assertEqual(1, tags.count())
-        tag = tags[0]
+        self.assertEqual(1, db.tag.count_documents({}))
+        tag = db.tag.find_one()
 
         # File
-        files = db.file.find()
-        self.assertEqual(1, files.count())
-        file = files[0]
+        self.assertEqual(1, db.file.count_documents({}))
+        file = db.file.find_one()
 
         # file_action
-        fileActions = db.file_action.find()
-        self.assertEqual(1, fileActions.count())
-        fileAction = fileActions[0]
+        self.assertEqual(1, db.file_action.count_documents({}))
+        fileAction = db.file_action.find_one()
 
         # VCS System
-        vcs_systems = db.vcs_system.find()
-        self.assertEqual(1, vcs_systems.count())
-        vcs_system = vcs_systems[0]
+        self.assertEqual(1, db.vcs_system.count_documents({}))
+        vcs_system = db.vcs_system.find_one()
 
         # People
-        people = db.people.find()
-        self.assertEqual(1, people.count())
-        ppl = people[0]
+        self.assertEqual(1, db.people.count_documents({}))
+        ppl = db.people.find_one()
 
         # Hunks
+        self.assertEqual(3, db.hunk.count_documents({}))
         hunks = db.hunk.find()
-        self.assertEqual(3, hunks.count())
         hunk1 = hunks[0]
         hunk2 = hunks[1]
         hunk3 = hunks[2]
