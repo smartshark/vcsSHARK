@@ -17,23 +17,7 @@ from pyvcsshark.datastores.mongostore import MongoStore
 from pyvcsshark.parser.models import CommitModel, BranchModel, TagModel,\
     PeopleModel, FileModel, Hunk
 
-
-class ArgparserMock(object):
-    def __init__(self, db_driver, db_user, db_password, db_database, db_hostname, db_port, db_authentication, path,
-                 debug_level, project_name, ssl, cores_per_job):
-        self.db_driver = db_driver
-        self.db_user = db_user
-        self.db_password = db_password
-        self.db_database = db_database
-        self.db_hostname = db_hostname
-        self.db_port = int(db_port)
-        self.db_authentication = db_authentication
-        self.path = path
-        self.log_level = debug_level
-        self.project_name = project_name
-        self.ssl = ssl
-        self.cores_per_job = cores_per_job
-
+from tests.argparsermock import ArgparserMock
 
 class Test(unittest.TestCase):
 
@@ -54,7 +38,7 @@ class Test(unittest.TestCase):
         parser = ArgparserMock('mongo', config['Database']['db_user'], config['Database']['db_password'],
                                config['Database']['db_database'], config['Database']['db_hostname'],
                                config['Database']['db_port'], config['Database']['db_authentication'], '..',
-                               'ERROR', 'testproject', False, 2)
+                               'ERROR', 'testproject', False, False, False, False, 2)
 
         cls.config = Config(parser)
 
@@ -76,6 +60,7 @@ class Test(unittest.TestCase):
 
     def test_storeIdentifier(self):
         self.assertEqual("mongo", self.mongostore.store_identifier)
+        self.mongostore.finalize()
 
     def addingCommit(self):
         # Creating rather complex commit
