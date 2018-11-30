@@ -27,6 +27,10 @@ if [ ! -z ${11+x} ] && [ ${11} != "None" ]; then
 	COMMAND="$COMMAND --ssl"
 fi
 
+if [ ! -z ${12+x} ] && [ ${12} != "None" ]; then
+	COMMAND="$COMMAND --cores_per_job 1"
+fi
+
 
 $COMMAND
 

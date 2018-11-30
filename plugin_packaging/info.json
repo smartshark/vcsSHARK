@@ -1,7 +1,7 @@
 {
     "name": "vcsSHARK",
     "author": "Fabian Trautsch",
-    "version": "0.13",
+    "version": "2.0.1",
     "plugin_type": "repo",
     "linux_libraries": [
         "build-essential", 
@@ -72,7 +72,7 @@
             "description": "path to root folder of plugin"
         },
         {
-            "name": "path",
+            "name": "repository_url",
             "required": true,
             "position": 2,
             "type": "execute",
@@ -86,7 +86,7 @@
             "description": "name of the project"
         },
         {
-            "name": "debug",
+            "name": "log_level",
             "required": false,
             "position": 4,
             "type": "execute",
@@ -140,6 +140,13 @@
             "position": 11,
             "type": "execute",
             "description": "needs to be set if database uses ssl connection"
+        },
+		{
+            "name": "cores_per_job",
+            "required": false,
+            "position": 12,
+            "type": "execute",
+            "description": "number of cores per job"
         }
     ]
 }
