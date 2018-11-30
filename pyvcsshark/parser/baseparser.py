@@ -43,11 +43,12 @@ class BaseParser(metaclass=abc.ABCMeta):
         return
 
     @abc.abstractmethod
-    def parse(self, repository_path, datastore):
+    def parse(self, repository_path, datastore, cores_per_job):
         """Parses the repository
         
         :param repository_path: path to the repository
         :param datastore: subclass of :class:`pyvcsshark.datastores.basestore.BaseStore`.
+        :param cores_per_job: number of cores used for parsing
         
         
         .. NOTE:: We must call the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function in the parsing process if we want \

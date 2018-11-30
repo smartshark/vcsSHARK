@@ -72,7 +72,7 @@
             "description": "path to root folder of plugin"
         },
         {
-            "name": "repository_url",
+            "name": "path",
             "required": true,
             "position": 2,
             "type": "execute",

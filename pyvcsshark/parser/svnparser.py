@@ -33,7 +33,7 @@ class SVNParser(BaseParser):
         """Finalization process for parser"""
         return
     
-    def parse(self, repository_path, datastore):
+    def parse(self, repository_path, datastore, cores_per_job):
         return None
     
     

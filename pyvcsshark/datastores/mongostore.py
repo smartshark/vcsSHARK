@@ -20,12 +20,10 @@ class MongoStore(BaseStore):
 
     :property commit_queue: instance of a :class:`multiprocessing.JoinableQueue`, which  \
     holds objects of :class:`pyvcsshark.dbmodels.models.CommitModel`, that should be put into the mongodb
-    :property NUMBER_OF_PROCESSES: holds the number of processes by calling :func:`multiprocessing.cpu_count`
     :property logger: holds the logging instance, by calling logging.getLogger("store")
     """
 
     commit_queue = None
-    NUMBER_OF_PROCESSES = multiprocessing.cpu_count()
 
     def __init__(self):
         BaseStore.__init__(self)
@@ -49,6 +47,7 @@ class MongoStore(BaseStore):
         # we need an extra queue for branches because all commits need to be finished before we can process branches
         self.branch_queue = multiprocessing.JoinableQueue()
         self.config = config
+        self.cores_per_job = config.cores_per_job
 
         # We define, that the user we authenticate with is in the admin database
         logger.info("Connecting to MongoDB...")
@@ -80,7 +79,7 @@ class MongoStore(BaseStore):
             last_commit_date = None
 
         # Start worker, they will wait till something comes into the queue and then process it
-        for i in range(self.NUMBER_OF_PROCESSES):
+        for i in range(self.cores_per_job):
             name = "StorageProcess-%d" % i
             process = CommitStorageProcess(self.commit_queue, self.vcs_system_id, last_commit_date, self.config, name)
             process.daemon = True
@@ -105,11 +104,12 @@ class MongoStore(BaseStore):
         return
 
     def finalize(self):
-        """As we depend on commits beeing finished with branches (for the references) we must wait first for them to finish before we can start our branch processing."""
+        """As we depend on commits beeing finished with branches (for the references) we must wait first for
+        them to finish before we can start our branch processing."""
         self.commit_queue.join()
 
         # after commits are finished, process branches
-        for i in range(self.NUMBER_OF_PROCESSES):
+        for i in range(self.cores_per_job):
             name = "StorageProcessBranch-%d" % i
             process = BranchStorageProcess(self.branch_queue, self.vcs_system_id, self.config, name)
             process.daemon = True

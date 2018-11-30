@@ -15,7 +15,6 @@ class GitParser(BaseParser):
     :func:`pyvcsshark.parser.gitparser.GitParser.parse`.
     
     :property SIMILARITY_THRESHOLD: sets the threshold for deciding if a file is similar to another. Default: 50%
-    :property NUMBER_OF_PROCESSES: number of processes for the parsing process. Calls \
     :func:`multiprocessing.cpu_count()`.
     :property repository: object of class :class:`pygit2.Repository`, which represents the repository
     :property commits_to_be_processed: dictionary that is set up the following way: \
@@ -31,7 +30,6 @@ class GitParser(BaseParser):
     
     # Includes rename and copy threshold, 50% is the default git threshold
     SIMILARITY_THRESHOLD = 50
-    NUMBER_OF_PROCESSES = multiprocessing.cpu_count()
 
     def __init__(self):
         self.repository = None
@@ -187,7 +185,7 @@ class GitParser(BaseParser):
                 if str(child.id) not in self.commits_to_be_processed:
                     self.add_branch(child.id, None)
 
-    def parse(self, repository_path, datastore):
+    def parse(self, repository_path, datastore, cores_per_job):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
         datastore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen
         datastore. It mostly uses pygit2 (see: http://www.pygit2.org/).
@@ -212,13 +210,13 @@ class GitParser(BaseParser):
             self.datastore.add_branch(BranchTipModel(name, val['target'], val['is_origin_head']))
 
         # Set up the poison pills
-        for i in range(self.NUMBER_OF_PROCESSES):
+        for i in range(cores_per_job):
             self.commit_queue.put(None)
 
         # Parsing all commits of the queue
         self.logger.info("Parsing commits...")
         lock = multiprocessing.Lock()
-        for i in range(self.NUMBER_OF_PROCESSES):
+        for i in range(cores_per_job):
             thread = CommitParserProcess(self.commit_queue, self.commits_to_be_processed, self.repository, self.datastore,
                                          lock)
             thread.daemon = True

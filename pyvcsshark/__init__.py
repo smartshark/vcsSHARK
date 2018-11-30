@@ -62,11 +62,12 @@ def start():
                                 'the current working directory will be used as a checked out directory.', '1.0.0')
     parser.add_argument('-D', '--db-driver', help='Output database driver. Currently only mongoDB is supported',
                         default='mongo', choices=datastore_choices)
-    parser.add_argument('-d', '--debug', help='Debug level', choices=['INFO', 'DEBUG', 'WARNING', 'ERROR'],
+    parser.add_argument('-d', '--log-level', help='Debug level', choices=['INFO', 'DEBUG', 'WARNING', 'ERROR'],
                         default='INFO')
     parser.add_argument('-n', '--project-name', help='Name of the project, that is analyzed', required=True)
     parser.add_argument('--path', help='Path to the checked out repository directory', default=os.getcwd(),
                         type=readable_dir)
+    parser.add_argument('--cores-per-job', help='Number of cores to use', default=4, type=int)
 
     logger.info("Reading out config from command line")
 

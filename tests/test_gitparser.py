@@ -46,7 +46,7 @@ class GitParserCommitsTest(GitParserTest):
         cls.parser.initialize()
                 
         datastore = DatastoreMock()
-        cls.parser.parse(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository", datastore)
+        cls.parser.parse(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository", datastore, 2)
         
         # get the commits from our mockdatastore
         queue = datastore.get_commit_queue()

@@ -21,8 +21,9 @@ class Config(object):
         self.db_port = args.db_port
         self.db_authentication = args.db_authentication
         self.path = args.path.rstrip('/')
-        self.debug_level = args.debug
+        self.debug_level = args.log_level
         self.project_name = args.project_name
+        self.cores_per_job = args.cores_per_job
         self.ssl_enabled = args.ssl
 
     def __str__(self):
