@@ -2,26 +2,34 @@
 sudo: required
 language: python
 python:
-  - "3.5"
+  - "3.6"
 
 services:
-  - docker
+  - mongodb
 
 before_install:
   - printenv | grep -E '^TRAVIS_' > .env
-  - docker build -t testdocker .
-  - docker network create -d bridge mongodb-net
-  - docker run -d --net=mongodb-net --name=mongodb mongo:3.4
+  - wget https://github.com/libgit2/libgit2/archive/v0.26.2.tar.gz
+  - tar xzf v0.26.2.tar.gz
+  - cmake libgit2-0.26.2/
+  - make
+  - sudo make install
+  - sudo apt-get install -y build-essential wget git
+  - sudo apt-get install -y python3-pip python3-cffi
+  - pip install -U pip setuptools
+  - pip install Sphinx
+  - pip install sphinx_rtd_theme
+  - pip install ghp_import
 
 install:
-  - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3.6 setup.py install"
+  - python setup.py install
+  - sudo ldconfig
 
 script:
-  - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3.6 setup.py test"
+  - python setup.py test
 
 after_success:
-  - docker run --env-file .env --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; make deploy > /dev/null"
-  - SRD=`docker ps -alq` && docker cp $SRD:/root/vcsshark/plugin_packaging/vcsSHARK_plugin.tar .
+  - make deploy > /dev/null
 
 deploy:
   provider: releases
