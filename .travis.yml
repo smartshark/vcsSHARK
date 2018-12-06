@@ -9,11 +9,16 @@ services:
 
 before_install:
   - printenv | grep -E '^TRAVIS_' > .env
+  # Create libgit2 library in separate folder, otherwise it overwrites our makefile
+  - mkdir libgit2
+  - cd libgit2
   - wget https://github.com/libgit2/libgit2/archive/v0.26.2.tar.gz
   - tar xzf v0.26.2.tar.gz
   - cmake libgit2-0.26.2/
   - make
   - sudo make install
+  - cd ..
+  # --- libit2 install finished ---
   - sudo apt-get install -y build-essential wget git
   - sudo apt-get install -y python3-pip python3-cffi
   - pip install -U pip setuptools
