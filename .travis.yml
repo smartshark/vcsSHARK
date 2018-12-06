@@ -29,12 +29,12 @@ script:
   - python setup.py test
 
 after_success:
-  - make deploy > /dev/null
+  - make deploy
 
 deploy:
   provider: releases
   api_key: ${GH_TOKEN}
-  file: "vcsSHARK_plugin.tar"
+  file: "plugin_packaging/vcsSHARK_plugin.tar"
   skip_cleanup: true
   on:
     repo: smartshark/vcsSHARK
