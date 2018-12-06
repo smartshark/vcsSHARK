@@ -5,23 +5,25 @@ python:
   - "3.5"
 
 services:
-  - docker
+  - mongodb
 
 before_install:
   - printenv | grep -E '^TRAVIS_' > .env
-  - docker build -t testdocker .
-  - docker network create -d bridge mongodb-net
-  - docker run -d --net=mongodb-net --name=mongodb mongo:3.4
+  - sudo apt-get install -y build-essential wget git
+  - sudo apt-get install -y python3-pip python3-cffi libgit2-26 libgit2-dev
+  - sudo pip3 install -U pip setuptools
+  - sudo pip3 install Sphinx
+  - sudo pip3 install sphinx_rtd_theme
+  - sudo pip3 install ghp_import
 
 install:
-  - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3.6 setup.py install"
+  - sudo python3.6 setup.py install
 
 script:
-  - docker run --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; python3.6 setup.py test"
+  - sudo python3.6 setup.py test
 
 after_success:
-  - docker run --env-file .env --net=mongodb-net testdocker /bin/sh -c "cd /root/vcsshark; make deploy > /dev/null"
-  - SRD=`docker ps -alq` && docker cp $SRD:/root/vcsshark/plugin_packaging/vcsSHARK_plugin.tar .
+  - make deploy > /dev/null
 
 deploy:
   provider: releases
