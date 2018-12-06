@@ -9,18 +9,23 @@ services:
 
 before_install:
   - printenv | grep -E '^TRAVIS_' > .env
+  - wget https://github.com/libgit2/libgit2/archive/v0.26.2.tar.gz
+  - tar xzf v0.26.2.tar.gz
+  - cmake libgit2-0.26.2/
+  - make
+  - sudo make install
   - sudo apt-get install -y build-essential wget git
-  - sudo apt-get install -y python3-pip python3-cffi libgit2-26 libgit2-dev
+  - sudo apt-get install -y python3-pip python3-cffi
   - sudo pip3 install -U pip setuptools
   - sudo pip3 install Sphinx
   - sudo pip3 install sphinx_rtd_theme
   - sudo pip3 install ghp_import
 
 install:
-  - sudo python3.6 setup.py install
+  - sudo python3.5 setup.py install
 
 script:
-  - sudo python3.6 setup.py test
+  - sudo python3.5 setup.py test
 
 after_success:
   - make deploy > /dev/null
