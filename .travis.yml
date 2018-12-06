@@ -30,7 +30,7 @@ script:
   - make html
 
 after_success:
-  - cd plugin_packaging && ./build_plugin.sh
+  - cd plugin_packaging && ./build_plugin.sh && cd ..
 
 deploy:
   - provider: releases
