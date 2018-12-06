@@ -20,4 +20,4 @@ RUN git config --global user.name "Travis CI"
 RUN git clone --recursive https://github.com/smartshark/vcsSHARK /root/vcsshark
 
 # Install vcsshark requirements
-RUN pip3 install -r /root/vcsshark/requirements.txt
+RUN pip3 install -r . --process-dependency-links
