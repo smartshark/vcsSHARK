@@ -27,15 +27,22 @@ install:
 
 script:
   - python setup.py test
+  - make html
 
 after_success:
-  - make deploy
+  - cd plugin_packaging && ./build_plugin.sh
 
 deploy:
-  provider: releases
-  api_key: ${GH_TOKEN}
-  file: "plugin_packaging/vcsSHARK_plugin.tar"
-  skip_cleanup: true
-  on:
-    repo: smartshark/vcsSHARK
-    tags: true
+  - provider: releases
+    api_key: ${GH_TOKEN}
+    file: "plugin_packaging/vcsSHARK_plugin.tar"
+    skip_cleanup: true
+    on:
+      repo: smartshark/vcsSHARK
+      tags: true
+  - provider: pages
+    github-token: $(GH_TOKEN}
+    local-dir: $TRAVIS_BUILD_DIR/docs/build
+    skip_cleanup: true
+    on:
+      branch: master

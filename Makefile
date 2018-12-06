@@ -18,7 +18,6 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html       to make standalone HTML files"
-	@echo "  deploy     deploys to the gh-pages section of the repository"
 
 .PHONY: clean
 clean:
@@ -29,15 +28,3 @@ html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
-
-.PHONY: deploy
-deploy:
-	cd plugin_packaging && ./build_plugin.sh && cd ..
-	
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
-	ghp-import -n $(BUILDDIR) -m "Travis documentation push"
-	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)."
-	git push -fq https://$(GH_TOKEN)@github.com/smartshark/vcsSHARK.git gh-pages
-	@echo
-	@echo "Push finished. The HTML pages are pushed to https://smartshark.github.io/vcsSHARK/"
