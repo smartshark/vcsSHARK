@@ -28,7 +28,7 @@ if [ ! -z ${11+x} ] && [ ${11} != "None" ]; then
 fi
 
 if [ ! -z ${12+x} ] && [ ${12} != "None" ]; then
-	COMMAND="$COMMAND --cores_per_job ${12}"
+	COMMAND="$COMMAND --cores-per-job ${12}"
 fi
 
 
