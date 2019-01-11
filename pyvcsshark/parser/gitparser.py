@@ -121,7 +121,7 @@ class GitParser(BaseParser):
             except UnicodeDecodeError as e:
                 email = tag_object.tagger.raw_email.decode('utf-8', 'replace')
 
-            people_model = PeopleModel(tag_object.tagger.name, tag_object.tagger.email)
+            people_model = PeopleModel(name, email)
             tag_model = TagModel(tag_name, getattr(tag_object, 'message', None), people_model,
                                  tag_object.tagger.time, tag_object.tagger.offset)
         else:
