@@ -177,13 +177,24 @@ class GitParser(BaseParser):
             reference = self.repository.lookup_reference(tag)
             tag_object = self.repository[reference.target.hex]
             tagged_commit = self.repository.lookup_reference(tag).peel()
+
+            # we exclude Blobs
+            if isinstance(tagged_commit, pygit2.Blob):
+                continue
+
             self.add_tag(tagged_commit, tag, tag_object)
 
             # The tagged_commit can have children that are not on any branch, but we may need it anyway --> collect it
             # and add it only if we have not collected it before
-            for child in self.repository.walk(tagged_commit.id, pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
-                if str(child.id) not in self.commits_to_be_processed:
-                    self.add_branch(child.id, None)
+            try:
+                for child in self.repository.walk(tagged_commit.id, pygit2.GIT_SORT_TIME | pygit2.GIT_SORT_TOPOLOGICAL):
+                    if str(child.id) not in self.commits_to_be_processed:
+                        self.add_branch(child.id, None)
+            except ValueError as e:
+                # we may hit a tag that does not point to a commit but to a blob, therefore we can not walk over it until libgit implements this
+                # see: https://github.com/libgit2/libgit2/issues/3595
+                if str(e) != 'ValueError: object is not a committish':  # we do not bail on this we just ignore tags to blobs
+                    raise
 
     def parse(self, repository_path, datastore, cores_per_job):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
@@ -273,18 +284,22 @@ class CommitParserProcess(multiprocessing.Process):
 
     def parse_commit(self, commit):
         """ Function for parsing a commit.
-        
+
         1. changedFiles are created (type: list of :class:`pyvcsshark.parser.models.FileModel`)
         2. author and commiter are created (type: :class:`pyvcsshark.parser.models.PeopleModel`)
         3. parents are added (list of strings)
         4. commit model is created (type: :class:`pyvcsshark.parser.models.CommitModel`)
         5. :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is called
-        
+
         :param commit: commit object of type :class:`pygit2.Commit`
-        
+
         .. NOTE:: The call to :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is thread/process safe, as a\
         lock is used to regulate the calls
         """
+        # we do not want Blobs (for now)
+        if commit.__class__.__name__ == 'Blob':
+            del self.commits_to_be_processed[str(commit.id)]
+            return
 
         # If there are parents, we need to get the normal changed files, if not we need to get the files for initial
         # commit
@@ -294,7 +309,7 @@ class CommitParserProcess(multiprocessing.Process):
                 changed_files += self.get_changed_files_with_similiarity(parent, commit)
         else:
             changed_files = self.get_changed_files_for_initial_commit(commit)
-            
+
         string_commit_hash = str(commit.id)
 
         # Create the different models
@@ -343,7 +358,7 @@ class CommitParserProcess(multiprocessing.Process):
         Special function for the initial commit, as we need to diff against the empty tree. Creates
         the changed files list, where objects of class :class:`pyvcsshark.parser.models.FileModel` are added.
         For every changed file in the initial commit.
-        
+
         :param commit: commit of type :class:`pygit2.Commit`
         """
         changed_files = []
