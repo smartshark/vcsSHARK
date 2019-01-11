@@ -67,7 +67,6 @@ class CommitModel(object):
         if(value is not None):
             for branch in value:
                 if(not isinstance(branch, BranchModel) and branch is not None):
-                    print(branch)
                     raise Exception("Branch is not a Branch model or None!")
         
         self._branches = value

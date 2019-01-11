@@ -109,6 +109,18 @@ class GitParser(BaseParser):
 
         # If we have an annotated tag, get all the information we can out of it
         if isinstance(tag_object, pygit2.Tag):
+
+            # in some cases (jspwiki) there are taggers where the name or email contains non utf-8 chars.
+            # In these cases we replace them with the utf-8 replacement character
+            try:
+                name = tag_object.tagger.name
+            except UnicodeDecodeError as e:
+                name = tag_object.tagger.raw_name.decode('utf-8', 'replace')
+            try:
+                email = tag_object.tagger.email
+            except UnicodeDecodeError as e:
+                email = tag_object.tagger.raw_email.decode('utf-8', 'replace')
+
             people_model = PeopleModel(tag_object.tagger.name, tag_object.tagger.email)
             tag_model = TagModel(tag_name, getattr(tag_object, 'message', None), people_model,
                                  tag_object.tagger.time, tag_object.tagger.offset)
