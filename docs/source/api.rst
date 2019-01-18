@@ -44,7 +44,7 @@ API
    :members:
 
 
-.. autoclass:: pyvcsshark.datastores.mongostore.CommitStorageProcess
+.. autoclass:: pyvcsshark.datastores.mongostore.CommitStorage
    :members:
 
 
@@ -78,5 +78,5 @@ GitParser
 .. autoclass:: pyvcsshark.parser.gitparser.GitParser
    :members:
 
-.. autoclass:: pyvcsshark.parser.gitparser.CommitParserProcess
+.. autoclass:: pyvcsshark.parser.gitparser.CommitParser
    :members:

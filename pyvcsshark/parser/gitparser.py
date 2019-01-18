@@ -14,7 +14,6 @@ from pyvcsshark.parser.models import BranchModel, PeopleModel, TagModel, FileMod
 class GitParser(BaseParser):
     """ Parser for git repositories. The general parsing process is described in
     :func:`pyvcsshark.parser.gitparser.GitParser.parse`.
-
     :property SIMILARITY_THRESHOLD: sets the threshold for deciding if a file is similar to another. Default: 50%
     :func:`multiprocessing.cpu_count()`.
     :property repository: object of class :class:`pygit2.Repository`, which represents the repository
@@ -202,7 +201,7 @@ class GitParser(BaseParser):
             1. A list of all branches and tags are created (see GitParser.initialize)
             2. All branches and tags are parsed. So we create dictionary of all commits with their corresponding tags\
             and branches and add all revision hashes to the commit list (see GitParser.initialize)
-            3. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParserProcess`, which parse all\
+            3. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParser`, which parse all\
             commits.
 
         :param repository_path: Path to the repository
@@ -282,7 +281,7 @@ def _parse_commit(commit):
 class CommitParser():
     """
     A class that provides an API for parsing commits.
-    A single commit can be parsed by calling :fund:`pyvcsshark.parser.gitparser.CommitParser.parse`.
+    A single commit can be parsed by calling :func:`pyvcsshark.parser.gitparser.CommitParser.parse`.
     Each parsed commit is submitted to the given datastore via
     :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit`.
 

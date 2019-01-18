@@ -32,7 +32,7 @@ class MongoStore(BaseStore):
 
     def initialize(self, config, repository_url, repository_type):
         """Initializes the mongostore by connecting to the mongodb, creating the project in the project collection \
-        and setting up processes (see: :class:`pyvcsshark.datastores.mongostore.CommitStorageProcess`, which
+        and setting up processes (see: :class:`pyvcsshark.datastores.mongostore.CommitStorage`, which
         read commits out of the commitqueue, process them and store them into the mongodb.
 
         :param config: all configuration
