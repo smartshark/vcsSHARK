@@ -671,7 +671,6 @@ class GitParserCommitsTest(GitParserTest):
         self.assertEqual("Merge branch 'lines'\n", commit1.message)
         self.assertListEqual([], commit1.tags)
 
-        '''
         # Checking branches
         list_of_branch_names = []
         for branchModel in commit1.branches:
@@ -681,7 +680,6 @@ class GitParserCommitsTest(GitParserTest):
         self.assertIn("refs/heads/master", list_of_branch_names)
         self.assertIn("refs/remotes/origin/HEAD", list_of_branch_names)
         self.assertIn("refs/remotes/origin/master", list_of_branch_names)
-        '''
 
         # Check times
         self.assertEqual(datetime.datetime.utcfromtimestamp(1549889088), commit1.authorDate)
