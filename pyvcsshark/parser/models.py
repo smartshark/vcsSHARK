@@ -162,9 +162,10 @@ class FileModel(object):
     :param mode: mode of the file action (e.g. "A" for file was added)
     :param hunks: list of hunks for the file
     :param oldPath: old path to the file, which only exist if a file was copied or moved
+    :param parent_revision_hash: hash of the parent commit
     """
     def __init__(self, path, size=None, linesAdded=None, linesDeleted=None,
-                 isBinary= None, mode=None, hunks=[], oldPath=None):
+                 isBinary= None, mode=None, hunks=[], oldPath=None, parent_revision_hash=None):
         self.path = path
         self.size = size
         self.linesAdded = linesAdded
@@ -173,6 +174,7 @@ class FileModel(object):
         self.mode = mode
         self.hunks = hunks
         self.oldPath = oldPath
+        self.parent_revision_hash = parent_revision_hash
         
     @property
     def hunks(self):

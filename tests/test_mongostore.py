@@ -1,9 +1,3 @@
-'''
-Created on 21.01.2016
-
-@author: fabian
-'''
-import argparse
 import unittest
 import logging
 import configparser
@@ -38,17 +32,17 @@ class ArgparserMock(object):
 class Test(unittest.TestCase):
 
     config = None
-    mongostore = None
-    projectUrl = None
-    projectName = None
-    mongoClient = None
+    mongo_store = None
+    project_url = None
+    project_name = None
+    mongo_client = None
 
     @classmethod
     def setUpClass(cls):
         # Setup logging
         logging.basicConfig(level=logging.ERROR)
 
-        # Create testconfig
+        # Create test config
         config = configparser.ConfigParser()
         config.read(os.path.dirname(os.path.realpath(__file__))+"/data/used_test_config.cfg")
         parser = ArgparserMock('mongo', config['Database']['db_user'], config['Database']['db_password'],
@@ -58,59 +52,60 @@ class Test(unittest.TestCase):
 
         cls.config = Config(parser)
 
-        # Initialize mongoclient
-        cls.mongoClient = MongoClient(cls.config.db_hostname, cls.config.db_port)
+        # Initialize mongo client
+        cls.mongo_client = MongoClient(cls.config.db_hostname, cls.config.db_port)
         if cls.config.db_password:
-            cls.mongoClient[cls.config.db_authentication].authenticate(cls.config.db_user,
-                                                                       cls.config.db_password, mechanism='SCRAM-SHA-1')
+            cls.mongo_client[cls.config.db_authentication].authenticate(cls.config.db_user,
+                                                                        cls.config.db_password, mechanism='SCRAM-SHA-1')
+
     def setUp(self):
         # Drop database
-        self.mongoClient.drop_database(self.config.db_database)
-        self.mongoClient[self.config.db_database].project.insert_one({"name": "testproject"})
+        self.mongo_client.drop_database(self.config.db_database)
+        self.mongo_client[self.config.db_database].project.insert_one({"name": "testproject"})
 
-         # Initialize mongostore
-        self.mongostore = MongoStore()
-        self.projectName = str(uuid.uuid4())
-        self.projectUrl = "local/"+self.projectName
-        self.mongostore.initialize(self.config,  self.projectUrl, "git")
+        # Initialize mongo store
+        self.mongo_store = MongoStore()
+        self.project_name = str(uuid.uuid4())
+        self.project_url = "local/" + self.project_name
+        self.mongo_store.initialize(self.config, self.project_url, "git")
 
     def test_storeIdentifier(self):
-        self.assertEqual("mongo", self.mongostore.store_identifier)
+        self.assertEqual("mongo", self.mongo_store.store_identifier)
 
     def addingCommit(self):
         # Creating rather complex commit
 
-        ## Create author/committer/tagger
+        # Create author/committer/tagger
         people = PeopleModel("Fabian Trautsch", "ftrautsch@googlemail.com")
 
-        ## Create branches
+        # Create branches
         branch1 = BranchModel('refs/heads/master')
         branch2 = BranchModel('refs/heads/testbranch1')
 
-        ## Create tag
-        tag = TagModel("release1", "tag release 1", people , 1453380457, 60)
+        # Create tag
+        tag = TagModel("release1", "tag release 1", people, 1453380457, 60)
 
-        ## ChangedFile
-        hunks = []
-        hunks.append(Hunk(old_start=1, old_lines=1, new_start=0, new_lines=0, content='-line1\n'))
-        hunks.append(Hunk(old_start=20, old_lines=1, new_start=19, new_lines=1, content='-line20\n+\n'))
-        hunks.append(Hunk(old_start=40, old_lines=0, new_start=40, new_lines=1, content='+line41\n'))
-        testFile = FileModel("lib/lib.txt", 266, 2, 2, False, "M", hunks, None)
+        # ChangedFile
+        hunks = [Hunk(old_start=1, old_lines=1, new_start=0, new_lines=0, content='-line1\n'),
+                 Hunk(old_start=20, old_lines=1, new_start=19, new_lines=1, content='-line20\n+\n'),
+                 Hunk(old_start=40, old_lines=0, new_start=40, new_lines=1, content='+line41\n')]
+        test_file = FileModel("lib/lib.txt", 266, 2, 2, False, "M", hunks, None,
+                              "204d306b10e123f2474612a297b83be6ac79e519")
 
         commit = CommitModel("830c29f111f261e26897d42e94c15960a512c0e4", {branch1, branch2}, [tag],
-                             ['204d306b10e123f2474612a297b83be6ac79e519'], people, people, "testCommit", [testFile]
-                             , 1453380157, 60, 1453380357, 60)
+                             ['204d306b10e123f2474612a297b83be6ac79e519'], people, people, "testCommit", [test_file],
+                             1453380157, 60, 1453380357, 60)
 
-        self.mongostore.add_commit(commit)
+        self.mongo_store.add_commit(commit)
 
-        # Wait till mongostore finalized
-        self.mongostore.finalize()
+        # Wait till mongo store finalized
+        self.mongo_store.finalize()
 
     def test_addCommit(self):
         self.addingCommit()
 
         # Check if it was inserted
-        db = self.mongoClient[self.config.db_database]
+        db = self.mongo_client[self.config.db_database]
 
         # check if only inserted once
         commits = db.commit.find()
@@ -128,9 +123,9 @@ class Test(unittest.TestCase):
         file = files[0]
 
         # file_action
-        fileActions = db.file_action.find()
-        self.assertEqual(1, fileActions.count())
-        fileAction = fileActions[0]
+        file_actions = db.file_action.find()
+        self.assertEqual(1, file_actions.count())
+        file_action = file_actions[0]
 
         # VCS System
         vcs_systems = db.vcs_system.find()
@@ -148,7 +143,6 @@ class Test(unittest.TestCase):
         hunk1 = hunks[0]
         hunk2 = hunks[1]
         hunk3 = hunks[2]
-
 
         # Check Commit
         self.assertEqual(commit['vcs_system_id'], vcs_system['_id'])
@@ -171,35 +165,36 @@ class Test(unittest.TestCase):
         self.assertEqual(vcs_system['_id'], file['vcs_system_id'])
 
         # Check file action
-        self.assertEqual(file['_id'], fileAction['file_id'])
-        self.assertEqual(commit['_id'], fileAction['commit_id'])
-        self.assertEqual('M', fileAction['mode'])
-        self.assertEqual(266, fileAction['size_at_commit'])
-        self.assertEqual(2, fileAction['lines_added'])
-        self.assertEqual(2, fileAction['lines_deleted'])
-        self.assertEqual(False, fileAction['is_binary'])
+        self.assertEqual(file['_id'], file_action['file_id'])
+        self.assertEqual(commit['_id'], file_action['commit_id'])
+        self.assertEqual('M', file_action['mode'])
+        self.assertEqual(266, file_action['size_at_commit'])
+        self.assertEqual(2, file_action['lines_added'])
+        self.assertEqual(2, file_action['lines_deleted'])
+        self.assertEqual(False, file_action['is_binary'])
+        self.assertEqual("204d306b10e123f2474612a297b83be6ac79e519", file_action['parent_revision_hash'])
 
         # Check hunks
-        self.assertEqual(fileAction['_id'], hunk1['file_action_id'])
+        self.assertEqual(file_action['_id'], hunk1['file_action_id'])
         self.assertEqual(0, hunk1['new_lines'])
         self.assertEqual(0, hunk1['new_start'])
         self.assertEqual(1, hunk1['old_start'])
         self.assertEqual(1, hunk1['old_lines'])
-        self.assertEqual("-line1\n",hunk1['content'])
+        self.assertEqual("-line1\n", hunk1['content'])
 
-        self.assertEqual(fileAction['_id'], hunk2['file_action_id'])
+        self.assertEqual(file_action['_id'], hunk2['file_action_id'])
         self.assertEqual(1, hunk2['new_lines'])
         self.assertEqual(19, hunk2['new_start'])
         self.assertEqual(20, hunk2['old_start'])
         self.assertEqual(1, hunk2['old_lines'])
-        self.assertEqual("-line20\n+\n",hunk2['content'])
+        self.assertEqual("-line20\n+\n", hunk2['content'])
 
-        self.assertEqual(fileAction['_id'], hunk3['file_action_id'])
+        self.assertEqual(file_action['_id'], hunk3['file_action_id'])
         self.assertEqual(1, hunk3['new_lines'])
         self.assertEqual(40, hunk3['new_start'])
         self.assertEqual(40, hunk3['old_start'])
         self.assertEqual(0, hunk3['old_lines'])
-        self.assertEqual("+line41\n",hunk3['content'])
+        self.assertEqual("+line41\n", hunk3['content'])
 
         # Check people
         self.assertEqual("Fabian Trautsch", ppl['name'])
@@ -215,7 +210,5 @@ class Test(unittest.TestCase):
         self.assertEqual(60, tag['date_offset'])
 
 
-
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

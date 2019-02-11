@@ -348,7 +348,8 @@ class CommitStorageProcess(multiprocessing.Process):
             # Create the new file action
             try:
                 logger.debug("Process %s is creating file action with file_id %s." % (self.proc_name, new_file_id))
-                file_action_id = FileAction.objects(file_id=new_file_id, commit_id=mongo_commit_id).get().id
+                file_action_id = FileAction.objects(file_id=new_file_id, commit_id=mongo_commit_id,
+                                                    parent_revision_hash=file.parent_revision_hash).get().id
 
                 logger.debug("Process %s is deleting all hunks for file action id %s." % (self.proc_name, file_action_id))
                 Hunk.objects(file_action_id=file_action_id).all().delete()
@@ -360,7 +361,8 @@ class CommitStorageProcess(multiprocessing.Process):
                                             lines_deleted=file.linesDeleted,
                                             is_binary=file.isBinary,
                                             mode=file.mode,
-                                            old_file_id=old_file_id).save().id
+                                            old_file_id=old_file_id,
+                                            parent_revision_hash=file.parent_revision_hash).save().id
 
             # Create hunk objects for bulk insert
             logger.debug("Process %s is creating hunks for bulk insert." % self.proc_name)

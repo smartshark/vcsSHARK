@@ -428,7 +428,7 @@ class CommitParserProcess(multiprocessing.Process):
             changed_file = FileModel(patch.delta.new_file.path, patch.delta.new_file.size,
                                      patch.line_stats[1], patch.line_stats[2],
                                      patch.delta.is_binary, mode,
-                                     self.create_hunks(patch.hunks))
+                                     self.create_hunks(patch.hunks), parent_revision_hash=str(parent.id))
             
             # only add oldpath if file was copied/renamed
             if mode in ['C', 'R']:
