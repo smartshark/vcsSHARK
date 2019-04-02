@@ -1,7 +1,7 @@
 {
     "name": "vcsSHARK",
     "author": "Fabian Trautsch",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "plugin_type": "repo",
     "linux_libraries": [
         "build-essential", 
