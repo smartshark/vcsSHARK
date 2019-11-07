@@ -1,4 +1,7 @@
+import os
 import sys
+import tarfile
+
 from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
 from pyvcsshark.datastores.basestore import BaseStore
@@ -64,10 +67,38 @@ class MongoStore(BaseStore):
             sys.exit(1)
 
         # Check if vcssystem already exist, and use upsert
-        self.vcs_system_id = VCSSystem.objects(url=repository_url).upsert_one(url=repository_url,
-                                                                              repository_type=repository_type,
-                                                                              last_updated=datetime.datetime.today(),
-                                                                              project_id=project_id).id
+        vcs_system = VCSSystem.objects(url=repository_url).upsert_one(url=repository_url,
+                                                                      repository_type=repository_type,
+                                                                      last_updated=datetime.datetime.today(),
+                                                                      project_id=project_id)
+        self.vcs_system_id = vcs_system.id
+
+        # Tar.gz name based on project name
+        tar_gz_name = '{}.tar.gz'.format(config.project_name)
+
+        # Tar.gz of repository folder
+        with tarfile.open(tar_gz_name, "w:gz") as tar:
+            tar.add(config.path, arcname=os.path.basename(config.path))
+
+        # Add repository to gridfs if not existent
+        if vcs_system.repository_file.grid_id is None:
+            logger.info('Copying project to gridfs...')
+
+            # Store in gridfs
+            with open(tar_gz_name, 'rb') as tar_file:
+                vcs_system.repository_file.put(tar_file, content_type='application/gzip',
+                                               filename=tar_gz_name)
+                vcs_system.save()
+        else:
+            # replace file if not existent
+            logger.info('Replacing project file in gridfs...')
+            with open(tar_gz_name, 'rb') as tar_file:
+                vcs_system.repository_file.replace(tar_file, content_type='application/gzip',
+                                                   filename=tar_gz_name)
+                vcs_system.save()
+
+        # Delete tar.gz file
+        os.remove(tar_gz_name)
 
         # Get the last commit by date of the project (if there is any)
         last_commit = Commit.objects(vcs_system_id=self.vcs_system_id)\
