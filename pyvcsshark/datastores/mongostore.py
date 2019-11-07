@@ -78,7 +78,7 @@ class MongoStore(BaseStore):
 
         # Tar.gz of repository folder
         with tarfile.open(tar_gz_name, "w:gz") as tar:
-            tar.add(config.path, arcname=os.path.basename(config.path))
+            tar.add(config.path, arcname=config.project_name)
 
         # Add repository to gridfs if not existent
         if vcs_system.repository_file.grid_id is None:
