@@ -8,7 +8,7 @@ if not sys.version_info[0] == 3:
 
 setup(
     name="vcsSHARK",
-    version='2.0.6',
+    version='2.0.7',
     author='Fabian Trautsch',
     author_email='trautsch@cs.uni-goettingen.de',
     description='vcsSHARK is a tool to analyze source code repositories',
