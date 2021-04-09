@@ -1,48 +1,53 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyvcsshark.datastores.mongostore &mdash; vcsSHARK 1.1.3 documentation</title>
-  
-
-  
-  
-  
+  <title>pyvcsshark.datastores.mongostore &mdash; vcsSHARK 2.0.7 documentation</title>
   
 
   
-
-  
-  
-    
-
-  
-
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
-  <script src="../../../_static/js/modernizr.min.js"></script>
+  
 
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -59,7 +64,7 @@
             
             
               <div class="version">
-                1.1
+                2.0
               </div>
             
           
@@ -76,6 +81,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -92,6 +98,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,11 +133,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -150,13 +159,16 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyvcsshark.datastores.mongostore</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">pymongo.errors</span> <span class="k">import</span> <span class="n">DocumentTooLarge</span><span class="p">,</span> <span class="n">DuplicateKeyError</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
 
-<span class="kn">from</span> <span class="nn">pyvcsshark.datastores.basestore</span> <span class="k">import</span> <span class="n">BaseStore</span>
-<span class="kn">from</span> <span class="nn">mongoengine</span> <span class="k">import</span> <span class="n">connect</span><span class="p">,</span> <span class="n">DoesNotExist</span><span class="p">,</span> <span class="n">NotUniqueError</span>
-<span class="kn">from</span> <span class="nn">pycoshark.mongomodels</span> <span class="k">import</span> <span class="n">VCSSystem</span><span class="p">,</span> <span class="n">Project</span><span class="p">,</span> <span class="n">Commit</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">People</span><span class="p">,</span> <span class="n">FileAction</span><span class="p">,</span> <span class="n">Hunk</span><span class="p">,</span> <span class="n">Branch</span>
-<span class="kn">from</span> <span class="nn">pycoshark.utils</span> <span class="k">import</span> <span class="n">create_mongodb_uri_string</span>
+<span class="kn">from</span> <span class="nn">pymongo.errors</span> <span class="kn">import</span> <span class="n">DocumentTooLarge</span><span class="p">,</span> <span class="n">DuplicateKeyError</span>
+
+<span class="kn">from</span> <span class="nn">pyvcsshark.datastores.basestore</span> <span class="kn">import</span> <span class="n">BaseStore</span>
+<span class="kn">from</span> <span class="nn">mongoengine</span> <span class="kn">import</span> <span class="n">connect</span><span class="p">,</span> <span class="n">DoesNotExist</span><span class="p">,</span> <span class="n">NotUniqueError</span>
+<span class="kn">from</span> <span class="nn">pycoshark.mongomodels</span> <span class="kn">import</span> <span class="n">VCSSystem</span><span class="p">,</span> <span class="n">Project</span><span class="p">,</span> <span class="n">Commit</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">People</span><span class="p">,</span> <span class="n">FileAction</span><span class="p">,</span> <span class="n">Hunk</span><span class="p">,</span> <span class="n">Branch</span>
+<span class="kn">from</span> <span class="nn">pycoshark.utils</span> <span class="kn">import</span> <span class="n">create_mongodb_uri_string</span>
 
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -172,14 +184,12 @@
 
 <span class="sd">    :property commit_queue: instance of a :class:`multiprocessing.JoinableQueue`, which  \</span>
 <span class="sd">    holds objects of :class:`pyvcsshark.dbmodels.models.CommitModel`, that should be put into the mongodb</span>
-<span class="sd">    :property NUMBER_OF_PROCESSES: holds the number of processes by calling :func:`multiprocessing.cpu_count`</span>
 <span class="sd">    :property logger: holds the logging instance, by calling logging.getLogger(&quot;store&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">commit_queue</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">NUMBER_OF_PROCESSES</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">BaseStore</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MongoStore.initialize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.MongoStore.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">repository_url</span><span class="p">,</span> <span class="n">repository_type</span><span class="p">):</span>
@@ -201,6 +211,7 @@
         <span class="c1"># we need an extra queue for branches because all commits need to be finished before we can process branches</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">branch_queue</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">JoinableQueue</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cores_per_job</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">cores_per_job</span>
 
         <span class="c1"># We define, that the user we authenticate with is in the admin database</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connecting to MongoDB...&quot;</span><span class="p">)</span>
@@ -217,10 +228,38 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># Check if vcssystem already exist, and use upsert</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span> <span class="o">=</span> <span class="n">VCSSystem</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">repository_url</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">repository_url</span><span class="p">,</span>
-                                                                              <span class="n">repository_type</span><span class="o">=</span><span class="n">repository_type</span><span class="p">,</span>
-                                                                              <span class="n">last_updated</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span>
-                                                                              <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">vcs_system</span> <span class="o">=</span> <span class="n">VCSSystem</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">repository_url</span><span class="p">)</span><span class="o">.</span><span class="n">upsert_one</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">repository_url</span><span class="p">,</span>
+                                                                      <span class="n">repository_type</span><span class="o">=</span><span class="n">repository_type</span><span class="p">,</span>
+                                                                      <span class="n">last_updated</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span>
+                                                                      <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span> <span class="o">=</span> <span class="n">vcs_system</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="c1"># Tar.gz name based on project name</span>
+        <span class="n">tar_gz_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.tar.gz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span>
+
+        <span class="c1"># Tar.gz of repository folder</span>
+        <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tar_gz_name</span><span class="p">,</span> <span class="s2">&quot;w:gz&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar</span><span class="p">:</span>
+            <span class="n">tar</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">arcname</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span>
+
+        <span class="c1"># Add repository to gridfs if not existent</span>
+        <span class="k">if</span> <span class="n">vcs_system</span><span class="o">.</span><span class="n">repository_file</span><span class="o">.</span><span class="n">grid_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Copying project to gridfs...&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Store in gridfs</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tar_gz_name</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar_file</span><span class="p">:</span>
+                <span class="n">vcs_system</span><span class="o">.</span><span class="n">repository_file</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">tar_file</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/gzip&#39;</span><span class="p">,</span>
+                                               <span class="n">filename</span><span class="o">=</span><span class="n">tar_gz_name</span><span class="p">)</span>
+                <span class="n">vcs_system</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># replace file if not existent</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Replacing project file in gridfs...&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tar_gz_name</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar_file</span><span class="p">:</span>
+                <span class="n">vcs_system</span><span class="o">.</span><span class="n">repository_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tar_file</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/gzip&#39;</span><span class="p">,</span>
+                                                   <span class="n">filename</span><span class="o">=</span><span class="n">tar_gz_name</span><span class="p">)</span>
+                <span class="n">vcs_system</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="c1"># Delete tar.gz file</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tar_gz_name</span><span class="p">)</span>
 
         <span class="c1"># Get the last commit by date of the project (if there is any)</span>
         <span class="n">last_commit</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">vcs_system_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">)</span>\
@@ -232,7 +271,7 @@
             <span class="n">last_commit_date</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Start worker, they will wait till something comes into the queue and then process it</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_PROCESSES</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cores_per_job</span><span class="p">):</span>
             <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;StorageProcess-</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span>
             <span class="n">process</span> <span class="o">=</span> <span class="n">CommitStorageProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">last_commit_date</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
             <span class="n">process</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
@@ -257,11 +296,12 @@
         <span class="k">return</span></div>
 
 <div class="viewcode-block" id="MongoStore.finalize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.datastores.mongostore.MongoStore.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;As we depend on commits beeing finished with branches (for the references) we must wait first for them to finish before we can start our branch processing.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;As we depend on commits beeing finished with branches (for the references) we must wait first for</span>
+<span class="sd">        them to finish before we can start our branch processing.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
         <span class="c1"># after commits are finished, process branches</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_PROCESSES</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cores_per_job</span><span class="p">):</span>
             <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;StorageProcessBranch-</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span>
             <span class="n">process</span> <span class="o">=</span> <span class="n">BranchStorageProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branch_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vcs_system_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
             <span class="n">process</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
@@ -275,7 +315,7 @@
 
 <span class="k">class</span> <span class="nc">BranchStorageProcess</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="n">create_mongodb_uri_string</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">db_user</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">db_password</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">db_hostname</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">db_port</span><span class="p">,</span>
                                         <span class="n">config</span><span class="o">.</span><span class="n">db_authentication</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">ssl_enabled</span><span class="p">)</span>
@@ -292,7 +332,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Process </span><span class="si">{}</span><span class="s2"> is processing branch </span><span class="si">{}</span><span class="s2"> -&gt; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_name</span><span class="p">,</span> <span class="n">branch</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">branch</span><span class="o">.</span><span class="n">target</span><span class="p">))</span>
 
             <span class="c1"># get commit OID for Target ref</span>
@@ -327,7 +366,7 @@
 <span class="sd">    :param last_commit_date: object of class :class:`datetime.datetime`, which holds the last commit that was parsed</span>
 <span class="sd">    :param config: object of class :class:`pyvcsshark.config.Config`, which holds configuration information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">last_commit_date</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">vcs_system_id</span><span class="p">,</span> <span class="n">last_commit_date</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="n">create_mongodb_uri_string</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">db_user</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">db_password</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">db_hostname</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">db_port</span><span class="p">,</span>
                                         <span class="n">config</span><span class="o">.</span><span class="n">db_authentication</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">ssl_enabled</span><span class="p">)</span>
@@ -501,7 +540,8 @@
             <span class="c1"># Create the new file action</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Process </span><span class="si">%s</span><span class="s2"> is creating file action with file_id </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_name</span><span class="p">,</span> <span class="n">new_file_id</span><span class="p">))</span>
-                <span class="n">file_action_id</span> <span class="o">=</span> <span class="n">FileAction</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">file_id</span><span class="o">=</span><span class="n">new_file_id</span><span class="p">,</span> <span class="n">commit_id</span><span class="o">=</span><span class="n">mongo_commit_id</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                <span class="n">file_action_id</span> <span class="o">=</span> <span class="n">FileAction</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">file_id</span><span class="o">=</span><span class="n">new_file_id</span><span class="p">,</span> <span class="n">commit_id</span><span class="o">=</span><span class="n">mongo_commit_id</span><span class="p">,</span>
+                                                    <span class="n">parent_revision_hash</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">parent_revision_hash</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
 
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Process </span><span class="si">%s</span><span class="s2"> is deleting all hunks for file action id </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proc_name</span><span class="p">,</span> <span class="n">file_action_id</span><span class="p">))</span>
                 <span class="n">Hunk</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">file_action_id</span><span class="o">=</span><span class="n">file_action_id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
@@ -513,7 +553,8 @@
                                             <span class="n">lines_deleted</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">linesDeleted</span><span class="p">,</span>
                                             <span class="n">is_binary</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">isBinary</span><span class="p">,</span>
                                             <span class="n">mode</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-                                            <span class="n">old_file_id</span><span class="o">=</span><span class="n">old_file_id</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                                            <span class="n">old_file_id</span><span class="o">=</span><span class="n">old_file_id</span><span class="p">,</span>
+                                            <span class="n">parent_revision_hash</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">parent_revision_hash</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
 
             <span class="c1"># Create hunk objects for bulk insert</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Process </span><span class="si">%s</span><span class="s2"> is creating hunks for bulk insert.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">proc_name</span><span class="p">)</span>
@@ -540,20 +581,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Fabian Trautsch
+        &#169; Copyright 2017, Fabian Trautsch.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -562,26 +608,16 @@
   </div>
   
 
-
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

@@ -1,48 +1,53 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyvcsshark.parser.gitparser &mdash; vcsSHARK 1.1.3 documentation</title>
-  
-
-  
-  
-  
+  <title>pyvcsshark.parser.gitparser &mdash; vcsSHARK 2.0.7 documentation</title>
   
 
   
-
-  
-  
-    
-
-  
-
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
-  <script src="../../../_static/js/modernizr.min.js"></script>
+  
 
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -59,7 +64,7 @@
             
             
               <div class="version">
-                1.1
+                2.0
               </div>
             
           
@@ -76,6 +81,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -92,6 +98,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,11 +133,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
@@ -152,14 +161,14 @@
   <h1>Source code for pyvcsshark.parser.gitparser</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">pyvcsshark.parser.baseparser</span> <span class="k">import</span> <span class="n">BaseParser</span>
+<span class="kn">from</span> <span class="nn">pyvcsshark.parser.baseparser</span> <span class="kn">import</span> <span class="n">BaseParser</span>
 <span class="kn">import</span> <span class="nn">pygit2</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 
-<span class="kn">from</span> <span class="nn">pyvcsshark.parser.models</span> <span class="k">import</span> <span class="n">BranchModel</span><span class="p">,</span> <span class="n">PeopleModel</span><span class="p">,</span> <span class="n">TagModel</span><span class="p">,</span> <span class="n">FileModel</span><span class="p">,</span> <span class="n">CommitModel</span><span class="p">,</span> <span class="n">Hunk</span><span class="p">,</span> <span class="n">BranchTipModel</span>
+<span class="kn">from</span> <span class="nn">pyvcsshark.parser.models</span> <span class="kn">import</span> <span class="n">BranchModel</span><span class="p">,</span> <span class="n">PeopleModel</span><span class="p">,</span> <span class="n">TagModel</span><span class="p">,</span> <span class="n">FileModel</span><span class="p">,</span> <span class="n">CommitModel</span><span class="p">,</span> <span class="n">Hunk</span><span class="p">,</span> <span class="n">BranchTipModel</span>
 
 
 <div class="viewcode-block" id="GitParser"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser">[docs]</a><span class="k">class</span> <span class="nc">GitParser</span><span class="p">(</span><span class="n">BaseParser</span><span class="p">):</span>
@@ -167,7 +176,6 @@
 <span class="sd">    :func:`pyvcsshark.parser.gitparser.GitParser.parse`.</span>
 <span class="sd">    </span>
 <span class="sd">    :property SIMILARITY_THRESHOLD: sets the threshold for deciding if a file is similar to another. Default: 50%</span>
-<span class="sd">    :property NUMBER_OF_PROCESSES: number of processes for the parsing process. Calls \</span>
 <span class="sd">    :func:`multiprocessing.cpu_count()`.</span>
 <span class="sd">    :property repository: object of class :class:`pygit2.Repository`, which represents the repository</span>
 <span class="sd">    :property commits_to_be_processed: dictionary that is set up the following way: \</span>
@@ -183,9 +191,8 @@
     
     <span class="c1"># Includes rename and copy threshold, 50% is the default git threshold</span>
     <span class="n">SIMILARITY_THRESHOLD</span> <span class="o">=</span> <span class="mi">50</span>
-    <span class="n">NUMBER_OF_PROCESSES</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repository</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;parser&quot;</span><span class="p">)</span>
@@ -263,7 +270,19 @@
 
         <span class="c1"># If we have an annotated tag, get all the information we can out of it</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag_object</span><span class="p">,</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">Tag</span><span class="p">):</span>
-            <span class="n">people_model</span> <span class="o">=</span> <span class="n">PeopleModel</span><span class="p">(</span><span class="n">tag_object</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">tag_object</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+
+            <span class="c1"># in some cases (jspwiki) there are taggers where the name or email contains non utf-8 chars.</span>
+            <span class="c1"># In these cases we replace them with the utf-8 replacement character</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">tag_object</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">except</span> <span class="ne">UnicodeDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">tag_object</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">raw_name</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">email</span> <span class="o">=</span> <span class="n">tag_object</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">email</span>
+            <span class="k">except</span> <span class="ne">UnicodeDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">email</span> <span class="o">=</span> <span class="n">tag_object</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">raw_email</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span>
+
+            <span class="n">people_model</span> <span class="o">=</span> <span class="n">PeopleModel</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
             <span class="n">tag_model</span> <span class="o">=</span> <span class="n">TagModel</span><span class="p">(</span><span class="n">tag_name</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tag_object</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">people_model</span><span class="p">,</span>
                                  <span class="n">tag_object</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">tag_object</span><span class="o">.</span><span class="n">tagger</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -331,15 +350,26 @@
             <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">lookup_reference</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
             <span class="n">tag_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="p">[</span><span class="n">reference</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">hex</span><span class="p">]</span>
             <span class="n">tagged_commit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">lookup_reference</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">peel</span><span class="p">()</span>
+
+            <span class="c1"># we exclude Blobs</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tagged_commit</span><span class="p">,</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">Blob</span><span class="p">):</span>
+                <span class="k">continue</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">add_tag</span><span class="p">(</span><span class="n">tagged_commit</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">tag_object</span><span class="p">)</span>
 
             <span class="c1"># The tagged_commit can have children that are not on any branch, but we may need it anyway --&gt; collect it</span>
             <span class="c1"># and add it only if we have not collected it before</span>
-            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tagged_commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">GIT_SORT_TIME</span> <span class="o">|</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">GIT_SORT_TOPOLOGICAL</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">add_branch</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tagged_commit</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">GIT_SORT_TIME</span> <span class="o">|</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">GIT_SORT_TOPOLOGICAL</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_branch</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># we may hit a tag that does not point to a commit but to a blob, therefore we can not walk over it until libgit implements this</span>
+                <span class="c1"># see: https://github.com/libgit2/libgit2/issues/3595</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;ValueError: object is not a committish&#39;</span><span class="p">:</span>  <span class="c1"># we do not bail on this we just ignore tags to blobs</span>
+                    <span class="k">raise</span></div>
 
-<div class="viewcode-block" id="GitParser.parse"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repository_path</span><span class="p">,</span> <span class="n">datastore</span><span class="p">):</span>
+<div class="viewcode-block" id="GitParser.parse"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repository_path</span><span class="p">,</span> <span class="n">datastore</span><span class="p">,</span> <span class="n">cores_per_job</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Parses the repository, which is located at the repository_path and save the parsed commits in the</span>
 <span class="sd">        datastore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen</span>
 <span class="sd">        datastore. It mostly uses pygit2 (see: http://www.pygit2.org/).</span>
@@ -364,13 +394,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">datastore</span><span class="o">.</span><span class="n">add_branch</span><span class="p">(</span><span class="n">BranchTipModel</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;is_origin_head&#39;</span><span class="p">]))</span>
 
         <span class="c1"># Set up the poison pills</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_PROCESSES</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cores_per_job</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># Parsing all commits of the queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsing commits...&quot;</span><span class="p">)</span>
         <span class="n">lock</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_PROCESSES</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cores_per_job</span><span class="p">):</span>
             <span class="n">thread</span> <span class="o">=</span> <span class="n">CommitParserProcess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">datastore</span><span class="p">,</span>
                                          <span class="n">lock</span><span class="p">)</span>
             <span class="n">thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
@@ -398,7 +428,7 @@
 <span class="sd">    the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">commits_to_be_processed</span><span class="p">,</span> <span class="n">repository</span><span class="p">,</span> <span class="n">datastore</span><span class="p">,</span> <span class="n">lock</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">commits_to_be_processed</span><span class="p">,</span> <span class="n">repository</span><span class="p">,</span> <span class="n">datastore</span><span class="p">,</span> <span class="n">lock</span><span class="p">):</span>
         <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span> <span class="o">=</span> <span class="n">commits_to_be_processed</span>
@@ -427,18 +457,22 @@
 
 <div class="viewcode-block" id="CommitParserProcess.parse_commit"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.CommitParserProcess.parse_commit">[docs]</a>    <span class="k">def</span> <span class="nf">parse_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Function for parsing a commit.</span>
-<span class="sd">        </span>
+
 <span class="sd">        1. changedFiles are created (type: list of :class:`pyvcsshark.parser.models.FileModel`)</span>
 <span class="sd">        2. author and commiter are created (type: :class:`pyvcsshark.parser.models.PeopleModel`)</span>
 <span class="sd">        3. parents are added (list of strings)</span>
 <span class="sd">        4. commit model is created (type: :class:`pyvcsshark.parser.models.CommitModel`)</span>
 <span class="sd">        5. :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is called</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param commit: commit object of type :class:`pygit2.Commit`</span>
-<span class="sd">        </span>
+
 <span class="sd">        .. NOTE:: The call to :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` is thread/process safe, as a\</span>
 <span class="sd">        lock is used to regulate the calls</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># we do not want Blobs (for now)</span>
+        <span class="k">if</span> <span class="n">commit</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;Blob&#39;</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)]</span>
+            <span class="k">return</span>
 
         <span class="c1"># If there are parents, we need to get the normal changed files, if not we need to get the files for initial</span>
         <span class="c1"># commit</span>
@@ -448,7 +482,7 @@
                 <span class="n">changed_files</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_changed_files_with_similiarity</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">commit</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">changed_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_changed_files_for_initial_commit</span><span class="p">(</span><span class="n">commit</span><span class="p">)</span>
-            
+
         <span class="n">string_commit_hash</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
         <span class="c1"># Create the different models</span>
@@ -497,7 +531,7 @@
 <span class="sd">        Special function for the initial commit, as we need to diff against the empty tree. Creates</span>
 <span class="sd">        the changed files list, where objects of class :class:`pyvcsshark.parser.models.FileModel` are added.</span>
 <span class="sd">        For every changed file in the initial commit.</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param commit: commit of type :class:`pygit2.Commit`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">changed_files</span> <span class="o">=</span> <span class="p">[]</span>
@@ -555,7 +589,7 @@
             <span class="n">changed_file</span> <span class="o">=</span> <span class="n">FileModel</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">new_file</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">patch</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">new_file</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
                                      <span class="n">patch</span><span class="o">.</span><span class="n">line_stats</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">patch</span><span class="o">.</span><span class="n">line_stats</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
                                      <span class="n">patch</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">is_binary</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span>
-                                     <span class="bp">self</span><span class="o">.</span><span class="n">create_hunks</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">hunks</span><span class="p">))</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">create_hunks</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">hunks</span><span class="p">),</span> <span class="n">parent_revision_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
             
             <span class="c1"># only add oldpath if file was copied/renamed</span>
             <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">]:</span>
@@ -570,20 +604,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Fabian Trautsch
+        &#169; Copyright 2017, Fabian Trautsch.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -592,26 +631,16 @@
   </div>
   
 
-
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

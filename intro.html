@@ -1,50 +1,55 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1. Introduction &mdash; vcsSHARK 1.1.3 documentation</title>
-  
-
-  
-  
-  
+  <title>1. Introduction &mdash; vcsSHARK 2.0.7 documentation</title>
   
 
   
-
-  
-  
-    
-
-  
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="2. How to Extend" href="extension.html" />
     <link rel="prev" title="Welcome to vcsSHARK’s documentation!" href="index.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -61,7 +66,7 @@
             
             
               <div class="version">
-                1.1
+                2.0
               </div>
             
           
@@ -78,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -105,6 +111,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -139,18 +146,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>1. Introduction</li>
+      <li><span class="section-number">1. </span>Introduction</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -165,7 +174,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="introduction">
-<h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <p>This introduction will show how the requirements of <strong>vcsSHARK</strong> , how it is installed, tested, and executed. Furthermore,
 a small tutorial in the end will show step by step, how to use this tool.</p>
 <p>vcsFoo is written in Python and uses the official libgit2 library for collecting the data. Furthermore,
@@ -174,22 +183,22 @@ processes are started for parsing and storing the data.</p>
 <p>We use a vanilla Ubuntu 16.04 operating system as basis for the steps that we describe. If necessary, we give hints
 on how to perform this step with a different operating system.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This software is still in development.</p>
+<p class="admonition-title">Warning</p>
+<p>This software is still in development.</p>
 </div>
 <div class="section" id="model-documentation">
-<h2>1.1. Model Documentation<a class="headerlink" href="#model-documentation" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.1. </span>Model Documentation<a class="headerlink" href="#model-documentation" title="Permalink to this headline">¶</a></h2>
 <p>The documentation for the used database models can be found here: <a class="reference external" href="https://smartshark.github.io/pycoSHARK/api.html">https://smartshark.github.io/pycoSHARK/api.html</a></p>
 </div>
 <div class="section" id="installation">
-<span id="id1"></span><h2>1.2. Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2><span class="section-number">1.2. </span>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>The installation process is straight forward. For a vanilla Ubuntu 18.04, we need to install the following packages:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install git python3-pip python3-cffi libgit2-26 libgit2-dev
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you are using an older version of Ubuntu (or another operating system), you need to install libgit by hand.
+<p class="admonition-title">Note</p>
+<p>If you are using an older version of Ubuntu (or another operating system), you need to install libgit by hand.
 The installation process is explained here: <a class="reference external" href="http://www.pygit2.org/install.html">http://www.pygit2.org/install.html</a>.
 But, you need to choose a version, which is compatible with pygit2 0.26.2.</p>
 </div>
@@ -198,26 +207,26 @@ But, you need to choose a version, which is compatible with pygit2 0.26.2.</p>
 to a folder you want. In the following, we assume that you have cloned the repository to <strong>~/vcsSHARK</strong>. Afterwards,
 the installation of <strong>vcsSHARK</strong> can be done in two different ways:</p>
 <div class="section" id="via-pip">
-<h3>1.2.1. via Pip<a class="headerlink" href="#via-pip" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">1.2.1. </span>via Pip<a class="headerlink" href="#via-pip" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo pip3 install https://github.com/smartshark/vcsSHARK/zipball/master --process-dependency-links
 </pre></div>
 </div>
 </div>
 <div class="section" id="via-setup-py">
-<h3>1.2.2. via setup.py<a class="headerlink" href="#via-setup-py" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">1.2.2. </span>via setup.py<a class="headerlink" href="#via-setup-py" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo python3.5 ~/vcsSHARK/setup.py install
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">It is advisable to change the location, where the logs are written to.
+<p class="admonition-title">Note</p>
+<p>It is advisable to change the location, where the logs are written to.
 They can be changed in the <strong>pyvcsshark/loggerConfiguration.json</strong>. There are different file handlers defined.
 Just change the “filename”-attribute to a location of your wish.</p>
 </div>
 </div>
 </div>
 <div class="section" id="tests">
-<h2>1.3. Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.3. </span>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
 <p>The tests of <strong>vcsSHARK</strong> can be executed by calling</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/setup.py <span class="nb">test</span>
@@ -226,18 +235,17 @@ Just change the “filename”-attribute to a location of your wish.</p>
 </div></blockquote>
 <p>The tests can be found in the folder “tests”.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The generated tests are not fully complete. They just test the basic functionality.</p>
+<p class="admonition-title">Warning</p>
+<p>The generated tests are not fully complete. They just test the basic functionality.</p>
 </div>
 </div>
 <div class="section" id="execution">
-<h2>1.4. Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.4. </span>Execution<a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h2>
 <p>In this chapter, we explain how you can execute <strong>vcsSHARK</strong>. Furthermore, the different execution parameters are
 explained in detail.</p>
 <ol class="arabic">
-<li><p class="first">Checkout the repository from which you want to collect the data.</p>
-</li>
-<li><p class="first">Make sure that your MongoDB is running!</p>
+<li><p>Checkout the repository from which you want to collect the data.</p></li>
+<li><p>Make sure that your MongoDB is running!</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo systemctl status mongodb
 </pre></div>
@@ -253,7 +261,7 @@ you can add them by:</p>
 </div>
 </div></blockquote>
 <ol class="arabic" start="4">
-<li><p class="first">Execute <strong>vcsSHARK</strong> by calling</p>
+<li><p>Execute <strong>vcsSHARK</strong> by calling</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 ~/vcsSHARK/vcsshark.py
 </pre></div>
@@ -262,99 +270,99 @@ you can add them by:</p>
 </li>
 </ol>
 <p><strong>vcsSHARK</strong> supports different commandline arguments:</p>
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-help">
-<code class="descname">--help</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-h</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-help" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-h"></span><code class="sig-name descname"><span class="pre">--help</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-h</span></code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-help" title="Permalink to this definition">¶</a></dt>
 <dd><p>shows the help page for this command</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-version">
-<code class="descname">--version</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-version" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-v"></span><code class="sig-name descname"><span class="pre">--version</span></code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-v</span></code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-version" title="Permalink to this definition">¶</a></dt>
 <dd><p>shows the version</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-db-driver">
-<code class="descname">--db-driver</code><code class="descclassname"> &lt;DRIVER&gt;</code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"> &lt;DRIVER&gt;</code><a class="headerlink" href="#cmdoption-db-driver" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-D"></span><span id="cmdoption-d"></span><code class="sig-name descname"><span class="pre">--db-driver</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;DRIVER&gt;</span></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-D</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;DRIVER&gt;</span></code><a class="headerlink" href="#cmdoption-db-driver" title="Permalink to this definition">¶</a></dt>
 <dd><p>output datastore driver. Currently only mongodb is supported</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-db-user">
-<code class="descname">--db-user</code><code class="descclassname"> &lt;USER&gt;</code><code class="descclassname">, </code><code class="descname">-U</code><code class="descclassname"> &lt;USER&gt;</code><a class="headerlink" href="#cmdoption-db-user" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-U"></span><span id="cmdoption-u"></span><code class="sig-name descname"><span class="pre">--db-user</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;USER&gt;</span></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-U</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;USER&gt;</span></code><a class="headerlink" href="#cmdoption-db-user" title="Permalink to this definition">¶</a></dt>
 <dd><p>datastore user name</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-db-password">
-<code class="descname">--db-password</code><code class="descclassname"> &lt;PASSWORD&gt;</code><code class="descclassname">, </code><code class="descname">-P</code><code class="descclassname"> &lt;PASSWORD&gt;</code><a class="headerlink" href="#cmdoption-db-password" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-P"></span><span id="cmdoption-p"></span><code class="sig-name descname"><span class="pre">--db-password</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;PASSWORD&gt;</span></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-P</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;PASSWORD&gt;</span></code><a class="headerlink" href="#cmdoption-db-password" title="Permalink to this definition">¶</a></dt>
 <dd><p>datastore password</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-db-database">
-<code class="descname">--db-database</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><code class="descclassname">, </code><code class="descname">-DB</code><code class="descclassname"> &lt;DATABASENAME&gt;</code><a class="headerlink" href="#cmdoption-db-database" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-DB"></span><span id="cmdoption-db"></span><code class="sig-name descname"><span class="pre">--db-database</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;DATABASENAME&gt;</span></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-DB</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;DATABASENAME&gt;</span></code><a class="headerlink" href="#cmdoption-db-database" title="Permalink to this definition">¶</a></dt>
 <dd><p>database name (e.g., name of the mongodb database that should be used)</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-db-hostname">
-<code class="descname">--db-hostname</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><code class="descclassname">, </code><code class="descname">-H</code><code class="descclassname"> &lt;HOSTNAME&gt;</code><a class="headerlink" href="#cmdoption-db-hostname" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-H"></span><code class="sig-name descname"><span class="pre">--db-hostname</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;HOSTNAME&gt;</span></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-H</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;HOSTNAME&gt;</span></code><a class="headerlink" href="#cmdoption-db-hostname" title="Permalink to this definition">¶</a></dt>
 <dd><p>hostname, where the datastore runs on</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-db-port">
-<code class="descname">--db-port</code><code class="descclassname"> &lt;PORT&gt;</code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"> &lt;PORT&gt;</code><a class="headerlink" href="#cmdoption-db-port" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-0"></span><code class="sig-name descname"><span class="pre">--db-port</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;PORT&gt;</span></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-p</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;PORT&gt;</span></code><a class="headerlink" href="#cmdoption-db-port" title="Permalink to this definition">¶</a></dt>
 <dd><p>port, where the datastore runs on</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-db-authentication">
-<code class="descname">--db-authentication</code><code class="descclassname"> &lt;DB_AUTHENTICATION&gt; -a &lt;DB_AUTHENTICATION&gt;</code><a class="headerlink" href="#cmdoption-db-authentication" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">--db-authentication</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;DB_AUTHENTICATION&gt;</span> <span class="pre">-a</span> <span class="pre">&lt;DB_AUTHENTICATION&gt;</span></code><a class="headerlink" href="#cmdoption-db-authentication" title="Permalink to this definition">¶</a></dt>
 <dd><p>name of the authentication database</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-ssl">
-<code class="descname">--ssl</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-ssl" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">--ssl</span></code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-ssl" title="Permalink to this definition">¶</a></dt>
 <dd><p>enables ssl for the connection to the mongodb</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-debug">
-<code class="descname">--debug</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><code class="descclassname">, </code><code class="descname">-d</code><code class="descclassname"> &lt;DEBUG_LEVEL&gt;</code><a class="headerlink" href="#cmdoption-debug" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-1"></span><code class="sig-name descname"><span class="pre">--debug</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;DEBUG_LEVEL&gt;</span></code><code class="sig-prename descclassname"><span class="pre">,</span> </code><code class="sig-name descname"><span class="pre">-d</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;DEBUG_LEVEL&gt;</span></code><a class="headerlink" href="#cmdoption-debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>Debug level (INFO, DEBUG, WARNING, ERROR)</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-project-name">
-<code class="descname">--project-name</code><code class="descclassname"> &lt;PROJECT_NAME&gt;</code><a class="headerlink" href="#cmdoption-project-name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">--project-name</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;PROJECT_NAME&gt;</span></code><a class="headerlink" href="#cmdoption-project-name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name of the project, from which the data is collected</p>
 </dd></dl>
 
-<dl class="option">
+<dl class="std option">
 <dt id="cmdoption-path">
-<code class="descname">--path</code><code class="descclassname"> &lt;PATH&gt;</code><a class="headerlink" href="#cmdoption-path" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">--path</span></code><code class="sig-prename descclassname"> <span class="pre">&lt;PATH&gt;</span></code><a class="headerlink" href="#cmdoption-path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to the checked out repository directory</p>
 </dd></dl>
 
 </div>
 <div class="section" id="tutorial">
-<h2>1.5. Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">1.5. </span>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
 <p>In this section we show step-by-step how you can analyze and store the repository of the
 <a class="reference external" href="https://github.com/checkstyle/checkstyle">checkstyle</a> project in a mongodb.</p>
 <p>1.      First, if you want to use the mongodb datastore you need to have a mongodb running (version 3.2+).
 How this can be achieved is explained here: <a class="reference external" href="https://docs.mongodb.org/manual/">https://docs.mongodb.org/manual/</a>.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Make sure, that you activated the authentication of mongodb
+<p class="admonition-title">Warning</p>
+<p>Make sure, that you activated the authentication of mongodb
 (<strong>vcsSHARK</strong> also works without authentication, but with authentication it is much safer!).
 Hints how this can be achieved are given <a class="reference external" href="https://docs.mongodb.org/manual/core/authentication/">here</a>.</p>
 </div>
 <ol class="arabic" start="2">
-<li><p class="first">Add checkstyle to the projects table in MongoDB.</p>
+<li><p>Add checkstyle to the projects table in MongoDB.</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ mongo
 $ use vcsshark
@@ -363,36 +371,35 @@ $ db.project.insert<span class="o">({</span><span class="s2">&quot;name&quot;</s
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">Install <strong>vcsSHARK</strong>. An explanation is given above.</p>
-</li>
+<li><p>Install <strong>vcsSHARK</strong>. An explanation is given above.</p></li>
 </ol>
 <ol class="arabic" start="3">
-<li><p class="first">Enter the <strong>vcsSHARK</strong> directory via</p>
+<li><p>Enter the <strong>vcsSHARK</strong> directory via</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> vcsSHARK
 </pre></div>
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">Test if everything works as expected</p>
+<li><p>Test if everything works as expected</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3.5 vcsshark.py --help
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you receive an error here, it is most likely, that the installation process failed.</p>
+<p class="admonition-title">Note</p>
+<p>If you receive an error here, it is most likely, that the installation process failed.</p>
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">Clone the checkstyle repository to your home directory (or another place)</p>
+<li><p>Clone the checkstyle repository to your home directory (or another place)</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/checkstyle/checkstyle ~/checkstyle
 </pre></div>
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">Execute <strong>vcsSHARK</strong>:</p>
+<li><p>Execute <strong>vcsSHARK</strong>:</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> ~/vcsSHARK
 $ python3.5 vcsshark.py -D mongo -DB vcsshark -H localhost -p <span class="m">27017</span> -n checkstyle --path ~/checkstyle
@@ -411,29 +418,29 @@ of <a class="reference external" href="http://smartshark2.informatik.uni-goettin
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="extension.html" class="btn btn-neutral float-right" title="2. How to Extend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="index.html" class="btn btn-neutral" title="Welcome to vcsSHARK’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="extension.html" class="btn btn-neutral float-right" title="2. How to Extend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to vcsSHARK’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Fabian Trautsch
+        &#169; Copyright 2017, Fabian Trautsch.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -442,26 +449,16 @@ of <a class="reference external" href="http://smartshark2.informatik.uni-goettin
   </div>
   
 
-
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

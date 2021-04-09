@@ -1,49 +1,54 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>3. API Documentation &mdash; vcsSHARK 1.1.3 documentation</title>
-  
-
-  
-  
-  
+  <title>3. API Documentation &mdash; vcsSHARK 2.0.7 documentation</title>
   
 
   
-
-  
-  
-    
-
-  
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="2. How to Extend" href="extension.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -60,7 +65,7 @@
             
             
               <div class="version">
-                1.1
+                2.0
               </div>
             
           
@@ -77,6 +82,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -116,6 +122,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -150,18 +157,20 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>3. API Documentation</li>
+      <li><span class="section-number">3. </span>API Documentation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -176,12 +185,12 @@
            <div itemprop="articleBody">
             
   <div class="section" id="api-documentation">
-<h1>3. API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3. </span>API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pyvcsshark.main">
-<span id="main-module"></span><h2>3.1. Main Module<a class="headerlink" href="#module-pyvcsshark.main" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<span id="main-module"></span><h2><span class="section-number">3.1. </span>Main Module<a class="headerlink" href="#module-pyvcsshark.main" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
 <dt id="pyvcsshark.main.Application">
-<em class="property">class </em><code class="descclassname">pyvcsshark.main.</code><code class="descname">Application</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/main.html#Application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.main.Application" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.main.</span></code><code class="sig-name descname"><span class="pre">Application</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/main.html#Application"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.main.Application" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main application class. Contains the most important process logic.
 The main application consists of different steps:</p>
 <p>1. The correct datastore is found (inherits from: <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore" title="pyvcsshark.datastores.basestore.BaseStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore</span></code></a>) by
@@ -198,22 +207,19 @@ parameters and values from the parser (concreter: the <strong>implemented functi
 (e.g. closing files) (concreter: the <strong>implemented function</strong> of the <strong>correct parser</strong>)</p>
 <p>7. <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore.finalize" title="pyvcsshark.datastores.basestore.BaseStore.finalize"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.finalize()</span></code></a> is called to finalize the storing process
 (e.g. closing connections) (concreter: the <strong>implemented function</strong> of the <strong>correct datastore</strong>)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> – An instance of <a class="reference internal" href="#pyvcsshark.Config" title="pyvcsshark.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>, which contains the configuration parameters</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> – An instance of <a class="reference internal" href="#pyvcsshark.Config" title="pyvcsshark.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>, which contains the configuration parameters</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="application">
-<h2>3.2. Application<a class="headerlink" href="#application" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<h2><span class="section-number">3.2. </span>Application<a class="headerlink" href="#application" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
 <dt id="pyvcsshark.Application">
-<em class="property">class </em><code class="descclassname">pyvcsshark.</code><code class="descname">Application</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/main.html#Application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.Application" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.</span></code><code class="sig-name descname"><span class="pre">Application</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/main.html#Application"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.Application" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main application class. Contains the most important process logic.
 The main application consists of different steps:</p>
 <p>1. The correct datastore is found (inherits from: <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore" title="pyvcsshark.datastores.basestore.BaseStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore</span></code></a>) by
@@ -230,184 +236,156 @@ parameters and values from the parser (concreter: the <strong>implemented functi
 (e.g. closing files) (concreter: the <strong>implemented function</strong> of the <strong>correct parser</strong>)</p>
 <p>7. <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore.finalize" title="pyvcsshark.datastores.basestore.BaseStore.finalize"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.finalize()</span></code></a> is called to finalize the storing process
 (e.g. closing connections) (concreter: the <strong>implemented function</strong> of the <strong>correct datastore</strong>)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> – An instance of <a class="reference internal" href="#pyvcsshark.Config" title="pyvcsshark.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>, which contains the configuration parameters</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> – An instance of <a class="reference internal" href="#pyvcsshark.Config" title="pyvcsshark.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>, which contains the configuration parameters</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="configuration-and-misc">
-<h2>3.3. Configuration and Misc<a class="headerlink" href="#configuration-and-misc" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.3. </span>Configuration and Misc<a class="headerlink" href="#configuration-and-misc" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="configuration">
-<h3>3.3.1. Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<h3><span class="section-number">3.3.1. </span>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
 <dt id="pyvcsshark.Config">
-<em class="property">class </em><code class="descclassname">pyvcsshark.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.</span></code><code class="sig-name descname"><span class="pre">Config</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/config.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Holds configuration information</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> – argumentparser of the class <a class="reference external" href="https://docs.python.org/3.5/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">argparse.ArgumentParser</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> – argumentparser of the class <a class="reference external" href="https://docs.python.org/3.5/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">argparse.ArgumentParser</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="module-pyvcsshark.utils">
-<span id="utils"></span><h3>3.3.2. Utils<a class="headerlink" href="#module-pyvcsshark.utils" title="Permalink to this headline">¶</a></h3>
-<dl class="function">
+<span id="utils"></span><h3><span class="section-number">3.3.2. </span>Utils<a class="headerlink" href="#module-pyvcsshark.utils" title="Permalink to this headline">¶</a></h3>
+<dl class="py function">
 <dt id="pyvcsshark.utils.find_plugins">
-<code class="descclassname">pyvcsshark.utils.</code><code class="descname">find_plugins</code><span class="sig-paren">(</span><em>plugin_dir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/utils.html#find_plugins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.utils.find_plugins" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pyvcsshark.utils.</span></code><code class="sig-name descname"><span class="pre">find_plugins</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plugin_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/utils.html#find_plugins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.utils.find_plugins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds all python files in the specified path and imports them. This is needed, if we want to
 detect automatically, which datastore and parser we can apply</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plugin_dir</strong> – path to the plugin directory</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plugin_dir</strong> – path to the plugin directory</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pyvcsshark.utils.get_immediate_subdirectories">
-<code class="descclassname">pyvcsshark.utils.</code><code class="descname">get_immediate_subdirectories</code><span class="sig-paren">(</span><em>a_dir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/utils.html#get_immediate_subdirectories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.utils.get_immediate_subdirectories" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pyvcsshark.utils.</span></code><code class="sig-name descname"><span class="pre">get_immediate_subdirectories</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/utils.html#get_immediate_subdirectories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.utils.get_immediate_subdirectories" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper method, which gets the <strong>immediate</strong> subdirectories of a path. Is helpful, if one want to create a
 parser, which looks if certain folders are there.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>a_dir</strong> – directory from which <strong>immediate</strong> subdirectories should be listed</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>a_dir</strong> – directory from which <strong>immediate</strong> subdirectories should be listed</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="pyvcsshark.utils.readable_dir">
-<code class="descclassname">pyvcsshark.utils.</code><code class="descname">readable_dir</code><span class="sig-paren">(</span><em>prospective_dir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/utils.html#readable_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.utils.readable_dir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pyvcsshark.utils.</span></code><code class="sig-name descname"><span class="pre">readable_dir</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prospective_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/utils.html#readable_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.utils.readable_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function that checks if a path is a directory, if it exists and if it is accessible and only
 returns true if all these three are the case</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prospective_dir</strong> – path to the directory</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prospective_dir</strong> – path to the directory</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 </div>
 <div class="section" id="datastores">
-<h2>3.4. Datastores<a class="headerlink" href="#datastores" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.4. </span>Datastores<a class="headerlink" href="#datastores" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="basedatastore">
-<h3>3.4.1. BaseDatastore<a class="headerlink" href="#basedatastore" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<h3><span class="section-number">3.4.1. </span>BaseDatastore<a class="headerlink" href="#basedatastore" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
 <dt id="pyvcsshark.datastores.basestore.BaseStore">
-<em class="property">class </em><code class="descclassname">pyvcsshark.datastores.basestore.</code><code class="descname">BaseStore</code><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.datastores.basestore.</span></code><code class="sig-name descname"><span class="pre">BaseStore</span></code><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract class for the datastores. One must inherit from this class and implement
 the methods to create a new datastore.</p>
 <p>Based on pythons abc: <a class="reference external" href="https://docs.python.org/3.5/library/abc.html#module-abc" title="(in Python v3.5)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">abc</span></code></a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Property projectName:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">name of the project, which should be stored</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Property projectURL:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">url of the repository of the project, which should be stored</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Property repositoryType:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">type of the repository of the project, which should be stored</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metaclass</strong> – name of the abstract metaclass</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Property projectName</dt>
+<dd class="field-odd"><p>name of the project, which should be stored</p>
+</dd>
+<dt class="field-even">Property projectURL</dt>
+<dd class="field-even"><p>url of the repository of the project, which should be stored</p>
+</dd>
+<dt class="field-odd">Property repositoryType</dt>
+<dd class="field-odd"><p>type of the repository of the project, which should be stored</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>metaclass</strong> – name of the abstract metaclass</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>If you want to use a logger for your implementation of a datastore you can write:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;store&quot;</span><span class="p">)</span> 
 </pre></div>
 </div>
-<p class="last">to get the logger.</p>
+<p>to get the logger.</p>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">It is possible to include datastores, which are not databases like mongoDB or mysql. But you should make     sure, that your datastore implementation handles the values which are given to it correctly.</p>
+<p class="admonition-title">Note</p>
+<p>It is possible to include datastores, which are not databases like mongoDB or mysql. But you should make     sure, that your datastore implementation handles the values which are given to it correctly.</p>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.basestore.BaseStore.add_commit">
-<code class="descname">add_commit</code><span class="sig-paren">(</span><em>commit_model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore.add_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.add_commit" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">add_commit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore.add_commit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.add_commit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the commit to the datastore. How this is handled depends on the implementation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>commit_model</strong> – instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">CommitModel</span></code>, which includes all         important information about the commit</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>commit_model</strong> – instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">CommitModel</span></code>, which includes all         important information about the commit</p>
+</dd>
+</dl>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The commits we get here are not sorted. Furthermore, they need to be processed right away or            stored in a <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.SimpleQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleQueue</span></code></a>. Storing it in a normal list or dictionary can not be done,            as some parser (e.g. GitParser) use multiprocessing to add the commits.</p>
+<p class="admonition-title">Warning</p>
+<p>The commits we get here are not sorted. Furthermore, they need to be processed right away or            stored in a <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.SimpleQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleQueue</span></code></a>. Storing it in a normal list or dictionary can not be done,            as some parser (e.g. GitParser) use multiprocessing to add the commits.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.basestore.BaseStore.finalize">
-<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.finalize" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">finalize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.finalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is called in the end to finalize the datastore (e.g. closing files or connections)</p>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.basestore.BaseStore.find_correct_datastore">
-<em class="property">static </em><code class="descname">find_correct_datastore</code><span class="sig-paren">(</span><em>datastore_identifier</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore.find_correct_datastore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.find_correct_datastore" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">find_correct_datastore</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datastore_identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore.find_correct_datastore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.find_correct_datastore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the correct datastore by looking at the datastore.storeIdentifier property</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>datastore_identifier</strong> – string that represents the correct datastore (e.g. <strong>mongo</strong>)</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>datastore_identifier</strong> – string that represents the correct datastore (e.g. <strong>mongo</strong>)</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.basestore.BaseStore.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><em>config</em>, <em>repository_url</em>, <em>repository_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.initialize" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/basestore.html#BaseStore.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the datastore</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>config</strong> – all configuration</li>
-<li><strong>repository_url</strong> – url of the repository, which is to be analyzed</li>
-<li><strong>repository_type</strong> – type of the repository, which is to be analyzed (e.g. “git”)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – all configuration</p></li>
+<li><p><strong>repository_url</strong> – url of the repository, which is to be analyzed</p></li>
+<li><p><strong>repository_type</strong> – type of the repository, which is to be analyzed (e.g. “git”)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.basestore.BaseStore.store_identifier">
-<code class="descname">store_identifier</code><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.store_identifier" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">store_identifier</span></code><a class="headerlink" href="#pyvcsshark.datastores.basestore.BaseStore.store_identifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Must return a string identifier for the datastore (e.g. <strong>mongo</strong>)</p>
 </dd></dl>
 
@@ -415,174 +393,149 @@ the methods to create a new datastore.</p>
 
 </div>
 <div class="section" id="mongostore">
-<h3>3.4.2. MongoStore<a class="headerlink" href="#mongostore" title="Permalink to this headline">¶</a></h3>
+<h3><span class="section-number">3.4.2. </span>MongoStore<a class="headerlink" href="#mongostore" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="api">
-<h4>3.4.2.1. API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
+<h4><span class="section-number">3.4.2.1. </span>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h4>
+<dl class="py class">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore">
-<em class="property">class </em><code class="descclassname">pyvcsshark.datastores.mongostore.</code><code class="descname">MongoStore</code><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.datastores.mongostore.</span></code><code class="sig-name descname"><span class="pre">MongoStore</span></code><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Datastore implementation for saving data to the mongodb. Inherits from
 <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore" title="pyvcsshark.datastores.basestore.BaseStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Property commit_queue:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">instance of a <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.JoinableQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.JoinableQueue</span></code></a>, which      holds objects of <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code>, that should be put into the mongodb</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Property NUMBER_OF_PROCESSES:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">holds the number of processes by calling <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.cpu_count" title="(in Python v3.5)"><code class="xref py py-func docutils literal notranslate"><span class="pre">multiprocessing.cpu_count()</span></code></a></td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Property logger:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">holds the logging instance, by calling logging.getLogger(“store”)</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+<dl class="field-list simple">
+<dt class="field-odd">Property commit_queue</dt>
+<dd class="field-odd"><p>instance of a <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.JoinableQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.JoinableQueue</span></code></a>, which      holds objects of <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code>, that should be put into the mongodb</p>
+</dd>
+<dt class="field-even">Property logger</dt>
+<dd class="field-even"><p>holds the logging instance, by calling logging.getLogger(“store”)</p>
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore.add_branch">
-<code class="descname">add_branch</code><span class="sig-paren">(</span><em>branch_model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.add_branch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.add_branch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_branch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">branch_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.add_branch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.add_branch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add branch to extra queue</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore.add_commit">
-<code class="descname">add_commit</code><span class="sig-paren">(</span><em>commit_model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.add_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.add_commit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_commit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.add_commit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.add_commit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds commits of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code> to the commitqueue</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore.finalize">
-<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.finalize" title="Permalink to this definition">¶</a></dt>
-<dd><p>As we depend on commits beeing finished with branches (for the references) we must wait first for them to finish before we can start our branch processing.</p>
+<code class="sig-name descname"><span class="pre">finalize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>As we depend on commits beeing finished with branches (for the references) we must wait first for
+them to finish before we can start our branch processing.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><em>config</em>, <em>repository_url</em>, <em>repository_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.initialize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#MongoStore.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the mongostore by connecting to the mongodb, creating the project in the project collection         and setting up processes (see: <a class="reference internal" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess" title="pyvcsshark.datastores.mongostore.CommitStorageProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.mongostore.CommitStorageProcess</span></code></a>, which
 read commits out of the commitqueue, process them and store them into the mongodb.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>config</strong> – all configuration</li>
-<li><strong>repository_url</strong> – url of the repository, which is to be analyzed</li>
-<li><strong>repository_type</strong> – type of the repository, which is to be analyzed (e.g. “git”)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – all configuration</p></li>
+<li><p><strong>repository_url</strong> – url of the repository, which is to be analyzed</p></li>
+<li><p><strong>repository_type</strong> – type of the repository, which is to be analyzed (e.g. “git”)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.MongoStore.store_identifier">
-<code class="descname">store_identifier</code><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.store_identifier" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">store_identifier</span></code><a class="headerlink" href="#pyvcsshark.datastores.mongostore.MongoStore.store_identifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the identifier <strong>mongo</strong> for this datastore</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess">
-<em class="property">class </em><code class="descclassname">pyvcsshark.datastores.mongostore.</code><code class="descname">CommitStorageProcess</code><span class="sig-paren">(</span><em>queue</em>, <em>vcs_system_id</em>, <em>last_commit_date</em>, <em>config</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.datastores.mongostore.</span></code><code class="sig-name descname"><span class="pre">CommitStorageProcess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vcs_system_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_commit_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class that inherits from <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.Process" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.Process</span></code></a> for processing instances of class
 <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code>     and writing it into the mongodb</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>queue</strong> – queue, where the <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code> are stored in</li>
-<li><strong>vcs_system_id</strong> – object id of class <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code></a> from the vcs system</li>
-<li><strong>last_commit_date</strong> – object of class <a class="reference external" href="https://docs.python.org/3.5/library/datetime.html#datetime.datetime" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, which holds the last commit that was parsed</li>
-<li><strong>config</strong> – object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.config.Config</span></code>, which holds configuration information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>queue</strong> – queue, where the <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code> are stored in</p></li>
+<li><p><strong>vcs_system_id</strong> – object id of class <code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code> from the vcs system</p></li>
+<li><p><strong>last_commit_date</strong> – object of class <a class="reference external" href="https://docs.python.org/3.5/library/datetime.html#datetime.datetime" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, which holds the last commit that was parsed</p></li>
+<li><p><strong>config</strong> – object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.config.Config</span></code>, which holds configuration information</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.create_branch_list">
-<code class="descname">create_branch_list</code><span class="sig-paren">(</span><em>branches</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_branch_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_branch_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">create_branch_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">branches</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_branch_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_branch_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a list of the different branch names, where a commit belongs to. We go through the         branches property of the class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code>, which is a list of         different branch objects of class <cite>pyvcsshark.dbmodels.models.CommitModel</cite></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>branches</strong> – list of objects of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.BranchModel</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>branches</strong> – list of objects of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.BranchModel</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.create_file_actions">
-<code class="descname">create_file_actions</code><span class="sig-paren">(</span><em>files</em>, <em>mongo_commit_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_file_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_file_actions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a list of object ids of type <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code></a> for the different file actions of the
+<code class="sig-name descname"><span class="pre">create_file_actions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mongo_commit_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_file_actions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_file_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a list of object ids of type <code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code> for the different file actions of the
 commit by transforming the files into file actions of type FileAction, File, and Hunk (pycoshark library)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>files</strong> – list of changed files of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.FileModel</span></code></li>
-<li><strong>mongo_commit_id</strong> – mongoid of the commit which is processed</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>files</strong> – list of changed files of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.FileModel</span></code></p></li>
+<li><p><strong>mongo_commit_id</strong> – mongoid of the commit which is processed</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Hunks and the file action itself are inserted via bulk insert.</p>
+<p class="admonition-title">Note</p>
+<p>Hunks and the file action itself are inserted via bulk insert.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.create_people">
-<code class="descname">create_people</code><span class="sig-paren">(</span><em>name</em>, <em>email</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_people"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_people" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">create_people</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.create_people"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.create_people" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a people object of type People (which can be found in the pycoshark library) and returns a
-object id of the type <a class="reference external" href="http://api.mongodb.com/python/current/api/bson/objectid.html#bson.objectid.ObjectId" title="(in PyMongo v3.7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code></a> of the stored object</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> – name of the contributor</li>
-<li><strong>email</strong> – email of the contributor</li>
+object id of the type <code class="xref py py-class docutils literal notranslate"><span class="pre">bson.objectid.ObjectId</span></code> of the stored object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – name of the contributor</p></li>
+<li><p><strong>email</strong> – email of the contributor</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The call to <code class="xref py py-func docutils literal notranslate"><span class="pre">mongoengine.queryset.QuerySet.upsert_one()</span></code> is thread/process safe</p>
+<p class="admonition-title">Note</p>
+<p>The call to <code class="xref py py-func docutils literal notranslate"><span class="pre">mongoengine.queryset.QuerySet.upsert_one()</span></code> is thread/process safe</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.datastores.mongostore.CommitStorageProcess.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/datastores/mongostore.html#CommitStorageProcess.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.datastores.mongostore.CommitStorageProcess.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Endless loop for the processes, which consists of several steps:</p>
 <ol class="arabic simple">
-<li>Get a object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code> from the queue</li>
-<li>Check if this commit was stored before and if it is so: update branches and tags (if they have changed)</li>
-<li>Store author and committer in mongodb</li>
-<li>Store Tags in mongodb</li>
-<li>Create a list of branches, where the commit belongs to</li>
-<li>Save the different file actions, which were done in this commit in the mongodb</li>
-<li>Save the commit itself</li>
+<li><p>Get a object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.CommitModel</span></code> from the queue</p></li>
+<li><p>Check if this commit was stored before and if it is so: update branches and tags (if they have changed)</p></li>
+<li><p>Store author and committer in mongodb</p></li>
+<li><p>Store Tags in mongodb</p></li>
+<li><p>Create a list of branches, where the commit belongs to</p></li>
+<li><p>Save the different file actions, which were done in this commit in the mongodb</p></li>
+<li><p>Save the commit itself</p></li>
 </ol>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The committer date is used to check if a commit was already stored before. Meaning: We get the         last commit out of the database and check if the committer date of the commits we process are &gt; than the         committer date of the last commit.</p>
+<p class="admonition-title">Note</p>
+<p>The committer date is used to check if a commit was already stored before. Meaning: We get the         last commit out of the database and check if the committer date of the commits we process are &gt; than the         committer date of the last commit.</p>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">We only look for changed tags and branches here for already processed commits!</p>
+<p class="admonition-title">Warning</p>
+<p>We only look for changed tags and branches here for already processed commits!</p>
 </div>
 </dd></dl>
 
@@ -592,221 +545,191 @@ object id of the type <a class="reference external" href="http://api.mongodb.com
 </div>
 </div>
 <div class="section" id="models">
-<h2>3.5. Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<h2><span class="section-number">3.5. </span>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
 <dt id="pyvcsshark.parser.models.CommitModel">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.models.</code><code class="descname">CommitModel</code><span class="sig-paren">(</span><em>id</em>, <em>branches=[]</em>, <em>tags=[]</em>, <em>parents=[]</em>, <em>author=None</em>, <em>committer=None</em>, <em>message=None</em>, <em>changedFiles=[]</em>, <em>authorDate=None</em>, <em>authorOffset=None</em>, <em>committerDate=None</em>, <em>committerOffset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#CommitModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.models.CommitModel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.models.</span></code><code class="sig-name descname"><span class="pre">CommitModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">committer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">changedFiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authorDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authorOffset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">committerDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">committerOffset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#CommitModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.models.CommitModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model that represents a commit to a repository</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>id</strong> – id of the ocmmit (e.g. a revision hash)</li>
-<li><strong>branches</strong> – set of branches to which the commit belongs to</li>
-<li><strong>tags</strong> – list of tags of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.TagModel</span></code></li>
-<li><strong>parents</strong> – list of strings, which contains the parent ids of the commit</li>
-<li><strong>author</strong> – author of the commit. Must be of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.PeopleModel</span></code></li>
-<li><strong>committer</strong> – committer of the commit. Must be of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.PeopleModel</span></code></li>
-<li><strong>message</strong> – string of the commit message</li>
-<li><strong>changedFiles</strong> – list of files of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.FileModel</span></code></li>
-<li><strong>authorDate</strong> – date of the creation of the change of the commit (must be a UNIX timestamp)</li>
-<li><strong>authorOffset</strong> – offset for the authordate (timezone)</li>
-<li><strong>committerDate</strong> – date of the commit (must be a UNIX timestamp)</li>
-<li><strong>committerOffset</strong> – offset for the committerdate (timezone)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> – id of the ocmmit (e.g. a revision hash)</p></li>
+<li><p><strong>branches</strong> – set of branches to which the commit belongs to</p></li>
+<li><p><strong>tags</strong> – list of tags of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.TagModel</span></code></p></li>
+<li><p><strong>parents</strong> – list of strings, which contains the parent ids of the commit</p></li>
+<li><p><strong>author</strong> – author of the commit. Must be of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.PeopleModel</span></code></p></li>
+<li><p><strong>committer</strong> – committer of the commit. Must be of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.PeopleModel</span></code></p></li>
+<li><p><strong>message</strong> – string of the commit message</p></li>
+<li><p><strong>changedFiles</strong> – list of files of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.FileModel</span></code></p></li>
+<li><p><strong>authorDate</strong> – date of the creation of the change of the commit (must be a UNIX timestamp)</p></li>
+<li><p><strong>authorOffset</strong> – offset for the authordate (timezone)</p></li>
+<li><p><strong>committerDate</strong> – date of the commit (must be a UNIX timestamp)</p></li>
+<li><p><strong>committerOffset</strong> – offset for the committerdate (timezone)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If your parser do not provide all information, then just use the default ones</p>
+<p class="admonition-title">Note</p>
+<p>If your parser do not provide all information, then just use the default ones</p>
 </div>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pyvcsshark.parser.models.FileModel">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.models.</code><code class="descname">FileModel</code><span class="sig-paren">(</span><em>path</em>, <em>size=None</em>, <em>linesAdded=None</em>, <em>linesDeleted=None</em>, <em>isBinary=None</em>, <em>mode=None</em>, <em>hunks=[]</em>, <em>oldPath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#FileModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.models.FileModel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.models.</span></code><code class="sig-name descname"><span class="pre">FileModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linesAdded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linesDeleted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isBinary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oldPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_revision_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#FileModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.models.FileModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model that holds the changes of the files.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>path</strong> – path to the file that was changed</li>
-<li><strong>size</strong> – size of the file that was changed</li>
-<li><strong>linesAdded</strong> – count of how many lines were added to the file</li>
-<li><strong>linesDeleted</strong> – count of how many lines were deleted</li>
-<li><strong>isBinary</strong> – boolean, which is true if the file is a binary file</li>
-<li><strong>mode</strong> – mode of the file action (e.g. “A” for file was added)</li>
-<li><strong>hunks</strong> – list of hunks for the file</li>
-<li><strong>oldPath</strong> – old path to the file, which only exist if a file was copied or moved</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – path to the file that was changed</p></li>
+<li><p><strong>size</strong> – size of the file that was changed</p></li>
+<li><p><strong>linesAdded</strong> – count of how many lines were added to the file</p></li>
+<li><p><strong>linesDeleted</strong> – count of how many lines were deleted</p></li>
+<li><p><strong>isBinary</strong> – boolean, which is true if the file is a binary file</p></li>
+<li><p><strong>mode</strong> – mode of the file action (e.g. “A” for file was added)</p></li>
+<li><p><strong>hunks</strong> – list of hunks for the file</p></li>
+<li><p><strong>oldPath</strong> – old path to the file, which only exist if a file was copied or moved</p></li>
+<li><p><strong>parent_revision_hash</strong> – hash of the parent commit</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pyvcsshark.parser.models.Hunk">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.models.</code><code class="descname">Hunk</code><span class="sig-paren">(</span><em>new_start</em>, <em>new_lines</em>, <em>old_start</em>, <em>old_lines</em>, <em>content</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#Hunk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.models.Hunk" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.models.</span></code><code class="sig-name descname"><span class="pre">Hunk</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#Hunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.models.Hunk" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pyvcsshark.parser.models.TagModel">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.models.</code><code class="descname">TagModel</code><span class="sig-paren">(</span><em>name</em>, <em>message=None</em>, <em>tagger=None</em>, <em>taggerDate=None</em>, <em>taggerOffset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#TagModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.models.TagModel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.models.</span></code><code class="sig-name descname"><span class="pre">TagModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tagger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taggerDate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taggerOffset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#TagModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.models.TagModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model that holds the information for the different tags.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> – name of the tag</li>
-<li><strong>message</strong> – message of the tag</li>
-<li><strong>tagger</strong> – creator of the tag. Must be of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.PeopleModel</span></code>.</li>
-<li><strong>taggerDate</strong> – date of the creation of the tag. Must be a UNIX timestamp.</li>
-<li><strong>taggerOffset</strong> – offset for taggerdate (timezone)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – name of the tag</p></li>
+<li><p><strong>message</strong> – message of the tag</p></li>
+<li><p><strong>tagger</strong> – creator of the tag. Must be of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.dbmodels.models.PeopleModel</span></code>.</p></li>
+<li><p><strong>taggerDate</strong> – date of the creation of the tag. Must be a UNIX timestamp.</p></li>
+<li><p><strong>taggerOffset</strong> – offset for taggerdate (timezone)</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pyvcsshark.parser.models.BranchModel">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.models.</code><code class="descname">BranchModel</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#BranchModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.models.BranchModel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.models.</span></code><code class="sig-name descname"><span class="pre">BranchModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#BranchModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.models.BranchModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model which holds the branch information.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> – name of the branch</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – name of the branch</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pyvcsshark.parser.models.PeopleModel">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.models.</code><code class="descname">PeopleModel</code><span class="sig-paren">(</span><em>name=None</em>, <em>email=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#PeopleModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.models.PeopleModel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.models.</span></code><code class="sig-name descname"><span class="pre">PeopleModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/models.html#PeopleModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.models.PeopleModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model that holds the people information.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> – name of the person</li>
-<li><strong>email</strong> – email of the person</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – name of the person</p></li>
+<li><p><strong>email</strong> – email of the person</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="parser">
-<h2>3.6. Parser<a class="headerlink" href="#parser" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">3.6. </span>Parser<a class="headerlink" href="#parser" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="baseparser">
-<h3>3.6.1. BaseParser<a class="headerlink" href="#baseparser" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<h3><span class="section-number">3.6.1. </span>BaseParser<a class="headerlink" href="#baseparser" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
 <dt id="pyvcsshark.parser.baseparser.BaseParser">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.baseparser.</code><code class="descname">BaseParser</code><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.baseparser.</span></code><code class="sig-name descname"><span class="pre">BaseParser</span></code><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract class for the parsers. One must inherit from this class and implement
 the methods to create a new repository parser.</p>
 <p>Based on pythons abc: <a class="reference external" href="https://docs.python.org/3.5/library/abc.html#module-abc" title="(in Python v3.5)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">abc</span></code></a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metaclass</strong> – name of the abstract metaclass</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>metaclass</strong> – name of the abstract metaclass</p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>If you want to use a logger for your implementation of a datastore you can write:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;parser&quot;</span><span class="p">)</span> 
 </pre></div>
 </div>
-<p class="last">to get the logger.</p>
+<p>to get the logger.</p>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.baseparser.BaseParser.detect">
-<code class="descname">detect</code><span class="sig-paren">(</span><em>repository_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.detect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.detect" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">detect</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repository_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.detect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.detect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return true if the parser is applicable to the repository</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>repository_path</strong> – path to the repository</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>repository_path</strong> – path to the repository</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.baseparser.BaseParser.finalize">
-<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.finalize" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">finalize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.finalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finalization process for parser</p>
 </dd></dl>
 
-<dl class="staticmethod">
+<dl class="py method">
 <dt id="pyvcsshark.parser.baseparser.BaseParser.find_correct_parser">
-<em class="property">static </em><code class="descname">find_correct_parser</code><span class="sig-paren">(</span><em>repository_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.find_correct_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.find_correct_parser" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">find_correct_parser</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repository_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.find_correct_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.find_correct_parser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the correct parser by executing the parser.detect() method on
 the given repository path</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>repository_path</strong> – path to the repository</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>repository_path</strong> – path to the repository</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.baseparser.BaseParser.get_project_url">
-<code class="descname">get_project_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.get_project_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.get_project_url" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">get_project_url</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.get_project_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.get_project_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves the project url from the repository. This need to be
 put here, as only the parser is specific to the repository type</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.baseparser.BaseParser.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.initialize" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialization process for parser</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.baseparser.BaseParser.parse">
-<code class="descname">parse</code><span class="sig-paren">(</span><em>repository_path</em>, <em>datastore</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.parse" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">parse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repository_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datastore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores_per_job</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/baseparser.html#BaseParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.parse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parses the repository</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>repository_path</strong> – path to the repository</li>
-<li><strong>datastore</strong> – subclass of <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore" title="pyvcsshark.datastores.basestore.BaseStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore</span></code></a>.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>repository_path</strong> – path to the repository</p></li>
+<li><p><strong>datastore</strong> – subclass of <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore" title="pyvcsshark.datastores.basestore.BaseStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore</span></code></a>.</p></li>
+<li><p><strong>cores_per_job</strong> – number of cores used for parsing</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">We must call the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> function in the parsing process if we want         to add commits to the datastore</p>
+<p class="admonition-title">Note</p>
+<p>We must call the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> function in the parsing process if we want         to add commits to the datastore</p>
 </div>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pyvcsshark.parser.baseparser.BaseParser.repository_type">
-<code class="descname">repository_type</code><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.repository_type" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">repository_type</span></code><a class="headerlink" href="#pyvcsshark.parser.baseparser.BaseParser.repository_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Must return the type for the given repository. E.g. <strong>git</strong></p>
 </dd></dl>
 
@@ -814,254 +737,207 @@ put here, as only the parser is specific to the repository type</p>
 
 </div>
 <div class="section" id="gitparser">
-<h3>3.6.2. GitParser<a class="headerlink" href="#gitparser" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
+<h3><span class="section-number">3.6.2. </span>GitParser<a class="headerlink" href="#gitparser" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
 <dt id="pyvcsshark.parser.gitparser.GitParser">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.gitparser.</code><code class="descname">GitParser</code><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.gitparser.</span></code><code class="sig-name descname"><span class="pre">GitParser</span></code><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parser for git repositories. The general parsing process is described in
 <a class="reference internal" href="#pyvcsshark.parser.gitparser.GitParser.parse" title="pyvcsshark.parser.gitparser.GitParser.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.parser.gitparser.GitParser.parse()</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Property SIMILARITY_THRESHOLD:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">sets the threshold for deciding if a file is similar to another. Default: 50%</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Property NUMBER_OF_PROCESSES:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">number of processes for the parsing process. Calls     <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.cpu_count" title="(in Python v3.5)"><code class="xref py py-func docutils literal notranslate"><span class="pre">multiprocessing.cpu_count()</span></code></a>.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Property repository:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">object of class <a class="reference external" href="https://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Repository</span></code></a>, which represents the repository</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Property commits_to_be_processed:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">dictionary that is set up the following way:     commits_to_be_processed = {‘&lt;revisionHash&gt;’ : {‘branches’ : set(), ‘tags’ : []}}, where &lt;revisionHash&gt; must be    replaced with the actual hash. Therefore, this dictionary holds information about every revision and which branches     this revision belongs to and which tags it has.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Property logger:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">logger, which is acquired via logging.getLogger(“parser”)</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Property datastore:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">datastore, where the commits should be saved to</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Property commit_queue:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">object of class <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.JoinableQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.JoinableQueue</span></code></a>, where commits are stored in that    can be parsed</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+<dl class="field-list simple">
+<dt class="field-odd">Property SIMILARITY_THRESHOLD</dt>
+<dd class="field-odd"><p>sets the threshold for deciding if a file is similar to another. Default: 50%</p>
+</dd>
+</dl>
+<p><a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.cpu_count" title="(in Python v3.5)"><code class="xref py py-func docutils literal notranslate"><span class="pre">multiprocessing.cpu_count()</span></code></a>.
+:property repository: object of class <a class="reference external" href="https://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Repository</span></code></a>, which represents the repository
+:property commits_to_be_processed: dictionary that is set up the following way:     commits_to_be_processed = {‘&lt;revisionHash&gt;’ : {‘branches’ : set(), ‘tags’ : []}}, where &lt;revisionHash&gt; must be    replaced with the actual hash. Therefore, this dictionary holds information about every revision and which branches     this revision belongs to and which tags it has.
+:property logger: logger, which is acquired via logging.getLogger(“parser”)
+:property datastore: datastore, where the commits should be saved to
+:property commit_queue: object of class <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.JoinableQueue" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.JoinableQueue</span></code></a>, where commits are stored in that    can be parsed</p>
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.add_branch">
-<code class="descname">add_branch</code><span class="sig-paren">(</span><em>commit_hash</em>, <em>branch</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.add_branch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.add_branch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_branch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.add_branch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.add_branch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Does two things: First it adds the commitHash to the commitqueue, so that the parsing processes can process this commit. Second it
 creates objects of type <a class="reference internal" href="#pyvcsshark.parser.models.BranchModel" title="pyvcsshark.parser.models.BranchModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.BranchModel</span></code></a> and stores it in the dictionary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>commit_hash</strong> – revision hash of the commit to be processed</li>
-<li><strong>branch</strong> – branch that should be added for the commit</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>commit_hash</strong> – revision hash of the commit to be processed</p></li>
+<li><p><strong>branch</strong> – branch that should be added for the commit</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.add_tag">
-<code class="descname">add_tag</code><span class="sig-paren">(</span><em>tagged_commit</em>, <em>tag_name</em>, <em>tag_object</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.add_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.add_tag" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_tag</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tagged_commit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.add_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.add_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates objects of type <a class="reference internal" href="#pyvcsshark.parser.models.TagModel" title="pyvcsshark.parser.models.TagModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.TagModel</span></code></a> and stores it in the dictionary mentioned above.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tagged_commit</strong> – revision hash of the commit to be processed</li>
-<li><strong>tag_name</strong> – name of the tag that should be added</li>
-<li><strong>tag_object</strong> – in git it is possible to annotate tags. If a tag is annotated,
-we get a tag object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Tag</span></code></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tagged_commit</strong> – revision hash of the commit to be processed</p></li>
+<li><p><strong>tag_name</strong> – name of the tag that should be added</p></li>
+<li><p><strong>tag_object</strong> – in git it is possible to annotate tags. If a tag is annotated,
+we get a tag object of class <a class="reference external" href="https://www.pygit2.org/objects.html#pygit2.Tag" title="(in pygit2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Tag</span></code></a></p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">It can happen, that people committed to a tag and therefore created         a “tag-branch” which is normally not possible in git. Therefore, we go through all tags and check         if they respond to a commit, which is already in the dictionary.         If <strong>yes</strong> -&gt; we <strong>tag</strong> that commit         If <strong>no</strong> -&gt; we <strong>ignore</strong> it</p>
+<p class="admonition-title">Note</p>
+<p>It can happen, that people committed to a tag and therefore created         a “tag-branch” which is normally not possible in git. Therefore, we go through all tags and check         if they respond to a commit, which is already in the dictionary.         If <strong>yes</strong> -&gt; we <strong>tag</strong> that commit         If <strong>no</strong> -&gt; we <strong>ignore</strong> it</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.detect">
-<code class="descname">detect</code><span class="sig-paren">(</span><em>repository_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.detect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.detect" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">detect</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repository_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.detect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.detect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Try to detect the repository, if its not there an exception is raised and therfore false can be returned</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.finalize">
-<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.finalize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">finalize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.finalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.finalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finalization process for parser</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.get_project_url">
-<code class="descname">get_project_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.get_project_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.get_project_url" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_project_url</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.get_project_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.get_project_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the url of the project, which is processed</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.initialize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">initialize</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the parser. It gets all the branch and tag information and puts it into two different
 locations: First the commit id is put into the commitqueue for the processing with the parsing processes.
 Second a dictionary is created, which holds the information of which branches a commit is on and which tags it
 has</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.parse">
-<code class="descname">parse</code><span class="sig-paren">(</span><em>repository_path</em>, <em>datastore</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.parse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">parse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repository_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datastore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cores_per_job</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#GitParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.parse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parses the repository, which is located at the repository_path and save the parsed commits in the
 datastore, by calling the <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore.add_commit" title="pyvcsshark.datastores.basestore.BaseStore.add_commit"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.add_commit()</span></code></a> method of the chosen
 datastore. It mostly uses pygit2 (see: <a class="reference external" href="http://www.pygit2.org/">http://www.pygit2.org/</a>).</p>
 <p>The parsing process is divided into several steps:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li>A list of all branches and tags are created</li>
-<li>All branches and tags are parsed. So we create dictionary of all commits with their corresponding tags            and branches and add all revision hashes to the commitqueue</li>
-<li>Add the poison pills for terminating of the parsing process to the commit_queue</li>
-<li>Create processes of class <a class="reference internal" href="#pyvcsshark.parser.gitparser.CommitParserProcess" title="pyvcsshark.parser.gitparser.CommitParserProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.gitparser.CommitParserProcess</span></code></a>, which parse all            commits.</li>
+<li><p>A list of all branches and tags are created</p></li>
+<li><p>All branches and tags are parsed. So we create dictionary of all commits with their corresponding tags            and branches and add all revision hashes to the commitqueue</p></li>
+<li><p>Add the poison pills for terminating of the parsing process to the commit_queue</p></li>
+<li><p>Create processes of class <a class="reference internal" href="#pyvcsshark.parser.gitparser.CommitParserProcess" title="pyvcsshark.parser.gitparser.CommitParserProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.gitparser.CommitParserProcess</span></code></a>, which parse all            commits.</p></li>
 </ol>
 </div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>repository_path</strong> – Path to the repository</li>
-<li><strong>datastore</strong> – Datastore used to save the data to</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>repository_path</strong> – Path to the repository</p></li>
+<li><p><strong>datastore</strong> – Datastore used to save the data to</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.GitParser.repository_type">
-<code class="descname">repository_type</code><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.repository_type" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">repository_type</span></code><a class="headerlink" href="#pyvcsshark.parser.gitparser.GitParser.repository_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Must return the type for the given repository. E.g. <strong>git</strong></p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pyvcsshark.parser.gitparser.CommitParserProcess">
-<em class="property">class </em><code class="descclassname">pyvcsshark.parser.gitparser.</code><code class="descname">CommitParserProcess</code><span class="sig-paren">(</span><em>queue</em>, <em>commits_to_be_processed</em>, <em>repository</em>, <em>datastore</em>, <em>lock</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pyvcsshark.parser.gitparser.</span></code><code class="sig-name descname"><span class="pre">CommitParserProcess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commits_to_be_processed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datastore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lock</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess" title="Permalink to this definition">¶</a></dt>
 <dd><p>A process, which inherits from <a class="reference external" href="https://docs.python.org/3.5/library/multiprocessing.html#multiprocessing.Process" title="(in Python v3.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.Process</span></code></a>, that will parse the branches it 
 gets from the queue and call the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> function to add
 the commits</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Property logger:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><p class="first">logger acquired by calling logging.getLogger(“parser”)</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>queue</strong> – queue, where the different commithashes are stored in</li>
-<li><strong>commits_to_be_processed</strong> – dictionary, which contains information about the branches and tags of each commit</li>
-<li><strong>repository</strong> – repository object of type <a class="reference external" href="https://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Repository</span></code></a></li>
-<li><strong>datastore</strong> – object, that is a subclass of <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore" title="pyvcsshark.datastores.basestore.BaseStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore</span></code></a></li>
-<li><strong>lock</strong> – lock that is used, so that only one process at a time is calling     the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> function</li>
+<dl class="field-list simple">
+<dt class="field-odd">Property logger</dt>
+<dd class="field-odd"><p>logger acquired by calling logging.getLogger(“parser”)</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>queue</strong> – queue, where the different commithashes are stored in</p></li>
+<li><p><strong>commits_to_be_processed</strong> – dictionary, which contains information about the branches and tags of each commit</p></li>
+<li><p><strong>repository</strong> – repository object of type <a class="reference external" href="https://www.pygit2.org/repository.html#pygit2.Repository" title="(in pygit2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Repository</span></code></a></p></li>
+<li><p><strong>datastore</strong> – object, that is a subclass of <a class="reference internal" href="#pyvcsshark.datastores.basestore.BaseStore" title="pyvcsshark.datastores.basestore.BaseStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore</span></code></a></p></li>
+<li><p><strong>lock</strong> – lock that is used, so that only one process at a time is calling     the <code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> function</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.CommitParserProcess.create_hunks">
-<code class="descname">create_hunks</code><span class="sig-paren">(</span><em>hunks</em>, <em>initial_commit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.create_hunks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.create_hunks" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">create_hunks</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hunks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_commit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.create_hunks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.create_hunks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates the diff in the unified format (see: <a class="reference external" href="https://en.wikipedia.org/wiki/Diff#Unified_format">https://en.wikipedia.org/wiki/Diff#Unified_format</a>)</p>
 <p>If we have the initial commit, we need to turn around the hunk.* attributes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>hunks</strong> – list of objects of class <a class="reference external" href="https://www.pygit2.org/diff.html#pygit2.DiffHunk" title="(in pygit2 v0.27)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.DiffHunk</span></code></a></li>
-<li><strong>initial_commit</strong> – indicates if we have an initial commit</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hunks</strong> – list of objects of class <a class="reference external" href="https://www.pygit2.org/diff.html#pygit2.DiffHunk" title="(in pygit2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.DiffHunk</span></code></a></p></li>
+<li><p><strong>initial_commit</strong> – indicates if we have an initial commit</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.CommitParserProcess.get_changed_files_for_initial_commit">
-<code class="descname">get_changed_files_for_initial_commit</code><span class="sig-paren">(</span><em>commit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.get_changed_files_for_initial_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.get_changed_files_for_initial_commit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_changed_files_for_initial_commit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.get_changed_files_for_initial_commit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.get_changed_files_for_initial_commit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Special function for the initial commit, as we need to diff against the empty tree. Creates
 the changed files list, where objects of class <a class="reference internal" href="#pyvcsshark.parser.models.FileModel" title="pyvcsshark.parser.models.FileModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.FileModel</span></code></a> are added.
 For every changed file in the initial commit.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>commit</strong> – commit of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Commit</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>commit</strong> – commit of type <a class="reference external" href="https://www.pygit2.org/objects.html#pygit2.Commit" title="(in pygit2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Commit</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.CommitParserProcess.get_changed_files_with_similiarity">
-<code class="descname">get_changed_files_with_similiarity</code><span class="sig-paren">(</span><em>parent</em>, <em>commit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.get_changed_files_with_similiarity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.get_changed_files_with_similiarity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_changed_files_with_similiarity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.get_changed_files_with_similiarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.get_changed_files_with_similiarity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a list of changed files of the class <a class="reference internal" href="#pyvcsshark.parser.models.FileModel" title="pyvcsshark.parser.models.FileModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.FileModel</span></code></a>. For every
 changed file in the commit such an object is created. Furthermore, hunks are saved an each file is tested for
 similarity to detect copy and move operations</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parent</strong> – Object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Commit</span></code>, that represents the parent commit</li>
-<li><strong>commit</strong> – Object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Commit</span></code>, that represents the child commit</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> – Object of class <a class="reference external" href="https://www.pygit2.org/objects.html#pygit2.Commit" title="(in pygit2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Commit</span></code></a>, that represents the parent commit</p></li>
+<li><p><strong>commit</strong> – Object of class <a class="reference external" href="https://www.pygit2.org/objects.html#pygit2.Commit" title="(in pygit2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Commit</span></code></a>, that represents the child commit</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.CommitParserProcess.parse_commit">
-<code class="descname">parse_commit</code><span class="sig-paren">(</span><em>commit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.parse_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.parse_commit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">parse_commit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.parse_commit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.parse_commit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for parsing a commit.</p>
 <ol class="arabic simple">
-<li>changedFiles are created (type: list of <a class="reference internal" href="#pyvcsshark.parser.models.FileModel" title="pyvcsshark.parser.models.FileModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.FileModel</span></code></a>)</li>
-<li>author and commiter are created (type: <a class="reference internal" href="#pyvcsshark.parser.models.PeopleModel" title="pyvcsshark.parser.models.PeopleModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.PeopleModel</span></code></a>)</li>
-<li>parents are added (list of strings)</li>
-<li>commit model is created (type: <a class="reference internal" href="#pyvcsshark.parser.models.CommitModel" title="pyvcsshark.parser.models.CommitModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.CommitModel</span></code></a>)</li>
-<li><code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> is called</li>
+<li><p>changedFiles are created (type: list of <a class="reference internal" href="#pyvcsshark.parser.models.FileModel" title="pyvcsshark.parser.models.FileModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.FileModel</span></code></a>)</p></li>
+<li><p>author and commiter are created (type: <a class="reference internal" href="#pyvcsshark.parser.models.PeopleModel" title="pyvcsshark.parser.models.PeopleModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.PeopleModel</span></code></a>)</p></li>
+<li><p>parents are added (list of strings)</p></li>
+<li><p>commit model is created (type: <a class="reference internal" href="#pyvcsshark.parser.models.CommitModel" title="pyvcsshark.parser.models.CommitModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvcsshark.parser.models.CommitModel</span></code></a>)</p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> is called</p></li>
 </ol>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>commit</strong> – commit object of type <code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Commit</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>commit</strong> – commit object of type <a class="reference external" href="https://www.pygit2.org/objects.html#pygit2.Commit" title="(in pygit2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pygit2.Commit</span></code></a></p>
+</dd>
+</dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The call to <code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> is thread/process safe, as a        lock is used to regulate the calls</p>
+<p class="admonition-title">Note</p>
+<p>The call to <code class="xref py py-func docutils literal notranslate"><span class="pre">pyvcsshark.datastores.basestore.BaseStore.addCommit()</span></code> is thread/process safe, as a        lock is used to regulate the calls</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pyvcsshark.parser.gitparser.CommitParserProcess.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.run" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvcsshark/parser/gitparser.html#CommitParserProcess.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvcsshark.parser.gitparser.CommitParserProcess.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>The process gets a commit out of the queue and processes it.
 We use the poisonous pill technique here. Means, our queue has #Processes times “None” in it in the end.
 If a process encounters that None, he will stop and terminate.</p>
@@ -1078,27 +954,28 @@ If a process encounters that None, he will stop and terminate.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="extension.html" class="btn btn-neutral" title="2. How to Extend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="extension.html" class="btn btn-neutral float-left" title="2. How to Extend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Fabian Trautsch
+        &#169; Copyright 2017, Fabian Trautsch.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -1107,26 +984,16 @@ If a process encounters that None, he will stop and terminate.</p>
   </div>
   
 
-
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
