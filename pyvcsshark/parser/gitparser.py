@@ -1,19 +1,19 @@
 import sys
-
-from pyvcsshark.parser.baseparser import BaseParser
-import pygit2
 import logging
 import re
 import uuid
 import multiprocessing
 
+import pygit2
+
+from pyvcsshark.parser.baseparser import BaseParser
 from pyvcsshark.parser.models import BranchModel, PeopleModel, TagModel, FileModel, CommitModel, Hunk, BranchTipModel
 
 
 class GitParser(BaseParser):
     """ Parser for git repositories. The general parsing process is described in
     :func:`pyvcsshark.parser.gitparser.GitParser.parse`.
-    
+
     :property SIMILARITY_THRESHOLD: sets the threshold for deciding if a file is similar to another. Default: 50%
     :func:`multiprocessing.cpu_count()`.
     :property repository: object of class :class:`pygit2.Repository`, which represents the repository
@@ -25,9 +25,9 @@ class GitParser(BaseParser):
     :property datastore: datastore, where the commits should be saved to
     :property commit_queue: object of class :class:`multiprocessing.JoinableQueue`, where commits are stored in that\
     can be parsed
-    
+
     """
-    
+
     # Includes rename and copy threshold, 50% is the default git threshold
     SIMILARITY_THRESHOLD = 50
 
@@ -51,7 +51,7 @@ class GitParser(BaseParser):
         except KeyError:
             # repository is only local
             pass
-        
+
         return url
 
     def finalize(self):
@@ -212,16 +212,16 @@ class GitParser(BaseParser):
         """ Parses the repository, which is located at the repository_path and save the parsed commits in the
         datastore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen
         datastore. It mostly uses pygit2 (see: http://www.pygit2.org/).
-        
+
         The parsing process is divided into several steps:
-        
+
             1. A list of all branches and tags are created
             2. All branches and tags are parsed. So we create dictionary of all commits with their corresponding tags\
             and branches and add all revision hashes to the commitqueue
             3. Add the poison pills for terminating of the parsing process to the commit_queue
             4. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParserProcess`, which parse all\
             commits.
-        
+
         :param repository_path: Path to the repository
         :param datastore: Datastore used to save the data to
         """
@@ -253,12 +253,12 @@ class GitParser(BaseParser):
 
 class CommitParserProcess(multiprocessing.Process):
     """
-    A process, which inherits from :class:`multiprocessing.Process`, that will parse the branches it 
+    A process, which inherits from :class:`multiprocessing.Process`, that will parse the branches it
     gets from the queue and call the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function to add
     the commits
-    
+
     :property logger: logger acquired by calling logging.getLogger("parser")
-    
+
     :param queue: queue, where the different commithashes are stored in
     :param commits_to_be_processed: dictionary, which contains information about the branches and tags of each commit
     :param repository: repository object of type :class:`pygit2.Repository`
@@ -266,7 +266,7 @@ class CommitParserProcess(multiprocessing.Process):
     :param lock: lock that is used, so that only one process at a time is calling \
     the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function
     """
-    
+
     def __init__(self, queue, commits_to_be_processed, repository, datastore, lock):
         multiprocessing.Process.__init__(self)
         self.queue = queue
@@ -275,7 +275,7 @@ class CommitParserProcess(multiprocessing.Process):
         self.logger = logging.getLogger("parser")
         self.repository = repository
         self.lock = lock
-        
+
     def run(self):
         """
         The process gets a commit out of the queue and processes it.
@@ -332,12 +332,12 @@ class CommitParserProcess(multiprocessing.Process):
                                    self.commits_to_be_processed[string_commit_hash]['tags'], parent_ids,
                                    author_model, committer_model, commit.message, changed_files, commit.author.time,
                                    commit.author.offset, commit.committer.time, commit.committer.offset)
-        
+
         # Make sure, that addCommit is only called by one process at a time
         self.lock.acquire()
         self.datastore.add_commit(commit_model)
         self.lock.release()
-        
+
         del self.commits_to_be_processed[string_commit_hash]
 
     def create_hunks(self, hunks, initial_commit=False):
@@ -388,14 +388,14 @@ class CommitParserProcess(multiprocessing.Process):
         """ Creates a list of changed files of the class :class:`pyvcsshark.parser.models.FileModel`. For every
         changed file in the commit such an object is created. Furthermore, hunks are saved an each file is tested for
         similarity to detect copy and move operations
-        
+
         :param parent: Object of class :class:`pygit2.Commit`, that represents the parent commit
         :param commit: Object of class :class:`pygit2.Commit`, that represents the child commit
         """
-        
+
         changed_files = []
         diff = self.repository.diff(parent, commit, context_lines=0, interhunk_lines=1)
-                            
+
         opts = pygit2.GIT_DIFF_FIND_RENAMES | pygit2.GIT_DIFF_FIND_COPIES
         diff.find_similar(opts, GitParser.SIMILARITY_THRESHOLD, GitParser.SIMILARITY_THRESHOLD)
 
@@ -429,11 +429,11 @@ class CommitParserProcess(multiprocessing.Process):
                                      patch.line_stats[1], patch.line_stats[2],
                                      patch.delta.is_binary, mode,
                                      self.create_hunks(patch.hunks), parent_revision_hash=str(parent.id))
-            
+
             # only add oldpath if file was copied/renamed
             if mode in ['C', 'R']:
                 changed_file.oldPath = patch.delta.old_file.path
-    
+
             already_checked_file_paths.add(patch.delta.new_file.path)
             changed_files.append(changed_file)
         return changed_files
