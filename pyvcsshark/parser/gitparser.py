@@ -1,4 +1,5 @@
 import sys
+import os
 import logging
 import re
 import uuid
@@ -60,6 +61,9 @@ class GitParser(BaseParser):
 
     def detect(self, repository_path):
         """Try to detect the repository, if its not there an exception is raised and therfore false can be returned"""
+        # new versions of pygit2 just set backend to None if repo does not exist
+        if not os.path.exists(repository_path):
+            return False
         try:
             discovered_path = pygit2.discover_repository(repository_path)
             self.repository = pygit2.Repository(discovered_path)
