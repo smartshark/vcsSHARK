@@ -17,15 +17,12 @@ class GitParserTest(unittest.TestCase):
 
         self.parser = GitParser()
         self.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository")
-        pass
 
     def test_detect(self):
         self.assertFalse(self.parser.detect("./nonsense/path"))
-        pass
 
     def test_repositoryType(self):
         self.assertEqual(self.parser.repository_type, "git")
-        pass
 
 
 class GitParserCommitsTest(GitParserTest):
