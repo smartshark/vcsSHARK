@@ -1,75 +1,35 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>pyvcsshark.parser.gitparser &mdash; vcsSHARK 2.0.7 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>pyvcsshark.parser.gitparser &mdash; vcsSHARK 2.1.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
-    
+    <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../../index.html" class="icon icon-home"> vcsSHARK
-          
-
-          
-            
             <img src="../../../_static/SmartSHARK_read_the_docs_logo.png" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                2.0
+                2.1
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,104 +37,55 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">1. Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../extension.html">2. How to Extend</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">3. API Documentation</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../index.html">vcsSHARK</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../../index.html">Module code</a> &raquo;</li>
-        
       <li>pyvcsshark.parser.gitparser</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for pyvcsshark.parser.gitparser</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="kn">from</span> <span class="nn">pyvcsshark.parser.baseparser</span> <span class="kn">import</span> <span class="n">BaseParser</span>
-<span class="kn">import</span> <span class="nn">pygit2</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 
+<span class="kn">import</span> <span class="nn">pygit2</span>
+
+<span class="kn">from</span> <span class="nn">pyvcsshark.parser.baseparser</span> <span class="kn">import</span> <span class="n">BaseParser</span>
 <span class="kn">from</span> <span class="nn">pyvcsshark.parser.models</span> <span class="kn">import</span> <span class="n">BranchModel</span><span class="p">,</span> <span class="n">PeopleModel</span><span class="p">,</span> <span class="n">TagModel</span><span class="p">,</span> <span class="n">FileModel</span><span class="p">,</span> <span class="n">CommitModel</span><span class="p">,</span> <span class="n">Hunk</span><span class="p">,</span> <span class="n">BranchTipModel</span>
 
 
 <div class="viewcode-block" id="GitParser"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser">[docs]</a><span class="k">class</span> <span class="nc">GitParser</span><span class="p">(</span><span class="n">BaseParser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Parser for git repositories. The general parsing process is described in</span>
 <span class="sd">    :func:`pyvcsshark.parser.gitparser.GitParser.parse`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    :property SIMILARITY_THRESHOLD: sets the threshold for deciding if a file is similar to another. Default: 50%</span>
 <span class="sd">    :func:`multiprocessing.cpu_count()`.</span>
 <span class="sd">    :property repository: object of class :class:`pygit2.Repository`, which represents the repository</span>
@@ -186,9 +97,9 @@
 <span class="sd">    :property datastore: datastore, where the commits should be saved to</span>
 <span class="sd">    :property commit_queue: object of class :class:`multiprocessing.JoinableQueue`, where commits are stored in that\</span>
 <span class="sd">    can be parsed</span>
-<span class="sd">    </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="c1"># Includes rename and copy threshold, 50% is the default git threshold</span>
     <span class="n">SIMILARITY_THRESHOLD</span> <span class="o">=</span> <span class="mi">50</span>
 
@@ -212,7 +123,7 @@
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="c1"># repository is only local</span>
             <span class="k">pass</span>
-        
+
         <span class="k">return</span> <span class="n">url</span></div>
 
 <div class="viewcode-block" id="GitParser.finalize"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.finalize">[docs]</a>    <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -221,6 +132,9 @@
 
 <div class="viewcode-block" id="GitParser.detect"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.GitParser.detect">[docs]</a>    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repository_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Try to detect the repository, if its not there an exception is raised and therfore false can be returned&quot;&quot;&quot;</span>
+        <span class="c1"># new versions of pygit2 just set backend to None if repo does not exist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">repository_path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">discovered_path</span> <span class="o">=</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">discover_repository</span><span class="p">(</span><span class="n">repository_path</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">repository</span> <span class="o">=</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">Repository</span><span class="p">(</span><span class="n">discovered_path</span><span class="p">)</span>
@@ -373,16 +287,16 @@
         <span class="sd">&quot;&quot;&quot; Parses the repository, which is located at the repository_path and save the parsed commits in the</span>
 <span class="sd">        datastore, by calling the :func:`pyvcsshark.datastores.basestore.BaseStore.add_commit` method of the chosen</span>
 <span class="sd">        datastore. It mostly uses pygit2 (see: http://www.pygit2.org/).</span>
-<span class="sd">        </span>
+
 <span class="sd">        The parsing process is divided into several steps:</span>
-<span class="sd">        </span>
+
 <span class="sd">            1. A list of all branches and tags are created</span>
 <span class="sd">            2. All branches and tags are parsed. So we create dictionary of all commits with their corresponding tags\</span>
 <span class="sd">            and branches and add all revision hashes to the commitqueue</span>
 <span class="sd">            3. Add the poison pills for terminating of the parsing process to the commit_queue</span>
 <span class="sd">            4. Create processes of class :class:`pyvcsshark.parser.gitparser.CommitParserProcess`, which parse all\</span>
 <span class="sd">            commits.</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param repository_path: Path to the repository</span>
 <span class="sd">        :param datastore: Datastore used to save the data to</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -414,12 +328,12 @@
 
 <div class="viewcode-block" id="CommitParserProcess"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.CommitParserProcess">[docs]</a><span class="k">class</span> <span class="nc">CommitParserProcess</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A process, which inherits from :class:`multiprocessing.Process`, that will parse the branches it </span>
+<span class="sd">    A process, which inherits from :class:`multiprocessing.Process`, that will parse the branches it</span>
 <span class="sd">    gets from the queue and call the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function to add</span>
 <span class="sd">    the commits</span>
-<span class="sd">    </span>
+
 <span class="sd">    :property logger: logger acquired by calling logging.getLogger(&quot;parser&quot;)</span>
-<span class="sd">    </span>
+
 <span class="sd">    :param queue: queue, where the different commithashes are stored in</span>
 <span class="sd">    :param commits_to_be_processed: dictionary, which contains information about the branches and tags of each commit</span>
 <span class="sd">    :param repository: repository object of type :class:`pygit2.Repository`</span>
@@ -427,7 +341,7 @@
 <span class="sd">    :param lock: lock that is used, so that only one process at a time is calling \</span>
 <span class="sd">    the :func:`pyvcsshark.datastores.basestore.BaseStore.addCommit` function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">commits_to_be_processed</span><span class="p">,</span> <span class="n">repository</span><span class="p">,</span> <span class="n">datastore</span><span class="p">,</span> <span class="n">lock</span><span class="p">):</span>
         <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
@@ -436,7 +350,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;parser&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repository</span> <span class="o">=</span> <span class="n">repository</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">lock</span>
-        
+
 <div class="viewcode-block" id="CommitParserProcess.run"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.CommitParserProcess.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The process gets a commit out of the queue and processes it.</span>
@@ -493,12 +407,12 @@
                                    <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">[</span><span class="n">string_commit_hash</span><span class="p">][</span><span class="s1">&#39;tags&#39;</span><span class="p">],</span> <span class="n">parent_ids</span><span class="p">,</span>
                                    <span class="n">author_model</span><span class="p">,</span> <span class="n">committer_model</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">changed_files</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
                                    <span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">committer</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
-        
+
         <span class="c1"># Make sure, that addCommit is only called by one process at a time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datastore</span><span class="o">.</span><span class="n">add_commit</span><span class="p">(</span><span class="n">commit_model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-        
+
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">commits_to_be_processed</span><span class="p">[</span><span class="n">string_commit_hash</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="CommitParserProcess.create_hunks"><a class="viewcode-back" href="../../../api.html#pyvcsshark.parser.gitparser.CommitParserProcess.create_hunks">[docs]</a>    <span class="k">def</span> <span class="nf">create_hunks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hunks</span><span class="p">,</span> <span class="n">initial_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -549,14 +463,14 @@
         <span class="sd">&quot;&quot;&quot; Creates a list of changed files of the class :class:`pyvcsshark.parser.models.FileModel`. For every</span>
 <span class="sd">        changed file in the commit such an object is created. Furthermore, hunks are saved an each file is tested for</span>
 <span class="sd">        similarity to detect copy and move operations</span>
-<span class="sd">        </span>
+
 <span class="sd">        :param parent: Object of class :class:`pygit2.Commit`, that represents the parent commit</span>
 <span class="sd">        :param commit: Object of class :class:`pygit2.Commit`, that represents the child commit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="n">changed_files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">commit</span><span class="p">,</span> <span class="n">context_lines</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">interhunk_lines</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                            
+
         <span class="n">opts</span> <span class="o">=</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">GIT_DIFF_FIND_RENAMES</span> <span class="o">|</span> <span class="n">pygit2</span><span class="o">.</span><span class="n">GIT_DIFF_FIND_COPIES</span>
         <span class="n">diff</span><span class="o">.</span><span class="n">find_similar</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">GitParser</span><span class="o">.</span><span class="n">SIMILARITY_THRESHOLD</span><span class="p">,</span> <span class="n">GitParser</span><span class="o">.</span><span class="n">SIMILARITY_THRESHOLD</span><span class="p">)</span>
 
@@ -590,57 +504,41 @@
                                      <span class="n">patch</span><span class="o">.</span><span class="n">line_stats</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">patch</span><span class="o">.</span><span class="n">line_stats</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
                                      <span class="n">patch</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">is_binary</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">create_hunks</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">hunks</span><span class="p">),</span> <span class="n">parent_revision_hash</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
-            
+
             <span class="c1"># only add oldpath if file was copied/renamed</span>
             <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">]:</span>
                 <span class="n">changed_file</span><span class="o">.</span><span class="n">oldPath</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">old_file</span><span class="o">.</span><span class="n">path</span>
-    
+
             <span class="n">already_checked_file_paths</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">new_file</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
             <span class="n">changed_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">changed_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">changed_files</span></div></div>
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2017, Fabian Trautsch.
-
-    </p>
+    <p>&#169; Copyright 2017, Fabian Trautsch.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
