@@ -10,58 +10,58 @@ from tests.datastoremock import DatastoreMock
 class GitParserTest(unittest.TestCase):
 
     parser = None
-    
+
     def setUp(self):
         # Setup logging
         logging.basicConfig(level=logging.ERROR)
-        
+
         self.parser = GitParser()
         self.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository")
         pass
-    
+
     def test_detect(self):
         self.assertFalse(self.parser.detect("./nonsense/path"))
         pass
-   
+
     def test_repositoryType(self):
         self.assertEqual(self.parser.repository_type, "git")
         pass
-            
+
 
 class GitParserCommitsTest(GitParserTest):
-    
+
     list_of_commits = []
-    
+
     @classmethod
     def setUpClass(cls):
         # Setup logging
         logging.basicConfig(level=logging.ERROR)
-        
+
         cls.parser = GitParser()
         cls.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository")
         cls.parser.initialize()
-                
+
         datastore = DatastoreMock()
         cls.parser.parse(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository", datastore, 2)
 
         # get the commits from our mockdatastore
         queue = datastore.get_commit_queue()
-        
+
         while not queue.empty():
             cls.list_of_commits.append(queue.get())
-            
+
         # sort the generated list
         cls.list_of_commits.sort(key=lambda x: x.committerDate)
 
     def test_parsing_commit1(self):
         commit1 = self.list_of_commits[0]
-        
+
         # Checking commit attributes
         self.assertEqual("3c0a6fc133b8b50b8c217642fef7eb948f29b690", commit1.id)
         self.assertListEqual([], commit1.parents)
         self.assertEqual("first commit\n", commit1.message)
         self.assertListEqual([], commit1.tags)
-        
+
         # Checking branches
         list_of_branch_names = []
         for branchModel in commit1.branches:
@@ -71,24 +71,24 @@ class GitParserCommitsTest(GitParserTest):
         self.assertIn("refs/heads/master", list_of_branch_names)
         self.assertIn("refs/remotes/origin/HEAD", list_of_branch_names)
         self.assertIn("refs/remotes/origin/master", list_of_branch_names)
-        
+
         # Check times
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453374841), commit1.authorDate)
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453374841), commit1.committerDate)
         self.assertEqual(60, commit1.authorOffset)
         self.assertEqual(60, commit1.committerOffset)
-        
+
         # Check author
         self.assertEqual("Fabian Trautsch", commit1.author.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.author.email)
-        
+
         # Check committer
         self.assertEqual("Fabian Trautsch", commit1.committer.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.committer.email)
-        
+
         # Check changed files
         self.assertEqual(3, len(commit1.changedFiles))
-        
+
         # lib.jar
         test_file = [file for file in commit1.changedFiles if file.path == "lib.jar"][0]
         self.assertEqual("lib.jar", test_file.path)
@@ -102,7 +102,7 @@ class GitParserCommitsTest(GitParserTest):
 
         # Hunks
         self.assertEqual(len(test_file.hunks), 0)
-        
+
         # test.txt
         test_file = [file for file in commit1.changedFiles if file.path == "test.txt"][0]
         self.assertEqual("test.txt", test_file.path)
@@ -121,7 +121,7 @@ class GitParserCommitsTest(GitParserTest):
         self.assertEqual(1, test_file.hunks[0].new_start)
         self.assertEqual(0, test_file.hunks[0].old_start)
         self.assertEqual(0, test_file.hunks[0].old_lines)
-        self.assertEqual("+test1\n", test_file.hunks[0].content)      
+        self.assertEqual("+test1\n", test_file.hunks[0].content)
 
         # test2.txt
         test_file = [file for file in commit1.changedFiles if file.path == "test2.txt"][0]
@@ -144,13 +144,13 @@ class GitParserCommitsTest(GitParserTest):
 
     def test_parsing_commit2(self):
         commit1 = self.list_of_commits[1]
-        
+
         # Checking commit attributes
         self.assertEqual("022a1584a31ccc0816d20bfbbeb5c45aa290c7dd", commit1.id)
         self.assertListEqual(['3c0a6fc133b8b50b8c217642fef7eb948f29b690'], commit1.parents)
         self.assertEqual("second commit\n", commit1.message)
         self.assertListEqual([], commit1.tags)
-        
+
         # Checking branches
         list_of_branch_names = []
         for branchModel in commit1.branches:
@@ -160,7 +160,7 @@ class GitParserCommitsTest(GitParserTest):
         self.assertIn("refs/heads/master", list_of_branch_names)
         self.assertIn("refs/remotes/origin/HEAD", list_of_branch_names)
         self.assertIn("refs/remotes/origin/master", list_of_branch_names)
-        
+
         # Check times
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453375367), commit1.authorDate)
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453375367), commit1.committerDate)
@@ -170,14 +170,14 @@ class GitParserCommitsTest(GitParserTest):
         # Check author
         self.assertEqual("Fabian Trautsch", commit1.author.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.author.email)
-        
+
         # Check committer
         self.assertEqual("Fabian Trautsch", commit1.committer.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.committer.email)
-        
+
         # Check changed files
         self.assertEqual(3, len(commit1.changedFiles))
-        
+
         # test3.txt
         test_file = [file for file in commit1.changedFiles if file.path == "test3.txt"][0]
         self.assertEqual("test3.txt", test_file.path)
@@ -191,7 +191,7 @@ class GitParserCommitsTest(GitParserTest):
 
         # Hunks
         self.assertEqual(len(test_file.hunks), 1)
-        
+
         # test.txt
         test_file = [file for file in commit1.changedFiles if file.path == "test.txt"][0]
         self.assertEqual("test.txt", test_file.path)
@@ -209,8 +209,8 @@ class GitParserCommitsTest(GitParserTest):
         self.assertEqual(0, test_file.hunks[0].new_start)
         self.assertEqual(1, test_file.hunks[0].old_start)
         self.assertEqual(1, test_file.hunks[0].old_lines)
-        self.assertEqual("-test1\n", test_file.hunks[0].content)        
-        
+        self.assertEqual("-test1\n", test_file.hunks[0].content)
+
         # test2.txt
         test_file = [file for file in commit1.changedFiles if file.path == "test2.txt"][0]
         self.assertEqual("test2.txt", test_file.path)
@@ -229,10 +229,10 @@ class GitParserCommitsTest(GitParserTest):
         self.assertEqual(1, test_file.hunks[0].old_start)
         self.assertEqual(1, test_file.hunks[0].old_lines)
         self.assertEqual("-test2\n+test\n", test_file.hunks[0].content)
-        
+
     def test_parsing_commit3(self):
         commit1 = self.list_of_commits[2]
-        
+
         # Checking commit attributes
         self.assertEqual("5ed91aa4557b5042fa7096bf6c69463024c46b6f", commit1.id)
         self.assertListEqual(['022a1584a31ccc0816d20bfbbeb5c45aa290c7dd'], commit1.parents)
@@ -247,24 +247,24 @@ class GitParserCommitsTest(GitParserTest):
         self.assertIn("refs/heads/master", list_of_branch_names)
         self.assertIn("refs/remotes/origin/HEAD", list_of_branch_names)
         self.assertIn("refs/remotes/origin/master", list_of_branch_names)
-        
+
         # Check times
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453375768), commit1.authorDate)
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453375768), commit1.committerDate)
         self.assertEqual(60, commit1.authorOffset)
         self.assertEqual(60, commit1.committerOffset)
-        
+
         # Check author
         self.assertEqual("Fabian Trautsch", commit1.author.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.author.email)
-        
+
         # Check committer
         self.assertEqual("Fabian Trautsch", commit1.committer.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.committer.email)
-        
+
         # Check changed files
         self.assertEqual(1, len(commit1.changedFiles))
-        
+
         # test3.txt
         test_file = [file for file in commit1.changedFiles if file.path == "program.py"][0]
         self.assertEqual("program.py", test_file.path)
@@ -282,17 +282,17 @@ class GitParserCommitsTest(GitParserTest):
         self.assertEqual(1, test_file.hunks[0].new_start)
         self.assertEqual(0, test_file.hunks[0].old_start)
         self.assertEqual(0, test_file.hunks[0].old_lines)
-        self.assertEqual("+import nothing\n", test_file.hunks[0].content)    
-                               
+        self.assertEqual("+import nothing\n", test_file.hunks[0].content)
+
     def test_parsing_commit4(self):
         commit1 = self.list_of_commits[3]
-        
+
         # Checking commit attributes
         self.assertEqual("6fe2eff1f0bbc3220128e082385a01558e3306a6", commit1.id)
         self.assertListEqual(['5ed91aa4557b5042fa7096bf6c69463024c46b6f'], commit1.parents)
         self.assertEqual("moved\n", commit1.message)
         self.assertListEqual([], commit1.tags)
-        
+
         # Checking branches
         list_of_branch_names = []
         for branchModel in commit1.branches:
@@ -302,24 +302,24 @@ class GitParserCommitsTest(GitParserTest):
         self.assertIn("refs/heads/master", list_of_branch_names)
         self.assertIn("refs/remotes/origin/HEAD", list_of_branch_names)
         self.assertIn("refs/remotes/origin/master", list_of_branch_names)
-        
+
         # Check times
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453379814), commit1.authorDate)
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453379814), commit1.committerDate)
         self.assertEqual(60, commit1.authorOffset)
         self.assertEqual(60, commit1.committerOffset)
-        
+
         # Check author
         self.assertEqual("Fabian Trautsch", commit1.author.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.author.email)
-        
+
         # Check committer
         self.assertEqual("Fabian Trautsch", commit1.committer.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.committer.email)
-        
+
         # Check changed files
         self.assertEqual(2, len(commit1.changedFiles))
-        
+
         # lib.jar
         test_file = [file for file in commit1.changedFiles if file.path == "libs/lib.jar"][0]
         self.assertEqual("libs/lib.jar", test_file.path)
@@ -347,15 +347,15 @@ class GitParserCommitsTest(GitParserTest):
 
         # hunks
         self.assertEqual(0, len(test_file.hunks))
-        
+
     def test_parsing_commit5(self):
         commit1 = self.list_of_commits[4]
-        
+
         # Checking commit attributes
         self.assertEqual("a8dfa0944a8c3d97f217d34705de2ae1c7e68793", commit1.id)
         self.assertListEqual(['6fe2eff1f0bbc3220128e082385a01558e3306a6'], commit1.parents)
         self.assertEqual("branch3\n", commit1.message)
-        
+
         # Checking branches
         list_of_branch_names = []
         for branchModel in commit1.branches:
@@ -365,24 +365,24 @@ class GitParserCommitsTest(GitParserTest):
         self.assertIn("refs/heads/master", list_of_branch_names)
         self.assertIn("refs/remotes/origin/HEAD", list_of_branch_names)
         self.assertIn("refs/remotes/origin/master", list_of_branch_names)
-        
+
         # Check times
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453380347), commit1.authorDate)
         self.assertEqual(datetime.datetime.utcfromtimestamp(1453380347), commit1.committerDate)
         self.assertEqual(60, commit1.authorOffset)
         self.assertEqual(60, commit1.committerOffset)
-        
+
         # Check author
         self.assertEqual("Fabian Trautsch", commit1.author.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.author.email)
-        
+
         # Check committer
         self.assertEqual("Fabian Trautsch", commit1.committer.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.committer.email)
-        
+
         # Check changed files
         self.assertEqual(1, len(commit1.changedFiles))
-        
+
         # branch1.txt
         test_file = [file for file in commit1.changedFiles if file.path == "branch3.txt"][0]
         self.assertEqual("branch3.txt", test_file.path)
@@ -404,7 +404,7 @@ class GitParserCommitsTest(GitParserTest):
 
     def test_parsing_commit6(self):
         commit1 = self.list_of_commits[5]
-        
+
         # Checking commit attributes
         self.assertEqual("e91b0419196248c664f2b2e06c9a2c97452fda5c", commit1.id)
         self.assertListEqual(['a8dfa0944a8c3d97f217d34705de2ae1c7e68793'], commit1.parents)
@@ -430,14 +430,14 @@ class GitParserCommitsTest(GitParserTest):
         # Check author
         self.assertEqual("Fabian Trautsch", commit1.author.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.author.email)
-        
+
         # Check committer
         self.assertEqual("Fabian Trautsch", commit1.committer.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.committer.email)
 
         # Check changed files
         self.assertEqual(1, len(commit1.changedFiles))
-        
+
         # testbranch3.txt
         test_file = [file for file in commit1.changedFiles if file.path == "testbranch3.txt"][0]
         self.assertEqual("testbranch3.txt", test_file.path)
@@ -459,7 +459,7 @@ class GitParserCommitsTest(GitParserTest):
 
     def test_parsing_commit7(self):
         commit1 = self.list_of_commits[6]
-        
+
         # Checking commit attributes
         self.assertEqual("204d306b10e123f2474612a297b83be6ac79e519", commit1.id)
         self.assertListEqual(['e91b0419196248c664f2b2e06c9a2c97452fda5c'], commit1.parents)
@@ -485,7 +485,7 @@ class GitParserCommitsTest(GitParserTest):
         # Check author
         self.assertEqual("Fabian Trautsch", commit1.author.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.author.email)
-        
+
         # Check committer
         self.assertEqual("Fabian Trautsch", commit1.committer.name)
         self.assertEqual("ftrautsch@googlemail.com", commit1.committer.email)
@@ -515,7 +515,7 @@ class GitParserCommitsTest(GitParserTest):
                          "+line21\n+line22\n+line23\n+line24\n+line25\n+line26\n+line27\n+line28\n+line29\n+line30\n" +
                          "+line31\n+line32\n+line33\n+line34\n+line35\n+line36\n+line37\n+line38\n+line39\n+line40\n",
                          test_file.hunks[0].content)
-        
+
     def test_parsing_commit8(self):
         commit1 = self.list_of_commits[7]
 
