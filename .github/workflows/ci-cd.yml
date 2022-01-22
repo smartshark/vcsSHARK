@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Checkout Submodules
-        uses: actions/checkout@v2
         with:
           submodules: recursive
       - name: Set up Python ${{ matrix.python_version }}
@@ -64,8 +62,6 @@ jobs:
             libgit2_version: 0.26.2
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Checkout Submodules
         uses: actions/checkout@v2
         with:
           submodules: recursive
