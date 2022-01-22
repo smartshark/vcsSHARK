@@ -11,17 +11,13 @@ class GitParserTest(unittest.TestCase):
 
     parser = None
 
-    def setUp(self):
-        # Setup logging
-        logging.basicConfig(level=logging.ERROR)
-
-        self.parser = GitParser()
-        self.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository")
-
     def test_detect(self):
+        self.parser = GitParser()
         self.assertFalse(self.parser.detect("./nonsense/path"))
 
     def test_repositoryType(self):
+        self.parser = GitParser()
+        self.parser.detect(os.path.dirname(os.path.realpath(__file__))+"/data/testdatarepository")
         self.assertEqual(self.parser.repository_type, "git")
 
 
