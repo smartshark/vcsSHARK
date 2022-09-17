@@ -154,9 +154,10 @@ class GitParser(BaseParser):
                     self.branches[branch_name] = {'target': str(branch.target), 'is_origin_head': False}
 
         # set origin_head we know its there and that it has a target that we also know
-        om = self.repository.branches['origin/HEAD']
-        om_target = om.target.replace('refs/remotes/', '')
-        self.branches[om_target]['is_origin_head'] = True
+        if self.repository.branches.get('origin/HEAD')!= None:
+            om = self.repository.branches['origin/HEAD']
+            om_target = om.target.replace('refs/remotes/', '')
+            self.branches[om_target]['is_origin_head'] = True
 
     def initialize(self):
         """

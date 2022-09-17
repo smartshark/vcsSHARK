@@ -57,7 +57,13 @@ class Application(object):
         # Set projectName, url and repository type, as they
         # are most likely required for storing into a datastore (e.g. creating a project table)
         parser.initialize()
-        datastore.initialize(config, parser.get_project_url(), parser.repository_type)
+
+        if config.unit_testing == True:
+            url = "local/f79ee5be-edec-4c08-bbff-461336b06b57" # Static UUID for local repositories
+            datastore.initialize(config, url, parser.repository_type)
+        else:
+            datastore.initialize(config, parser.get_project_url(), parser.repository_type)
+            
         parser.parse(config.path, datastore, config.cores_per_job)
         parser.finalize()
         datastore.finalize()
