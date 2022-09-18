@@ -146,7 +146,7 @@ class Test(unittest.TestCase):
         os.system("git -C ./tests/data/" +
                   str(self.project_name)+" gc --prune=now")
 
-    def test_deleteCommit(self):
+    def test_delete_Commit(self):
         """
         Test if plugin mark commit as deleted if no longer exists in repo
         """
@@ -210,6 +210,14 @@ class Test(unittest.TestCase):
         # Assert - Previous states holds total states = total sample branches
         self.assertEqual(len(init_commit_updated.previous_states),
                          len(sample_branches), "previous states is not maintained!")
+    
+    def delete_tag(self,tag_name=''):
+        # delete tag, clean garbage collection
+        os.system("git -C ./tests/data/"+str(self.project_name) +
+                  " tag -d "+tag_name)
+
+        # Repository Garbage Collection
+        self.git_gc()
                          
     def test_tag(self):
         test_author = pygit2.Signature("test", "test@email.edu")
@@ -219,19 +227,15 @@ class Test(unittest.TestCase):
 
         # create tag on it
         self.repository.create_tag(
-            "test_tag", latest_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "test tag")
+            "test_tag", latest_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "test tag message")
         self.repository.create_tag(
-            "test_tag_2", latest_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "test tag 2")
+            "test_tag_2", latest_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "test tag 2 message")
 
         # run plugin
         self.syncPlugin()
 
         # delete tag, clean garbage collection
-        os.system("git -C ./tests/data/"+str(self.project_name) +
-                  " tag -d test_tag")
-
-        # Repository Garbage Collection
-        self.git_gc()
+        self.delete_tag('test_tag')
 
         # run plugin
         self.syncPlugin()
@@ -244,6 +248,44 @@ class Test(unittest.TestCase):
         mongo_tag_2 = Tag.objects(name='test_tag_2')[0]
         self.assertIsNone(mongo_tag_2.deleted_at,
                           "Tag shown as deleted but actually not deleted")
+
+        # Check if behavior for re-added tag for same commit where it was mark as deleted before
+        recreate_tag_commit = self.repository.revparse_single("HEAD~3")
+        self.repository.create_tag(
+            "recreate_tag_test", recreate_tag_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "test tag message")
+        
+        self.syncPlugin()
+
+        # -> Check tag is created
+        mongo_tag_check = Tag.objects(name='recreate_tag_test')[0]
+        self.assertIsNone(mongo_tag_check.deleted_at,
+                            "Tag shown as deleted but actually not deleted")
+
+        # delete tag
+        self.delete_tag('recreate_tag_test')
+
+        self.syncPlugin()
+
+        self.repository.create_tag(
+            "recreate_tag_test", recreate_tag_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "test tag message 2")
+        
+        self.syncPlugin()
+        mongo_tag_check = Tag.objects(name='recreate_tag_test')[0]
+        self.assertIsNone(mongo_tag_check.deleted_at,
+                            "Tag shown as deleted in mongodb but it recreated for same commit.")
+
+        # Final Check
+        mongo_tag_test_tag = Tag.objects(id=mongo_tag_1.id).get()
+        mongo_tag_test_tag_2 = Tag.objects(id=mongo_tag_2.id).get()
+        mongo_tag_recreate_tag_test = Tag.objects(id=mongo_tag_check.id).get()
+
+        self.assertIsNotNone(mongo_tag_test_tag.deleted_at,
+                             f"Final Test: {mongo_tag_test_tag.name} Tag not deleted in mongo but deleted in git",)
+        self.assertIsNone(mongo_tag_test_tag_2.deleted_at,
+                          f"Final Test: {mongo_tag_test_tag_2.name} Tag shown as deleted but actually not deleted")
+        self.assertIsNone(mongo_tag_recreate_tag_test.deleted_at,
+                          f"Final Test: {mongo_tag_recreate_tag_test.name} Tag shown as deleted but actually not deleted")
+
 
     def dropGitRepo(self, repository_path):
         try:

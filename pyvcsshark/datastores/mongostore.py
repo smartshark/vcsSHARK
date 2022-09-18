@@ -221,7 +221,7 @@ class CommitStorageProcess(multiprocessing.Process):
         self.vcs_system_id = vcs_system_id
         self.last_commit_date = last_commit_date
         self.proc_name = name
-    
+
     def isUpdated(self, mongo_commit,commit):
         """ Checks if the commit has any update
         Return False if nothing changed
@@ -262,7 +262,7 @@ class CommitStorageProcess(multiprocessing.Process):
             commit = self.queue.get()
             logger.debug("Process %s is processing commit with hash %s." % (self.proc_name, commit.id))
 
-            # Try to get the commit    
+            # Try to get the commit
             isNew = False
             try:
                 mongo_commit = Commit.objects(vcs_system_id=self.vcs_system_id, revision_hash=commit.id).get()                
@@ -272,11 +272,11 @@ class CommitStorageProcess(multiprocessing.Process):
                     revision_hash=commit.id
                 ).save()
                 isNew = True
-            
+
             logger.debug("Process %s is creating tags for commit with hash %s." % (self.proc_name, commit.id))
             self.create_tags(mongo_commit, commit)
-            
-            if isNew or self.isUpdated(mongo_commit, commit):                    
+
+            if isNew or self.isUpdated(mongo_commit, commit):
                 self.set_whole_commit(mongo_commit, commit)
                 # Save Revision object
                 mongo_commit.save()
@@ -285,22 +285,20 @@ class CommitStorageProcess(multiprocessing.Process):
             self.queue.task_done()
 
     def set_whole_commit(self, mongo_commit, commit):
-        # Create tags
-        # logger.debug("Process %s is creating tags for commit with hash %s." % (self.proc_name, commit.id))
-        # self.create_tags(mongo_commit, commit.tags)
-
         # Create branchlist
-        logger.debug("Process %s is creating branches for commit with hash %s." % (self.proc_name, commit.id))       
+        logger.debug("Process %s is creating branches for commit with hash %s." % (
+            self.proc_name, commit.id))
         branch_list = self.create_branch_list(commit.branches)
-        
+
         if branch_list is not None:
             branch_list.sort()
-        mongoBranch = list(mongo_commit.branches) if mongo_commit.branches else None
+        mongoBranch = list(
+            mongo_commit.branches) if mongo_commit.branches else None
         if mongoBranch != None:
             mongoBranch.sort()
 
         if mongoBranch != None and mongoBranch != branch_list:
-            stateDict ={'branches':mongo_commit.branches}
+            stateDict = {'branches': mongo_commit.branches}
             if mongo_commit.modified_date:
                 stateDict['date'] = mongo_commit.modified_date
             elif mongo_commit.committer_date:
@@ -378,7 +376,11 @@ class CommitStorageProcess(multiprocessing.Process):
                 except (DuplicateKeyError, NotUniqueError):
                     logger.debug("Process %s is found tag %s." % (self.proc_name, tag.name))
                     mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name).only('id', 'name','stored_at').get()
-            
+
+            if mongo_tag.deleted_at is not None:
+                mongo_tag.deleted_at = None
+                mongo_tag.save()
+
             # Check stored_at for Older Records
             if mongo_tag.stored_at is None:
                 mongo_tag_obj = Tag.objects(id=mongo_tag.id).get()
@@ -477,32 +479,36 @@ class CommitStorageProcess(multiprocessing.Process):
 
 class RemovedDataSync(multiprocessing.Process):
     """
+    It will update deleted objects from repository to database 
     """
+
     def __init__(self, vcs_system_id, config, name):
         multiprocessing.Process.__init__(self)
         uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
                                         config.db_authentication, config.ssl_enabled)
-        
+
         connect(config.db_database, host=uri, connect=False)
         self.vcs_system_id = vcs_system_id
         self.proc_name = name
-        self.config=config
+        self.config = config
         discovered_path = pygit2.discover_repository(self.config.path)
         self.repository = pygit2.Repository(discovered_path)
 
     def sync(self):
         # lookup in mongoDB for all commits
         for mongo_commit in Commit.objects(deleted_at=None):
-            git_commit_contain = self.repository.__contains__(mongo_commit.revision_hash)
+            git_commit_contain = self.repository.__contains__(
+                mongo_commit.revision_hash)
             if git_commit_contain == False:
-                mongo_commit.deleted_at=datetime.datetime.today()
+                mongo_commit.deleted_at = datetime.datetime.today()
                 mongo_commit.save()
 
         # Tags Update
         # Get all tags
         regex = re.compile('^refs/tags')
-        tags = set(filter(lambda r: regex.match(r), self.repository.listall_references()))
-        current_tags_list=[]
+        tags = set(filter(lambda r: regex.match(
+            r), self.repository.listall_references()))
+        current_tags_list = []
         for tag in tags:
             tagged_commit = self.repository.lookup_reference(tag).peel()
 
@@ -510,11 +516,25 @@ class RemovedDataSync(multiprocessing.Process):
             if isinstance(tagged_commit, pygit2.Blob):
                 continue
 
-            current_tags_list.append(tag.split("/")[-1])
+            current_tags_list.append(
+                {"tag_name": tag.split("/")[-1], "commit_hash": tagged_commit.hex})
 
-        for mongo_tag in Tag.objects(deleted_at=None):
-            if mongo_tag.name not in current_tags_list:
-                mongo_tag.deleted_at=datetime.datetime.today()
+        for mongo_tag in Tag.objects(vcs_system_id=self.vcs_system_id):
+            commit_revision_hash = Commit.objects(id=mongo_tag.commit_id).only(
+                'revision_hash').get().revision_hash
+
+            is_found = False
+            for tags in current_tags_list:
+                if tags['commit_hash'] == commit_revision_hash and tags['tag_name'] == mongo_tag.name:
+                    if mongo_tag.deleted_at != None:
+                        mongo_tag.deleted_at = None
+                        mongo_tag.save()
+
+                    is_found = True
+                    break
+
+            if is_found == False:
+                mongo_tag.deleted_at = datetime.datetime.today()
                 mongo_tag.save()
 
     def run(self):
