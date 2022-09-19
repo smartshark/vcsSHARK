@@ -496,7 +496,7 @@ class RemovedDataSync(multiprocessing.Process):
 
     def sync(self):
         # lookup in mongoDB for all commits
-        for mongo_commit in Commit.objects(deleted_at=None):
+        for mongo_commit in Commit.objects(vcs_system_id=self.vcs_system_id,deleted_at=None):
             git_commit_contain = self.repository.__contains__(
                 mongo_commit.revision_hash)
             if git_commit_contain == False:
