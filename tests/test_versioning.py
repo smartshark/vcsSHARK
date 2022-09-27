@@ -261,7 +261,7 @@ class Test(unittest.TestCase):
         self.assertIsNone(mongo_tag_check.deleted_at,
                             "Tag shown as deleted but actually not deleted")
 
-        # delete tag
+        # Delete tag & recreate tag
         self.delete_tag('recreate_tag_test')
 
         self.syncPlugin()
@@ -274,6 +274,16 @@ class Test(unittest.TestCase):
         self.assertIsNone(mongo_tag_check.deleted_at,
                             "Tag shown as deleted in mongodb but it recreated for same commit.")
 
+        # Again Delete & Recreate tag
+        self.delete_tag('recreate_tag_test')
+
+        self.syncPlugin()
+
+        self.repository.create_tag(
+            "recreate_tag_test", recreate_tag_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "test tag message 2")
+        
+        self.syncPlugin()
+
         # Final Check
         mongo_tag_test_tag = Tag.objects(id=mongo_tag_1.id).get()
         mongo_tag_test_tag_2 = Tag.objects(id=mongo_tag_2.id).get()
@@ -285,6 +295,7 @@ class Test(unittest.TestCase):
                           f"Final Test: {mongo_tag_test_tag_2.name} Tag shown as deleted but actually not deleted")
         self.assertIsNone(mongo_tag_recreate_tag_test.deleted_at,
                           f"Final Test: {mongo_tag_recreate_tag_test.name} Tag shown as deleted but actually not deleted")
+        self.assertEqual(len(mongo_tag_recreate_tag_test.previous_states),2,'Tag previous states not maintained. It should be created count - 1')
 
 
     def dropGitRepo(self, repository_path):
