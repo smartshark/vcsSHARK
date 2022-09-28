@@ -402,7 +402,6 @@ class CommitStorageProcess(multiprocessing.Process):
                     mongo_tag = Tag.objects(commit_id=commit_id, name=tag.name).only(
                         'id', 'name', 'stored_at').get()
 
-            # Check stored_at for Older Records
             mongo_tag_obj = Tag.objects(id=mongo_tag.id).get()
             if mongo_tag_obj.message != tag.message:
                 mongo_tag_obj.message = tag.message
