@@ -114,7 +114,7 @@ class MongoStore(BaseStore):
 
         # Sync commits
         remove_sync_thread = RemovedDataSync(
-            self.vcs_system_id, self.config, 'RemovedDataSync')
+            self.vcs_system_id, self.config, 'RemovedDataSync',self.vcs_system_last_updated)
         remove_sync_thread.daemon = True
         remove_sync_thread.start()
         remove_sync_thread.join()
@@ -123,7 +123,7 @@ class MongoStore(BaseStore):
         for i in range(self.cores_per_job):
             name = "StorageProcess-%d" % i
             process = CommitStorageProcess(
-                self.commit_queue, self.vcs_system_id, last_commit_date, self.config, name)
+                self.commit_queue, self.vcs_system_id, last_commit_date, self.config, name,self.vcs_system_last_updated)
             process.daemon = True
             process.start()
 
@@ -222,13 +222,14 @@ class CommitStorageProcess(multiprocessing.Process):
     :param config: object of class :class:`pyvcsshark.config.Config`, which holds configuration information
     """
 
-    def __init__(self, queue, vcs_system_id, last_commit_date, config, name):
+    def __init__(self, queue, vcs_system_id, last_commit_date, config, name,vcs_system_last_updated):
         multiprocessing.Process.__init__(self)
         uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
                                         config.db_authentication, config.ssl_enabled)
         connect(config.db_database, host=uri, connect=False)
         self.queue = queue
         self.vcs_system_id = vcs_system_id
+        self.vcs_system_last_updated = vcs_system_last_updated
         self.last_commit_date = last_commit_date
         self.proc_name = name
 
@@ -313,10 +314,7 @@ class CommitStorageProcess(multiprocessing.Process):
 
         if mongoBranch != None and mongoBranch != branch_list:
             stateDict = {'branches': mongo_commit.branches}
-            if mongo_commit.modified_date:
-                stateDict['date'] = mongo_commit.modified_date
-            else:
-                stateDict['date'] = self.vcs_system_last_updated
+            stateDict['date'] = mongo_commit.modified_date or None
 
             mongo_commit.previous_states.append(stateDict)
 
@@ -353,7 +351,7 @@ class CommitStorageProcess(multiprocessing.Process):
         self.create_file_actions(commit.changedFiles, mongo_commit.id)
 
         # Set Date
-        mongo_commit.modified_date = datetime.datetime.today()
+        mongo_commit.modified_date = self.vcs_system_last_updated
 
     def create_branch_list(self, branches):
         """Creates a list of the different branch names, where a commit belongs to. We go through the \
@@ -386,7 +384,7 @@ class CommitStorageProcess(multiprocessing.Process):
                         self.proc_name, tag.name))
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, message=tag.message, tagger_id=tagger_id,
                                     date=tag.taggerDate, date_offset=tag.taggerOffset,
-                                    vcs_system_id=self.vcs_system_id, stored_at=datetime.datetime.today()).save()
+                                    vcs_system_id=self.vcs_system_id, stored_at=self.vcs_system_last_updated).save()
                 except (DuplicateKeyError, NotUniqueError):
                     logger.debug("Process %s found tag with tagger with name %s." % (
                         self.proc_name, tag.name))
@@ -397,7 +395,7 @@ class CommitStorageProcess(multiprocessing.Process):
                     logger.debug("Process %s is creating tag %s." %
                                  (self.proc_name, tag.name))
                     mongo_tag = Tag(commit_id=commit_id, name=tag.name, date=tag.taggerDate,
-                                    date_offset=tag.taggerOffset, vcs_system_id=self.vcs_system_id, stored_at=datetime.datetime.today()).save()
+                                    date_offset=tag.taggerOffset, vcs_system_id=self.vcs_system_id, stored_at=self.vcs_system_last_updated).save()
                 except (DuplicateKeyError, NotUniqueError):
                     logger.debug("Process %s is found tag %s." %
                                  (self.proc_name, tag.name))
@@ -406,9 +404,6 @@ class CommitStorageProcess(multiprocessing.Process):
 
             # Check stored_at for Older Records
             mongo_tag_obj = Tag.objects(id=mongo_tag.id).get()
-            if mongo_tag_obj.stored_at is None:
-                mongo_tag_obj.stored_at = self.vcs_system_last_updated
-
             if mongo_tag_obj.message != tag.message:
                 mongo_tag_obj.message = tag.message
 
@@ -525,7 +520,7 @@ class RemovedDataSync(multiprocessing.Process):
     It will update deleted objects from repository to database 
     """
 
-    def __init__(self, vcs_system_id, config, name):
+    def __init__(self, vcs_system_id, config, name,vcs_system_last_updated):
         multiprocessing.Process.__init__(self)
         uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
                                         config.db_authentication, config.ssl_enabled)
@@ -536,6 +531,7 @@ class RemovedDataSync(multiprocessing.Process):
         self.config = config
         discovered_path = pygit2.discover_repository(self.config.path)
         self.repository = pygit2.Repository(discovered_path)
+        self.vcs_system_last_updated = vcs_system_last_updated
 
     def sync(self):
         # lookup in mongoDB for all commits
@@ -543,7 +539,7 @@ class RemovedDataSync(multiprocessing.Process):
             git_commit_contain = self.repository.__contains__(
                 mongo_commit.revision_hash)
             if git_commit_contain == False:
-                mongo_commit.deleted_at = datetime.datetime.today()
+                mongo_commit.deleted_at = self.vcs_system_last_updated
                 mongo_commit.save()
 
         # Tags Update
@@ -584,14 +580,14 @@ class RemovedDataSync(multiprocessing.Process):
 
                         mongo_tag.previous_states.append(state_object)
                         mongo_tag.deleted_at = None
-                        mongo_tag.stored_at = datetime.datetime.today()
+                        mongo_tag.stored_at = self.vcs_system_last_updated
                         mongo_tag.save()
 
                     is_found = True
                     break
 
             if is_found == False:
-                mongo_tag.deleted_at = datetime.datetime.today()
+                mongo_tag.deleted_at = self.vcs_system_last_updated
                 mongo_tag.save()
     def run(self):
         self.sync()
