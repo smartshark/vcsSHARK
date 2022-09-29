@@ -403,12 +403,40 @@ class CommitStorageProcess(multiprocessing.Process):
                         'id', 'name', 'stored_at').get()
 
             mongo_tag_obj = Tag.objects(id=mongo_tag.id).get()
+            # Message can be update
             if mongo_tag_obj.message != tag.message:
+                # Check last previous state date with current existing store date
+                # If both are equal, then we can consider it as same runtime and just update the modified message
+                if len(mongo_tag_obj.previous_states) > 0 and (('stored_at' in mongo_tag_obj.previous_states[-1] and mongo_tag_obj.previous_states[-1]['stored_at'] == mongo_tag_obj.stored_at) or ('stored_at' not in mongo_tag_obj.previous_states[-1])):
+                    mongo_tag_obj.previous_states[-1]['message'] = mongo_tag_obj.message
+                else:
+                    # look each previous states where message is not equal to current message
+                    isPreviousStateFound = False
+                    for state, index in zip(mongo_tag_obj.previous_states[::-1], range(len(mongo_tag_obj.previous_states))[::-1]):
+                        if "message" not in state and 'stored_at' in state:
+                            state['message'] = mongo_tag_obj.message
+                            mongo_tag_obj.previous_states[index] = state
+                            isPreviousStateFound = True
+                            break
+                    if isPreviousStateFound == False:
+                        state_object={"message": mongo_tag_obj.message}
+                        if mongo_tag_obj.stored_at != None:
+                            state_object['stored_at'] = mongo_tag_obj.stored_at
+                            
+                        mongo_tag_obj.previous_states.append(state_object)
+
                 mongo_tag_obj.message = tag.message
+                mongo_tag_obj.stored_at = self.vcs_system_last_updated
+
+            # Tag is found, so it should update the stored_at date and remove deleted date
+            # Previous State of delete was already handled by RemovedDataSync Class
+            if mongo_tag_obj.deleted_at != None:
+                mongo_tag_obj.deleted_at = None
+                mongo_tag_obj.stored_at = self.vcs_system_last_updated
 
             mongo_tag_obj.save()
 
-            tag_list.append(mongo_tag)
+            tag_list.append(mongo_tag_obj)
         return tag_list
 
     def create_people(self, name, email):
@@ -569,17 +597,17 @@ class RemovedDataSync(multiprocessing.Process):
                     # Tag is recreated, marked as deleted previously
                     if mongo_tag.deleted_at != None:
                         state_object = {
-                            "deleted_at": mongo_tag.deleted_at,
-                            "stored_at": mongo_tag.stored_at
+                            "deleted_at": mongo_tag.deleted_at
                         }
+
+                        if mongo_tag.stored_at != None:
+                            state_object["stored_at"] = mongo_tag.stored_at
 
                         # Message can be update
                         if mongo_tag.message != tags['message']:
                             state_object['message'] = mongo_tag.message
 
                         mongo_tag.previous_states.append(state_object)
-                        mongo_tag.deleted_at = None
-                        mongo_tag.stored_at = self.vcs_system_last_updated
                         mongo_tag.save()
 
                     is_found = True

@@ -167,12 +167,10 @@ class Test(unittest.TestCase):
 
         # assert check
         check_commit = Commit.objects(revision_hash=updatedMsgOid.hex).get()
-        print(check_commit.revision_hash, check_commit.deleted_at)
 
         self.assertEqual(updatedMsgOid.hex,
                          check_commit.revision_hash, "not same")
         self.assertIsNotNone(check_commit.deleted_at, "mark as deleted failed")
-        print("Deleted Test Pass")
 
     def test_previous_state(self):
         """
@@ -290,13 +288,65 @@ class Test(unittest.TestCase):
         mongo_tag_recreate_tag_test = Tag.objects(id=mongo_tag_check.id).get()
 
         self.assertIsNotNone(mongo_tag_test_tag.deleted_at,
-                             f"Final Test: {mongo_tag_test_tag.name} Tag not deleted in mongo but deleted in git",)
+                             f"Final Test: {mongo_tag_test_tag.name} Tag not deleted in mongo but deleted in git")
         self.assertIsNone(mongo_tag_test_tag_2.deleted_at,
                           f"Final Test: {mongo_tag_test_tag_2.name} Tag shown as deleted but actually not deleted")
         self.assertIsNone(mongo_tag_recreate_tag_test.deleted_at,
                           f"Final Test: {mongo_tag_recreate_tag_test.name} Tag shown as deleted but actually not deleted")
         self.assertEqual(len(mongo_tag_recreate_tag_test.previous_states),2,'Tag previous states not maintained. It should be created count - 1')
 
+        # It Check if tag is deleted from Git but not from mongo then again recreated with new message, then plugin should know that only message has been updated
+        # It checks behavior of plugin for tag message that is updated without marked as deleted in mongoDB
+
+        new_tag_commit = self.repository.revparse_single("HEAD~3")
+        self.repository.create_tag(
+            "new_tag", new_tag_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "message A")
+
+        self.syncPlugin()
+
+        self.delete_tag('new_tag')
+        self.syncPlugin()
+
+        self.repository.create_tag(
+            "new_tag", new_tag_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "message A") # Intentionally same message
+
+        self.syncPlugin()
+
+        mongo_tag_new_tag = Tag.objects(name='new_tag')[0]
+        self.assertEqual(len(mongo_tag_new_tag.previous_states),
+                         1, 'previous state length should be 1')
+        self.assertEqual(
+            "message" not in mongo_tag_new_tag.previous_states[-1], True, 'message should not be in previous state as it is not updated')
+
+        # Here, Tag deleted in git and again recreated with new message without sync plugin
+        self.delete_tag('new_tag')
+
+        self.repository.create_tag(
+            "new_tag", new_tag_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "message C")
+        self.syncPlugin()
+
+        self.delete_tag('new_tag')
+        self.syncPlugin()
+
+        self.repository.create_tag(
+            "new_tag", new_tag_commit.id, pygit2.GIT_OBJ_COMMIT, test_author, "message D")
+        self.syncPlugin()
+
+        self.delete_tag('new_tag')
+        self.syncPlugin()
+
+        mongo_tag_new_tag = Tag.objects(name='new_tag')[0]
+
+        self.assertEqual(mongo_tag_new_tag.message,
+                         'message D', 'Tag message not updated')
+        self.assertIsNotNone(mongo_tag_new_tag.deleted_at,
+                             f"Final Test: {mongo_tag_new_tag.name} Tag is deleted in repository but found not deleted in mongoDB")
+        self.assertEqual(len(mongo_tag_new_tag.previous_states),
+                         2, 'Tag previous states not maintained. It should be 3')
+        self.assertEqual(
+            mongo_tag_new_tag.previous_states[0]['message'], 'message A', 'Tag message should be message A')
+        self.assertEqual(
+            mongo_tag_new_tag.previous_states[1]['message'], 'message C', 'Tag message should be message C')
 
     def dropGitRepo(self, repository_path):
         try:
