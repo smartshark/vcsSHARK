@@ -25,10 +25,11 @@ class Config(object):
         self.project_name = args.project_name
         self.cores_per_job = args.cores_per_job
         self.ssl_enabled = args.ssl
+        self.unit_testing = args.unit_testing
 
     def __str__(self):
         return "Driver: %s, User: %s, Password: %s, Database: %s, Hostname: %s, Port: %s, AuthenticationDB: %s, " \
-               "Path: %s, Debug: %s, Project Name: %s" % (
+               "Path: %s, Debug: %s, Project Name: %s, Testing: %s" % (
                    self.db_driver,
                    self.db_user,
                    self.db_password,
@@ -39,4 +40,5 @@ class Config(object):
                    self.path,
                    self.debug_level,
                    self.project_name,
+                   self.unit_testing,
                )
