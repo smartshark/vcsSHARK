@@ -342,7 +342,7 @@ class Test(unittest.TestCase):
         self.assertIsNotNone(mongo_tag_new_tag.deleted_at,
                              f"Final Test: {mongo_tag_new_tag.name} Tag is deleted in repository but found not deleted in mongoDB")
         self.assertEqual(len(mongo_tag_new_tag.previous_states),
-                         2, 'Tag previous states not maintained. It should be 3')
+                         2, 'Tag previous states not maintained. It should be 2')
         self.assertEqual(
             mongo_tag_new_tag.previous_states[0]['message'], 'message A', 'Tag message should be message A')
         self.assertEqual(
