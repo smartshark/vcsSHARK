@@ -1,6 +1,8 @@
 import os
 import sys
 import tarfile
+import gridfs
+from mongoengine.connection import get_db
 
 from pymongo.errors import DocumentTooLarge, DuplicateKeyError
 
@@ -408,7 +410,11 @@ class CommitStorageProcess(multiprocessing.Process):
             if hunks:
                 try:
                     logger.debug("Process %s is inserting hunks..." % self.proc_name)
-                    Hunk.objects.insert(hunks, load_bulk=False)
+                    _fs = gridfs.GridFS(get_db())
+                    for h in hunks:
+                        if getattr(h, "content", None) and len(h.content) > 10000000:
+                            h.content = f"GRIDFS_REF:{_fs.put(h.content.encode('utf-8'))}"
+                    [Hunk.objects.insert(hunks[i:i + 50], load_bulk=False) for i in range(0, len(hunks), 50)]
                 except DocumentTooLarge:
                     for hunk in hunks:
                         try:
