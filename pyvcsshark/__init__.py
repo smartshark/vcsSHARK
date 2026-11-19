@@ -59,7 +59,7 @@ def start():
         sys.exit(1)
 
     parser = get_base_argparser('Analyze the given URI. An URI can be a checked out directory. If URI is omitted, '
-                                'the current working directory will be used as a checked out directory.', '1.0.0')
+                                'the current working directory will be used as a checked out directory.', '2.1.2')
     parser.add_argument('-D', '--db-driver', help='Output database driver. Currently only mongoDB is supported',
                         default='mongo', choices=datastore_choices)
     parser.add_argument('-d', '--log-level', help='Debug level', choices=['INFO', 'DEBUG', 'WARNING', 'ERROR'],
