@@ -2,10 +2,10 @@ import os
 import sys
 import tarfile
 
-from pymongo.errors import DocumentTooLarge, DuplicateKeyError
+from pymongo.errors import DocumentTooLarge, DuplicateKeyError, OperationFailure
 
 from pyvcsshark.datastores.basestore import BaseStore
-from mongoengine import connect, DoesNotExist, NotUniqueError
+from mongoengine import connect, disconnect, DoesNotExist, NotUniqueError, OperationError
 from mongoengine.fields import DateTimeField
 from pycoshark.mongomodels import VCSSystem, Project, Commit, Tag, File, People, FileAction, Hunk, Branch
 from pycoshark.utils import create_mongodb_uri_string
@@ -156,12 +156,10 @@ class BranchStorageProcess(multiprocessing.Process):
 
     def __init__(self, queue, vcs_system_id, config, name):
         multiprocessing.Process.__init__(self)
-        uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
-                                        config.db_authentication, config.ssl_enabled)
-        connect(config.db_database, host=uri, connect=False)
         self.queue = queue
         self.vcs_system_id = vcs_system_id
         self.proc_name = name
+        self.config = config
 
     def run(self):
         """Endless loop for the processes.
@@ -169,6 +167,10 @@ class BranchStorageProcess(multiprocessing.Process):
         1. Get a object of class :class:`pyvcsshark.dbmodels.models.BranchModel` from the queue
         2. Check if this branch was stored before and if so: update the branch, if not create branch
         """
+        uri = create_mongodb_uri_string(self.config.db_user, self.config.db_password, self.config.db_hostname,
+                                        self.config.db_port, self.config.db_authentication, self.config.ssl_enabled)
+        disconnect()
+        connect(self.config.db_database, host=uri)
         while True:
             branch = self.queue.get()
             logger.debug("Process {} is processing branch {} -> {}".format(self.proc_name, branch.name, branch.target))
@@ -206,13 +208,11 @@ class CommitStorageProcess(multiprocessing.Process):
     """
     def __init__(self, queue, vcs_system_id, last_commit_date, config, name):
         multiprocessing.Process.__init__(self)
-        uri = create_mongodb_uri_string(config.db_user, config.db_password, config.db_hostname, config.db_port,
-                                        config.db_authentication, config.ssl_enabled)
-        connect(config.db_database, host=uri, connect=False)
         self.queue = queue
         self.vcs_system_id = vcs_system_id
         self.last_commit_date = last_commit_date
         self.proc_name = name
+        self.config = config
 
     def run(self):
         """ Endless loop for the processes, which consists of several steps:
@@ -232,6 +232,10 @@ class CommitStorageProcess(multiprocessing.Process):
 
         .. WARNING:: We only look for changed tags and branches here for already processed commits!
         """
+        uri = create_mongodb_uri_string(self.config.db_user, self.config.db_password, self.config.db_hostname,
+                                        self.config.db_port, self.config.db_authentication, self.config.ssl_enabled)
+        disconnect()
+        connect(self.config.db_database, host=uri)
         logger.info("Entering the run() function in CommitStorageProcess")
         while True:
             commit = self.queue.get()
@@ -409,9 +413,10 @@ class CommitStorageProcess(multiprocessing.Process):
                 try:
                     logger.debug("Process %s is inserting hunks..." % self.proc_name)
                     Hunk.objects.insert(hunks, load_bulk=False)
-                except DocumentTooLarge:
+                except (DocumentTooLarge, OperationError, OperationFailure):
                     for hunk in hunks:
                         try:
                             hunk.save()
-                        except DocumentTooLarge:
-                            logger.info("Document was too large for commit: %s" % mongo_commit_id)
+                        except (DocumentTooLarge, OperationError, OperationFailure) as err:
+                            logger.error("Failed to save hunk for commit: %s, file_action: %s: %s" % (mongo_commit_id, file_action_id, err))
+                            raise

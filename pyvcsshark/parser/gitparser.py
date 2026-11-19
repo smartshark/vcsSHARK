@@ -10,6 +10,15 @@ import pygit2
 from pyvcsshark.parser.baseparser import BaseParser
 from pyvcsshark.parser.models import BranchModel, PeopleModel, TagModel, FileModel, CommitModel, Hunk, BranchTipModel
 
+# MongoDB max BSON document size is 16MB (16,777,216 bytes).
+# We leave 16KB of headroom for BSON document envelope and non-content fields (_id, file_action_id, etc.).
+MAX_HUNK_CONTENT_BYTES = 16 * 1024 * 1024 - 16 * 1024  # 16,760,832 bytes (~15.984 MB)
+
+
+class DiffLineTooLargeError(Exception):
+    """Raised when a single diff line exceeds MongoDB's 16MB limit and cannot be split."""
+    pass
+
 
 class GitParser(BaseParser):
     """ Parser for git repositories. The general parsing process is described in
@@ -344,29 +353,74 @@ class CommitParserProcess(multiprocessing.Process):
 
         del self.commits_to_be_processed[string_commit_hash]
 
-    def create_hunks(self, hunks, initial_commit=False):
+    def create_hunks(self, hunks, initial_commit=False, file_path=None):
         """
         Creates the diff in the unified format (see: https://en.wikipedia.org/wiki/Diff#Unified_format)
 
         If we have the initial commit, we need to turn around the hunk.* attributes.
+        If a hunk exceeds MongoDB's 16MB limit, it is cleanly split into sub-hunks at line boundaries
+        preserving exact line numbers and 100% of the diff content without data loss.
 
         :param hunks: list of objects of class :class:`pygit2.DiffHunk`
         :param initial_commit: indicates if we have an initial commit
+        :param file_path: path to the file being diffed (for diagnostic reporting)
         """
 
         list_of_hunks = []
 
         for hunk in hunks:
-            output = ""
-            if initial_commit:
-                for line in hunk.lines:
-                    output += "%s%s" % ('+', line.content)
-                gen_hunk = Hunk(hunk.old_start, hunk.old_lines, hunk.new_start, hunk.new_lines, output)
-            else:
-                for line in hunk.lines:
-                    output += "%s%s" % (line.origin, line.content)
-                gen_hunk = Hunk(hunk.new_start, hunk.new_lines, hunk.old_start, hunk.old_lines, output)
-            list_of_hunks.append(gen_hunk)
+            cur_new_start = hunk.old_start if initial_commit else hunk.new_start
+            cur_old_start = hunk.new_start if initial_commit else hunk.old_start
+            cur_new_lines = 0
+            cur_old_lines = 0
+            chunk_lines = []
+            chunk_bytes = 0
+
+            for line in hunk.lines:
+                prefix = '+' if initial_commit else line.origin
+                line_str = "%s%s" % (prefix, line.content)
+                line_bytes = len(line_str.encode('utf-8', errors='ignore'))
+
+                # Extreme case: a single line exceeds the 16MB limit and cannot be split at a newline boundary
+                if line_bytes > MAX_HUNK_CONTENT_BYTES:
+                    raise DiffLineTooLargeError(
+                        f"Diff line too large: a single diff line ({line_bytes} bytes) exceeds the 16MB "
+                        f"MongoDB limit ({MAX_HUNK_CONTENT_BYTES} bytes). Cannot store in MongoDB without data loss. "
+                        f"File: {file_path or 'unknown'}"
+                    )
+
+                # If adding this line would exceed the 15.98MB boundary, flush current sub-hunk
+                if chunk_bytes + line_bytes > MAX_HUNK_CONTENT_BYTES and chunk_lines:
+                    list_of_hunks.append(Hunk(
+                        cur_new_start, cur_new_lines,
+                        cur_old_start, cur_old_lines,
+                        "".join(chunk_lines)
+                    ))
+                    cur_new_start += cur_new_lines
+                    cur_old_start += cur_old_lines
+                    cur_new_lines = 0
+                    cur_old_lines = 0
+                    chunk_lines = []
+                    chunk_bytes = 0
+
+                chunk_lines.append(line_str)
+                chunk_bytes += line_bytes
+
+                if prefix == '+':
+                    cur_new_lines += 1
+                elif prefix == '-':
+                    cur_old_lines += 1
+                elif prefix == ' ':
+                    cur_new_lines += 1
+                    cur_old_lines += 1
+
+            if chunk_lines:
+                list_of_hunks.append(Hunk(
+                    cur_new_start, cur_new_lines,
+                    cur_old_start, cur_old_lines,
+                    "".join(chunk_lines)
+                ))
+
         return list_of_hunks
 
     def get_changed_files_for_initial_commit(self, commit):
@@ -384,7 +438,7 @@ class CommitParserProcess(multiprocessing.Process):
             changed_file = FileModel(patch.delta.old_file.path, patch.delta.old_file.size,
                                      patch.line_stats[2], patch.line_stats[1],
                                      patch.delta.is_binary, 'A',
-                                     self.create_hunks(patch.hunks, True))
+                                     self.create_hunks(patch.hunks, True, patch.delta.old_file.path))
             changed_files.append(changed_file)
         return changed_files
 
@@ -432,7 +486,7 @@ class CommitParserProcess(multiprocessing.Process):
             changed_file = FileModel(patch.delta.new_file.path, patch.delta.new_file.size,
                                      patch.line_stats[1], patch.line_stats[2],
                                      patch.delta.is_binary, mode,
-                                     self.create_hunks(patch.hunks), parent_revision_hash=str(parent.id))
+                                     self.create_hunks(patch.hunks, False, patch.delta.new_file.path), parent_revision_hash=str(parent.id))
 
             # only add oldpath if file was copied/renamed
             if mode in ['C', 'R']:
